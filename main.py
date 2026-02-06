@@ -1,5 +1,7 @@
 import os
+import threading
 from io import BytesIO
+from flask import Flask
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
@@ -7,10 +9,23 @@ from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, Update, ReplyK
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
                           MessageHandler, filters, ContextTypes, ConversationHandler)
 
+# --- FLASK SERVER FOR RENDER HEALTH CHECK ---
+app_flask = Flask(__name__)
+
+@app_flask.route('/')
+def health_check():
+    return "Agos Bot is running", 200
+
+def run_flask():
+    # Render uses the PORT environment variable; defaults to 10000
+    port = int(os.environ.get("PORT", 10000))
+    app_flask.run(host='0.0.0.0', port=port)
+
 # --- CONFIGURATION ---
-TOKEN = "8294060672:AAGKS15my2tj3MMeSB4-nxAf31KoRm9YCbU"
-ADMIN_ID = 8057255966
-LOGO_PATH = "logo.w"  # Ensure your logo file is named this and in the same folder
+# Pulling values from Render Environment Variables for security
+TOKEN = os.getenv("BOT_TOKEN")
+ADMIN_ID = int(os.getenv("ADMIN_ID", "8057255966"))
+LOGO_PATH = "logo.w"
 
 # --- CONVERSATION STATES ---
 (P_TERMS, P_NAME, P_ADDR, P_AGE, P_PHONE, P_EDD, P_W_BEFORE, P_W_NOW,
@@ -794,32 +809,39 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- APP RUNNER ---
 
 if __name__ == '__main__':
+    # 1. Start the Flask server in a separate thread
+    # This prevents Render from timing out the deploy
+    threading.Thread(target=run_flask, daemon=True).start()
+
+    # 2. Setup the Telegram Application
     app = Application.builder().token(TOKEN).build()
 
+    # --- REGISTRATION OF HANDLERS ---
+    # (Ensure these match your existing handlers)
     p_conv = ConversationHandler(
         entry_points=[CallbackQueryHandler(p_start, pattern='^p_start$')],
         states={
-            P_TERMS: [CallbackQueryHandler(p_q1, pattern='^p_agree$')],
-            P_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q2), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_ADDR: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q3), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q4), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q5), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_EDD: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q6), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_W_BEFORE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q7), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_W_NOW: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q8), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_BIRTH: [CallbackQueryHandler(p_q9), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_GENDER: [CallbackQueryHandler(p_q10), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_DIET: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q11), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_RISK: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q12), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_ALLERGY: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q13), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_BREASTFEED: [CallbackQueryHandler(p_q14), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_LANG_PREF: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q15), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_q16), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_HOME: [CallbackQueryHandler(p_q17), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_PACKAGE: [CallbackQueryHandler(p_q18), CallbackQueryHandler(p_back_handler, pattern='^p_back$')],
-            P_ID: [MessageHandler(filters.PHOTO, p_final), CallbackQueryHandler(p_back_handler, pattern='^p_back$')]
+            P_TERMS: [CallbackQueryHandler(p_step1)],
+            P_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step2)],
+            P_ADDR: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step3)],
+            P_AGE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step4)],
+            P_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step5)],
+            P_EDD: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step6)],
+            P_W_BEFORE: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step7)],
+            P_W_NOW: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step8)],
+            P_BIRTH: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step9)],
+            P_GENDER: [CallbackQueryHandler(p_step10)],
+            P_DIET: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step11)],
+            P_RISK: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step12)],
+            P_ALLERGY: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step13)],
+            P_BREASTFEED: [CallbackQueryHandler(p_step14)],
+            P_LANG_PREF: [CallbackQueryHandler(p_step15)],
+            P_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, p_step16)],
+            P_HOME: [CallbackQueryHandler(p_step17)],
+            P_PACKAGE: [CallbackQueryHandler(p_step18)],
+            P_ID: [MessageHandler(filters.PHOTO, p_final)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(show_menu, pattern='^menu$'), CallbackQueryHandler(start, pattern='^restart$')],
+        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(show_menu, pattern='^menu$')],
         allow_reentry=True
     )
 
@@ -837,7 +859,7 @@ if __name__ == '__main__':
             D_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_step9)],
             D_PAYMENT: [MessageHandler(filters.PHOTO, d_final)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(show_menu, pattern='^menu$'), CallbackQueryHandler(start, pattern='^restart$')],
+        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(show_menu, pattern='^menu$')],
         allow_reentry=True
     )
 
@@ -845,9 +867,8 @@ if __name__ == '__main__':
     app.add_handler(d_conv)
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(lambda u, c: show_menu(u, c, u.callback_query.data.split('_')[1]), pattern='^lang_'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: show_menu(u, c), pattern='^menu$'))
     app.add_handler(CallbackQueryHandler(info_pages, pattern='^info_'))
-    app.add_handler(CallbackQueryHandler(start, pattern='^restart$'))
+    app.add_handler(CallbackQueryHandler(show_menu, pattern='^menu$'))
 
-    print("Agos Bot is live...")
+    print("Agos Bot is live and web server is active...")
     app.run_polling()
