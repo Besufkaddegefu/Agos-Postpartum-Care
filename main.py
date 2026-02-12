@@ -11,7 +11,7 @@ from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
 import os
 TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_ID = int(os.environ.get("ADMIN_ID", "123456789"))  # fallback to dummy
-LOGO_PATH = os.environ.get("LOGO_PATH", "logo.png")
+LOGO_PATH = os.environ.get("LOGO_PATH", "logo.web")
 
 # --- CONVERSATION STATES ---
 (P_TERMS, P_NAME, P_ADDR, P_AGE, P_PHONE, P_EDD, P_W_BEFORE, P_W_NOW,
@@ -904,4 +904,5 @@ if __name__ == '__main__':
 
     print("Agos Bot is live...")
     app.run_polling()
+
 
