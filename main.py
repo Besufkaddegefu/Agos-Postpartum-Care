@@ -25,7 +25,15 @@ print("DEBUG - TOKEN is:", repr(TOKEN))
 # --- CONTENT ---
 CONTENT = {
     'en': {
-        'welcome': "🌿 *Welcome to Agos Postpartum Care* 🌸\n\n_Nurturing mothers, empowering families._",
+
+        'welcome': (
+            "🌿 *Welcome to Agos Postpartum Care* 🌸\n\n"
+            "👩‍🍼 Professional nursing & recovery support for new mothers.\n"
+            "🎁 Luxury home decor & surprise packages.\n"
+            "🚗 Royal arrivals & cinematic media coverage.\n\n"
+            "🌐 www.agospostpartumcare.com\n\n"
+            "_Nurturing mothers, empowering families._"
+        ),
         'btns': ["👩‍🍼 Postpartum Care", "🎁 Decor", "🚗 Arrival", "📸 Media", "📞 Contact", "📋 Postpartum Booking", "📅 Decor Booking"],
         'care_text': (
             "👩‍🍼 *Postpartum Care Packages*\n"
@@ -155,7 +163,14 @@ CONTENT = {
         'q_back': "⬅️ Previous Question"
     },
     'am': {
-        'welcome': "🌿 *እንኳን ወደ አጎስ የድህረ ወሊድ እንክብካቤ በሰላም መጡ* 🌸",
+
+        'welcome': (
+            "🌿 *እንኳን ወደ አጎስ የድህረ ወሊድ እንክብካቤ በሰላም መጡ* 🌸\n\n"
+            "👩‍🍼 ለእናቶች ሙያዊ የድህረ ወሊድ እንክብካቤ እና ድጋፍ።\n"
+            "🎁 የቤት ዲኮር እና የድንቅ ጥቅል አገልግሎቶች።\n"
+            "🚗 የሊሙዚን አቀባበል እና የፎቶ/ቪዲዮ አገልግሎት።\n\n"
+            "🌐 www.agospostpartumcare.com"
+        ),
         'btns': ["👩‍🍼 የድህረ ወሊድ እንክብካቤ", "🎁 ዲኮር", "🚗 ሊሙዚን", "📸 ፎቶ/ቪዲዮ", "📞 ያግኙን", "📋 የድህረ ወሊድ ምዝገባ", "📅 ዲኮር ይዘዙ"],
         'care_text': (
             "👩‍🍼 *የድህረ ወሊድ እንክብካቤ ፓኬጆች*\n"
@@ -455,6 +470,7 @@ def create_intake_pdf(data):
     return buffer
 
 # --- HELPERS ---
+# --- HELPERS ---
 async def send_terms(update, text, keyboard):
     chunks = [text[i:i+3800] for i in range(0, len(text), 3800)]
     target = update.callback_query.message if update.callback_query else update.message
@@ -466,6 +482,14 @@ async def send_terms(update, text, keyboard):
 
 def get_back_kb(lang):
     return InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]])
+
+# NEW HELPER FUNCTION - Add this
+def get_nav_kb(lang, back_callback='p_back'):
+    """Returns keyboard with Back and Menu buttons"""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data=back_callback)],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
 
 def get_amharic_label(key):
     labels = {
@@ -555,8 +579,15 @@ async def p_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # [Included in the main script logic below for full functionality]
 
 async def p_q1(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    lang = context.user_data.get('lang', 'en')
     target = update.callback_query.message if update.callback_query else update.message
-    await target.reply_text("1. Full Name / ሙሉ ስም:", reply_markup=ReplyKeyboardRemove())
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
+    await target.reply_text(
+        "1. Full Name / ሙሉ ስም:",
+        reply_markup=kb
+    )
     return P_NAME
 
 async def p_q2(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -564,7 +595,10 @@ async def p_q2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_name'] = update.message.text
         context.user_data['history'].append(P_NAME)
-    await (update.message or update.callback_query.message).reply_text("2. Address / አድራሻ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "2. Address / አድራሻ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_ADDR
 
 async def p_q3(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -572,7 +606,10 @@ async def p_q3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_addr'] = update.message.text
         context.user_data['history'].append(P_ADDR)
-    await (update.message or update.callback_query.message).reply_text("3. Age / እድሜ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "3. Age / እድሜ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_AGE
 
 async def p_q4(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -580,7 +617,10 @@ async def p_q4(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_age'] = update.message.text
         context.user_data['history'].append(P_AGE)
-    await (update.message or update.callback_query.message).reply_text("4. Phone Number / ስልክ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "4. Phone Number / ስልክ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_PHONE
 
 # Updated Intake Date Format Question
@@ -589,7 +629,10 @@ async def p_q5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_phone'] = update.message.text
         context.user_data['history'].append(P_PHONE)
-    await (update.message or update.callback_query.message).reply_text("5. Expected Due Date (EDD):\nFormat: (dd/mm/yyyy)\nExample: 12/10/2016 \n\n5. የሚጠበቅበት የወሊድ ቀን:\nአጻጻፍ: (ቀን/ወር/ዓመት)\nምሳሌ: 12/10/2016", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "5. Expected Due Date (EDD):\nFormat: (dd/mm/yyyy)\nExample: 12/10/2016 \n\n5. የሚጠበቅበት የወሊድ ቀን:\nአጻጻፍ: (ቀን/ወር/ዓመት)\nምሳሌ: 12/10/2016",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_EDD
 
 async def p_q6(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -597,7 +640,10 @@ async def p_q6(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_edd'] = update.message.text
         context.user_data['history'].append(P_EDD)
-    await (update.message or update.callback_query.message).reply_text("6. Weight Before Pregnancy (Kg): / ከእርግዝና በፊት ክብደት (ኪግ):", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "6. Weight Before Pregnancy (Kg): / ከእርግዝና በፊት ክብደት (ኪግ):",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_W_BEFORE
 
 async def p_q7(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -605,7 +651,10 @@ async def p_q7(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_w_b'] = update.message.text
         context.user_data['history'].append(P_W_BEFORE)
-    await (update.message or update.callback_query.message).reply_text("7. Current Weight (Kg): / አሁን ያለው ክብደት (ኪግ):", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "7. Current Weight (Kg): / አሁን ያለው ክብደት (ኪግ):",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_W_NOW
 
 async def p_q8(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -613,9 +662,16 @@ async def p_q8(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_w_n'] = update.message.text
         context.user_data['history'].append(P_W_NOW)
-    kb = [[InlineKeyboardButton("Normal / መደበኛ", callback_data='Normal'), InlineKeyboardButton("Cesarean / ቀዶ ሕክምና", callback_data='C-Sec')],
-          [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]]
-    await (update.message or update.callback_query.message).reply_text("8. Delivery Type / የወሊድ አይነት:", reply_markup=InlineKeyboardMarkup(kb))
+    kb = [
+        [InlineKeyboardButton("Normal / መደበኛ", callback_data='Normal'),
+         InlineKeyboardButton("Cesarean / ቀዶ ሕክምና", callback_data='C-Sec')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    await (update.message or update.callback_query.message).reply_text(
+        "8. Delivery Type / የወሊድ አይነት:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return P_BIRTH
 
 async def p_q9(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -623,9 +679,16 @@ async def p_q9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.callback_query and update.callback_query.data != 'p_back':
         context.user_data['p_birth'] = update.callback_query.data
         context.user_data['history'].append(P_BIRTH)
-    kb = [[InlineKeyboardButton("Male / ወንድ", callback_data='M'), InlineKeyboardButton("Female / ሴት", callback_data='F')],
-          [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]]
-    await (update.message or update.callback_query.message).reply_text("9. Baby Gender / የሕፃኑ ጾታ:", reply_markup=InlineKeyboardMarkup(kb))
+    kb = [
+        [InlineKeyboardButton("Male / ወንድ", callback_data='M'),
+         InlineKeyboardButton("Female / ሴት", callback_data='F')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    await (update.message or update.callback_query.message).reply_text(
+        "9. Baby Gender / የሕፃኑ ጾታ:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return P_GENDER
 
 async def p_q10(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -633,7 +696,10 @@ async def p_q10(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.callback_query and update.callback_query.data != 'p_back':
         context.user_data['p_gender'] = update.callback_query.data
         context.user_data['history'].append(P_GENDER)
-    await (update.message or update.callback_query.message).reply_text("10. Dietary Preference / የምግብ ምርጫ ወይም ክልከላ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "10. Dietary Preference / የምግብ ምርጫ ወይም ክልከላ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_DIET
 
 async def p_q11(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -641,7 +707,10 @@ async def p_q11(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_diet'] = update.message.text
         context.user_data['history'].append(P_DIET)
-    await (update.message or update.callback_query.message).reply_text("11. Pregnancy Complications / በእርግዝና ወቅት ያጋጠመ የጤና ችግር፦", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "11. Pregnancy Complications / በእርግዝና ወቅት ያጋጠመ የጤና ችግር፦",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_RISK
 
 async def p_q12(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -649,7 +718,10 @@ async def p_q12(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_risk'] = update.message.text
         context.user_data['history'].append(P_RISK)
-    await (update.message or update.callback_query.message).reply_text("12. Allergies / አለርጂ ያለብዎ ነገር:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "12. Allergies / አለርጂ ያለብዎ ነገር:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_ALLERGY
 
 async def p_q13(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -657,9 +729,16 @@ async def p_q13(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_allergy'] = update.message.text
         context.user_data['history'].append(P_ALLERGY)
-    kb = [[InlineKeyboardButton("Yes", callback_data='Yes'), InlineKeyboardButton("No", callback_data='No')],
-          [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]]
-    await (update.message or update.callback_query.message).reply_text("13. Breastfeeding? / ጡት እያጠቡ ነው?:", reply_markup=InlineKeyboardMarkup(kb))
+    kb = [
+        [InlineKeyboardButton("Yes / አዎ", callback_data='Yes'),
+         InlineKeyboardButton("No / አይ", callback_data='No')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    await (update.message or update.callback_query.message).reply_text(
+        "13. Breastfeeding? / ጡት እያጠቡ ነው?:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return P_BREASTFEED
 
 async def p_q14(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -667,7 +746,10 @@ async def p_q14(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.callback_query and update.callback_query.data != 'p_back':
         context.user_data['p_breast'] = update.callback_query.data
         context.user_data['history'].append(P_BREASTFEED)
-    await (update.message or update.callback_query.message).reply_text("14. Preferred Language / የሚመርጡት ቋንቋ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "14. Preferred Language / የሚመርጡት ቋንቋ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_LANG_PREF
 
 async def p_q15(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -675,7 +757,10 @@ async def p_q15(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_lang'] = update.message.text
         context.user_data['history'].append(P_LANG_PREF)
-    await (update.message or update.callback_query.message).reply_text("15. Additional Notes / ተጨማሪ አስተያየት፦:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "15. Additional Notes / ተጨማሪ አስተያየት፦:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_NOTES
 
 async def p_q16(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -683,9 +768,21 @@ async def p_q16(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         context.user_data['p_notes'] = update.message.text
         context.user_data['history'].append(P_NOTES)
-    kb = [[InlineKeyboardButton("Villa / ቪላ", callback_data='Villa'), InlineKeyboardButton("Apartment / አፓርትመንት", callback_data='Apartment')],
-          [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]]
-    await (update.message or update.callback_query.message).reply_text("16. House Type / የቤት አይነት:", reply_markup=InlineKeyboardMarkup(kb))
+
+    kb = [
+        [InlineKeyboardButton("Villa / ቪላ", callback_data='Villa'),
+         InlineKeyboardButton("Apartment / አፓርትመንት", callback_data='Apartment')],
+        [InlineKeyboardButton("Condominium / ኮንዶሚየም", callback_data='Condominium')],
+        [InlineKeyboardButton("G+1", callback_data='G1'),
+         InlineKeyboardButton("G+2", callback_data='G2')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+
+    await (update.message or update.callback_query.message).reply_text(
+        "16. House Type / የቤት አይነት:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return P_HOME
 
 async def p_q17(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -693,9 +790,38 @@ async def p_q17(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.callback_query and update.callback_query.data != 'p_back':
         context.user_data['p_home'] = update.callback_query.data
         context.user_data['history'].append(P_HOME)
-    kb = [[InlineKeyboardButton("Full 40 / ሙሉ 40 ቀን", callback_data='Full40'), InlineKeyboardButton("Half 30 / ግማሽ 30 ቀን", callback_data='Half30')],
-          [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')]]
-    await (update.message or update.callback_query.message).reply_text("17. Package Selection / የፓኬጅ ምርጫ:", reply_markup=InlineKeyboardMarkup(kb))
+
+    if lang == 'en':
+        kb = [
+            [InlineKeyboardButton("🌟 Full Postpartum (40d) - 95,000 ETB", callback_data='Full_Postpartum_95k'),
+             InlineKeyboardButton("🌙 Half Postpartum (30d) - 85,000 ETB", callback_data='Half_Postpartum_85k')],
+            [InlineKeyboardButton("💎 Full Premium (40d) - 85,000 ETB", callback_data='Full_Premium_85k'),
+             InlineKeyboardButton("✨ Half Premium (30d) - 75,000 ETB", callback_data='Half_Premium_75k')],
+            [InlineKeyboardButton("✅ Full Standard (40d) - 75,000 ETB", callback_data='Full_Standard_75k'),
+             InlineKeyboardButton("🔸 Half Standard (30d) - 65,000 ETB", callback_data='Half_Standard_65k')],
+            [InlineKeyboardButton("🏠 Full Basic (40d) - 55,000 ETB", callback_data='Full_Basic_55k'),
+             InlineKeyboardButton("🌿 Half Basic (30d) - 45,000 ETB", callback_data='Half_Basic_45k')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    else:
+        kb = [
+            [InlineKeyboardButton("🌟 ሙሉ ድህረ ወሊድ (40 ቀን) - 95,000 ብር", callback_data='Full_Postpartum_95k'),
+             InlineKeyboardButton("🌙 ግማሽ ድህረ ወሊድ (30 ቀን) - 85,000 ብር", callback_data='Half_Postpartum_85k')],
+            [InlineKeyboardButton("💎 ሙሉ ፕሪሚየም (40 ቀን) - 85,000 ብር", callback_data='Full_Premium_85k'),
+             InlineKeyboardButton("✨ ግማሽ ፕሪሚየም (30 ቀን) - 75,000 ብር", callback_data='Half_Premium_75k')],
+            [InlineKeyboardButton("✅ ሙሉ መደበኛ (40 ቀን) - 75,000 ብር", callback_data='Full_Standard_75k'),
+             InlineKeyboardButton("🔸 ግማሽ መደበኛ (30 ቀን) - 65,000 ብር", callback_data='Half_Standard_65k')],
+            [InlineKeyboardButton("🏠 ሙሉ መሰረታዊ (40 ቀን) - 55,000 ብር", callback_data='Full_Basic_55k'),
+             InlineKeyboardButton("🌿 ግማሽ መሰረታዊ (30 ቀን) - 45,000 ብር", callback_data='Half_Basic_45k')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='p_back')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+
+    await (update.message or update.callback_query.message).reply_text(
+        "17. Package Selection / የፓኬጅ ምርጫ:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return P_PACKAGE
 
 async def p_q18(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -703,11 +829,14 @@ async def p_q18(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.callback_query and update.callback_query.data != 'p_back':
         context.user_data['p_pkg'] = update.callback_query.data
         context.user_data['history'].append(P_PACKAGE)
-    await (update.message or update.callback_query.message).reply_text("18. Upload National ID Photo / የመታወቂያ ፎቶ ይላኩ:", reply_markup=get_back_kb(lang))
+    await (update.message or update.callback_query.message).reply_text(
+        "18. Upload National ID Photo / የመታወቂያ ፎቶ ይላኩ:",
+        reply_markup=get_nav_kb(lang)
+    )
     return P_ID
 
 async def p_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not update.message.photo: 
+    if not update.message.photo:
         return P_ID
     id_img = update.message.photo[-1].file_id
     pdf_file = create_intake_pdf(context.user_data)
@@ -718,14 +847,14 @@ async def p_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
             eng_label = k[2:].replace('_', ' ').title()
             amh_label = get_amharic_label(k[2:])
             report_lines.append(f"🔹 {eng_label} / {amh_label}: {v}")
-    
+
     report = "🚨 **NEW INTAKE / አዲስ ምዝገባ** 🚨\n\n" + "\n".join(report_lines)
 
     await context.bot.send_photo(chat_id=ADMIN_ID, photo=id_img, caption=f"🪪 ID ATTACHED / መታወቂያ ተያይዟል\n\n{report}", parse_mode='Markdown')
     await context.bot.send_document(chat_id=ADMIN_ID, document=pdf_file, filename=f"Intake_{context.user_data.get('p_name','Agos')}.pdf")
 
     pdf_file.seek(0)
-    await update.message.reply_document(document=pdf_file, filename="Agos_Intake_Confirmation.pdf", caption="✅ Application submitted! Above is your receipt. / ✅ ማመልከቻዎ ተልኳል! ከላይ ያለው ደረሰኝዎ ነው።")
+    await update.message.reply_document(document=pdf_file, filename="Agos_Intake_Confirmation.pdf", caption="✅ Application submitted! Above is your application summary. / ✅ ማመልከቻዎ ተልኳል! ከላይ ያለው የማመልከቻ ማጠቃለያዎ ነው።")
 
     # Fix the menu display issue
     lang = context.user_data.get('lang', 'en')
@@ -736,9 +865,9 @@ async def p_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton(btns[5], callback_data='p_start'), InlineKeyboardButton(btns[6], callback_data='d_start')],
         [InlineKeyboardButton(btns[4], callback_data='info_contact'), InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
     ]
-    
+
     await update.message.reply_text(CONTENT[lang]['welcome'], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-    
+
     return ConversationHandler.END
 
 # --- DECOR FLOW (Simplified) ---
@@ -749,73 +878,154 @@ async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     lang = context.user_data.get('lang', 'en')
     await query.answer()
-    kb = [[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]]
-    await query.message.reply_text("🎁 **Decor Booking / ዲኮር ለማዘዝ **\n\n1. Full Name / ሙሉ ስም:", reply_markup=InlineKeyboardMarkup(kb))
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
+    await query.message.reply_text(
+        "🎁 **Decor Booking / ዲኮር ለማዘዝ **\n\n1. Full Name / ሙሉ ስም:",
+        reply_markup=kb
+    )
     return D_NAME
 
 async def d_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_name'] = update.message.text
-    kb = [[InlineKeyboardButton("Male / ወንድ", callback_data='Male'), InlineKeyboardButton("Female / ሴት", callback_data='Female')],
-          [InlineKeyboardButton("Not Sure / እርግጠኛ አይደለሁም", callback_data='NotSure')]]
-    await update.message.reply_text("2. Gender of the Newborn / የአራሱ ጾታ:", reply_markup=InlineKeyboardMarkup(kb))
+    lang = context.user_data.get('lang', 'en')
+    kb = [
+        [InlineKeyboardButton("Male / ወንድ", callback_data='Male'),
+         InlineKeyboardButton("Female / ሴት", callback_data='Female')],
+        [InlineKeyboardButton("Not Sure / እርግጠኛ አይደለሁም", callback_data='NotSure')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    await update.message.reply_text(
+        "2. Gender of the Newborn / የሕፃኑ ጾታ:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return D_GENDER
 
 async def d_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     context.user_data['d_gender'] = query.data
-    await query.message.reply_text("3. House Address for Decor Setup / ዲኮር ለመስራት የቤት አድራሻ:")
+    lang = context.user_data.get('lang', 'en')
+    await query.message.reply_text(
+        "3. House Address for Decor Setup / ዲኮር ለመስራት የቤት አድራሻ:",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_ADDR
 
 async def d_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_addr'] = update.message.text
-    await update.message.reply_text("4. Client Phone Number / የደንበኛ ስልክ ቁጥር:")
+    lang = context.user_data.get('lang', 'en')
+    await update.message.reply_text(
+        "4. Client Phone Number / የደንበኛ ስልክ ቁጥር:",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_PHONE
 
 async def d_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_phone'] = update.message.text
-    await update.message.reply_text("5. Contact Person at Home (if different) / በቤት ውስጥ የሚገኝ የደንበኛ ተወካይ (ከላይ ከተጠቀሰው ሲለይ):")
+    lang = context.user_data.get('lang', 'en')
+    await update.message.reply_text(
+        "5. Contact Person at Home (if different) / በቤት ውስጥ የሚገኝ የደንበኛ ተወካይ (ከላይ ከተጠቀሰው ሲለይ):",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_CONTACT
 
 async def d_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_contact'] = update.message.text
-    kb = [[InlineKeyboardButton("Home Decor - 15,000 ETB / መደበኛ ዲኮር - 15,000 ብር", callback_data='15k')],
-          [InlineKeyboardButton("Home Decor Deluxe - 20,000 ETB / ደልክስ ዲኮር - 20,000 ብር", callback_data='20k')],
-          [InlineKeyboardButton("Home Decor Premium - 25,000 ETB / ፕሪሚየም ዲኮር - 25,000 ብር", callback_data='25k')]]
-    await update.message.reply_text("6. Chosen Surprise Package / የተመረጠ የዲኮር ፓኬጅ:", reply_markup=InlineKeyboardMarkup(kb))
+    lang = context.user_data.get('lang', 'en')
+    kb = [
+        [InlineKeyboardButton("Home Decor - 15,000 ETB / መደበኛ ዲኮር - 15,000 ብር", callback_data='15k')],
+        [InlineKeyboardButton("Home Decor Deluxe - 20,000 ETB / ደልክስ ዲኮር - 20,000 ብር", callback_data='20k')],
+        [InlineKeyboardButton("Home Decor Premium - 25,000 ETB / ፕሪሚየም ዲኮር - 25,000 ብር", callback_data='25k')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')],  # Back button
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]       # Menu button
+    ]
+    await update.message.reply_text(
+        "6. Chosen Surprise Package / የተመረጠ የዲኮር ፓኬጅ:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
     return D_PKG
 
 async def d_step6(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     context.user_data['d_pkg'] = query.data
-    await query.message.reply_text("7. Preferred Decor Date & Time\nFormat: (dd/mm/yyyy), (Time in LT)\nExample: 12/10/2016, 8:00 LT\n\n7. የሚፈለግ የዲኮር ቀን እና ሰዓት\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)\nለምሳሌ: 12/10/2016, 8:00")
+    lang = context.user_data.get('lang', 'en')
+    await query.message.reply_text(
+        "7. Preferred Decor Date & Time\nFormat: (dd/mm/yyyy), (Time in LT)\nExample: 12/10/2016, 8:00 LT\n\n7. የሚፈለግ የዲኮር ቀን እና ሰዓት\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)\nለምሳሌ: 12/10/2016, 8:00",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_DATE
 
 async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_date'] = update.message.text
-    kb = [[InlineKeyboardButton("Villa / ቪላ", callback_data='Villa'), InlineKeyboardButton("Apartment / አፓርትመንት", callback_data='Apartment')],
-          [InlineKeyboardButton("Condominium / ኮንዶሚየም", callback_data='Condominium')],
-          [InlineKeyboardButton("G+1", callback_data='G1'), InlineKeyboardButton("G+2", callback_data='G2')]]
-    await update.message.reply_text("8. House Type / የቤት አይነት:", reply_markup=InlineKeyboardMarkup(kb))
-    return D_HOUSE
+    lang = context.user_data.get('lang', 'en')
 
+    kb = [
+        [InlineKeyboardButton("Villa / ቪላ", callback_data='Villa'),
+         InlineKeyboardButton("Apartment / አፓርትመንት", callback_data='Apartment')],
+        [InlineKeyboardButton("Condominium / ኮንዶሚየም", callback_data='Condominium')],
+        [InlineKeyboardButton("G+1", callback_data='G1'),
+         InlineKeyboardButton("G+2", callback_data='G2')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+
+    await update.message.reply_text(
+        "8. House Type / የቤት አይነት:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
+    return D_HOUSE
 
 async def d_step8(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
+
+    if query.data == 'd_back':
+        # Handle back button
+        return await d_step7(update, context)
+
     context.user_data['d_house'] = query.data
-    await query.message.reply_text("9. Special Notes (Limousine, Photo, Video, or None) / ልዩ ማስታወሻ (ሊሙዚን፣ ፎቶ፣ ቪዲዮ፣ ወይም ምንም):")
+    await query.message.reply_text(
+        "9. Special Notes (Limousine, Photo, Video, or None) / ልዩ ማስታወሻ (ሊሙዚን፣ ፎቶ፣ ቪዲዮ፣ ወይም ምንም):",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_NOTES
 
 async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['d_notes'] = update.message.text
-    await update.message.reply_text("10. Finally, upload your Payment Screenshot / በመጨረሻም፣ የክፍያ ስክሪን ሾት ይላኩ:")
+    lang = context.user_data.get('lang', 'en')
+
+    # Bank account details
+    bank_message = (
+        "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+        "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
+        "👤 Account Name: AGOS POSTPARTUM CARE\n"
+        "🔢 Account Number: 10001345678901\n"
+        "🌍 Branch: Piassa Branch\n\n"
+        "📱 *Tele Birr / ቴሌ ብር*\n"
+        "📞 Phone: 0967621545\n"
+        "👤 Name: AGOS POSTPARTUM CARE\n\n"
+        "✅ *After payment, please send your payment screenshot below* /\n"
+        "ከክፍያ በኋላ፣ እባክዎ የክፍያ ስክሪን ሾትዎን ከዚህ በታች ይላኩ።"
+    )
+
+    await update.message.reply_text(bank_message, parse_mode='Markdown')
+    await update.message.reply_text(
+        "📤 Upload your Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
+        reply_markup=get_nav_kb(lang, back_callback='d_back')
+    )
     return D_PAYMENT
 
 async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message.photo:
-        await update.message.reply_text("Please upload a photo. / እባክዎ ፎቶ ይላኩ።")
+        lang = context.user_data.get('lang', 'en')
+        await update.message.reply_text(
+            "Please upload a photo. / እባክዎ ፎቶ ይላኩ።",
+            reply_markup=get_nav_kb(lang, back_callback='d_back')
+        )
         return D_PAYMENT
 
     pay_img = update.message.photo[-1].file_id
@@ -830,8 +1040,10 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
                f"📝 Notes / ማስታወሻ: {context.user_data.get('d_notes')}")
 
     await context.bot.send_photo(chat_id=ADMIN_ID, photo=pay_img, caption=summary, parse_mode='Markdown')
-    await update.message.reply_text("✅ Order Received! We will contact you shortly. / ✅ ትዕዛዝ ደርሷል! በቅርቡ እናገኝዎታለን።")
-    
+    await update.message.reply_text(
+        "⏳ Order pending - awaiting payment verification. We will contact you once confirmed. / ✅ ትዕዛዝ በመጠባበቅ ላይ - ክፍያ ማረጋገጫ በመጠባበቅ ላይ። ከተረጋገጠ በኋላ በቅርቡ እናገኝዎታለን።"
+    )
+
     # Fix the menu display issue
     lang = context.user_data.get('lang', 'en')
     btns = CONTENT[lang]['btns']
@@ -841,10 +1053,19 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton(btns[5], callback_data='p_start'), InlineKeyboardButton(btns[6], callback_data='d_start')],
         [InlineKeyboardButton(btns[4], callback_data='info_contact'), InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
     ]
-    
+
     await update.message.reply_text(CONTENT[lang]['welcome'], reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-    
+
     return ConversationHandler.END
+
+ # ADD THE D_BACK_HANDLER HERE - RIGHT AFTER ALL DECOR FUNCTIONS
+async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    # You can implement decor back navigation logic here if needed
+    # For now, we'll just go back to the previous question
+    # You can enhance this with history tracking similar to p_back_handler
+    return await d_step7(update, context)  # Default to going back to date question
 
 # --- APP RUNNER ---
 
@@ -906,7 +1127,3 @@ if __name__ == '__main__':
 
     print("Agos Bot is live...")
     app.run_polling()
-
-
-
-
