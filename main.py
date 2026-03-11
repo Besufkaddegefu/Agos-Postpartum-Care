@@ -12,9 +12,9 @@ import re
 # --- CONFIGURATION ---
 TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_IDS = [
-    int(os.environ.get("ADMIN_ID_1", "123456789")),  # Primary admin
-    int(os.environ.get("ADMIN_ID_2", "987654321")),  # Secondary admin
-    int(os.environ.get("ADMIN_ID_3", "555555555"))   # Tertiary admin
+    int(os.environ.get("ADMIN_ID_1", "123456789")),
+    int(os.environ.get("ADMIN_ID_2", "987654321")),
+    int(os.environ.get("ADMIN_ID_3", "555555555"))
 ]
 LOGO_PATH = os.environ.get("LOGO_PATH", "logo.webp")
 SERVICES_PDF_PATH = os.environ.get("SERVICES_PDF_PATH", "services_catalog.pdf")
@@ -27,7 +27,7 @@ print("DEBUG - TOKEN is:", repr(TOKEN))
 print("DEBUG - Admin IDs:", ADMIN_IDS)
 
 # --- CONVERSATION STATES ---
-# Decor Booking States (updated)
+# Decor Booking States
 (D_NAME, D_GENDER, D_ADDR, D_PHONE, D_USERNAME, D_CONTACT, D_PKG, D_DATE, D_HOUSE, D_PAYMENT, D_NOTES) = range(40, 51)
 
 # Limousine Booking States
@@ -73,67 +73,135 @@ CONTENT = {
             "🌐 www.agospostpartumcare.com\n\n"
             "_Making your celebrations unforgettable._"
         ),
-        'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Media Services", "📞 Contact Us", "📋 Services Catalog", "🎁 Book Decor", "🚗 Book Limousine", "📸 Book Media"],
-        'decor_text': (
-            "🎁 *Home Decor Packages*\n"
+        'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Media Services", "📞 Contact Us", "📋 Services Catalog"],
+        
+        # Individual Decor Package Pages with Book Buttons
+        'decor_basic': (
+            "🔸 *Home Decor (15,000 ETB)*\n"
             "__________________________\n\n"
-            "🔸 **Home Decor (15,000 ETB)**\n\n"
-            "• Bedroom Decoration\n\n"
-            "• Floor Decoration\n\n"
-            "• Corridor Decoration\n\n"
+            "• Bedroom Decoration\n"
+            "• Floor Decoration\n"
+            "• Corridor Decoration\n"
             "• Salon Decoration\n\n"
-            "📱 *See our work:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *See our work:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "✨ *Perfect for intimate celebrations!*"
+        ),
+        'decor_deluxe': (
+            "💎 *Home Decor Deluxe (20,000 ETB)*\n"
             "__________________________\n\n"
-            "💎 **Home Decor Deluxe (20,000 ETB)**\n\n"
-            "• Bedroom, Corridor & Salon Decor\n\n"
-            "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n\n"
+            "• Bedroom, Corridor & Salon Decor\n"
+            "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Normal Cake\n\n"
-            "📱 *See our work:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *See our work:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "🌟 *Our most popular choice!*"
+        ),
+        'decor_premium': (
+            "👑 *Home Decor Premium (25,000 ETB)*\n"
             "__________________________\n\n"
-            "👑 **Home Decor Premium (25,000 ETB)**\n\n"
-            "• Bedroom Decor with Agober rent (2 weeks)\n\n"
-            "• Corridor & Salon Decor\n\n"
-            "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n\n"
+            "• Bedroom Decor with Agober rent (2 weeks)\n"
+            "• Corridor & Salon Decor\n"
+            "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Custom Made Cake - 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *See our work:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)"
+            "📱 *See our work:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "👑 *The ultimate luxury experience!*"
         ),
-        'limousine_text': (
-            "🚗 *The Grand Arrival - Limousine Service*\n"
+        
+        # Limousine Package Pages with Book Buttons
+        'limo_grand': (
+            "⭐ *The Grand Arrival (25,000 ETB)*\n"
             "__________________________\n\n"
-            "⭐ **The Grand Arrival (25,000 ETB)**\n\n"
-            "• Special limousine service\n\n"
-            "• Grand and elegant ride home\n\n"
-            "📸 *Check out our arrivals:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum)\n\n"
-            "__________________________\n\n"
-            "✨ **Special Arrival (30,000 ETB)**\n\n"
-            "• Exclusive limousine service\n\n"
-            "• Luxurious and heartwarming ride\n\n"
-            "__________________________\n\n"
-            "👑 **Royal Welcome (35,000 ETB)**\n\n"
-            "• Premium luxury limousine\n\n"
-            "• Truly regal welcome home"
+            "• Special limousine service\n"
+            "• Grand and elegant ride home\n"
+            "• Professional chauffeur\n"
+            "• Rose petals & welcome drinks\n\n"
+            "📸 *See our arrivals:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "🚗 *Make a stylish entrance!*"
         ),
-        'media_text': (
-            "📸 *Photography & Videography Services*\n"
+        'limo_special': (
+            "✨ *Special Arrival (30,000 ETB)*\n"
             "__________________________\n\n"
-            "📱 **Digital Photography (10,000 ETB)**\n\n"
-            "• Professional photography\n\n"
-            "• All photos delivered in soft copy\n\n"
+            "• Exclusive limousine service\n"
+            "• Luxurious and heartwarming ride\n"
+            "• Professional chauffeur\n"
+            "• Rose petals, welcome drinks & cake\n\n"
+            "📸 *See our arrivals:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "✨ *Extra touches for a special day!*"
+        ),
+        'limo_royal': (
+            "👑 *Royal Welcome (35,000 ETB)*\n"
+            "__________________________\n\n"
+            "• Premium luxury limousine\n"
+            "• Truly regal welcome home\n"
+            "• Professional chauffeur in formal attire\n"
+            "• Full package: drinks, cake, flowers, photos\n\n"
+            "📸 *See our arrivals:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "👑 *Royal treatment for royalty!*"
+        ),
+        
+        # Photography Package Pages with Book Buttons
+        'photo_digital': (
+            "📱 *Digital Photography (10,000 ETB)*\n"
+            "__________________________\n\n"
+            "• Professional photography\n"
+            "• All photos delivered in soft copy\n"
+            "• 2 hours coverage\n"
             "• (No physical album)\n\n"
-            "📸 *See our portfolio:* [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/media)\n\n"
-            "__________________________\n\n"
-            "🖼️ **Standard Photography (12,000 ETB)**\n\n"
-            "• Normal album sized photos (100 printed)\n\n"
-            "• Soft copy of all photos\n\n"
-            "__________________________\n\n"
-            "💎 **Premium Photography (15,000 ETB)**\n\n"
-            "• Laminated photo album (20x30 cm)\n\n"
-            "• Soft copy of all photos\n\n"
-            "__________________________\n\n"
-            "🎥 **Videography Package (15,000 ETB)**\n\n"
-            "• Full video coverage\n\n"
-            "• Edited video (soft copy)"
+            "📸 *See our portfolio:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "📱 *Perfect for digital sharing!*"
         ),
+        'photo_standard': (
+            "🖼️ *Standard Photography (12,000 ETB)*\n"
+            "__________________________\n\n"
+            "• Normal album sized photos (100 printed)\n"
+            "• Soft copy of all photos\n"
+            "• 3 hours coverage\n\n"
+            "📸 *See our portfolio:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "🖼️ *Beautiful memories you can hold!*"
+        ),
+        'photo_premium': (
+            "💎 *Premium Photography (15,000 ETB)*\n"
+            "__________________________\n\n"
+            "• Laminated photo album (20x30 cm)\n"
+            "• Soft copy of all photos\n"
+            "• 4 hours coverage\n"
+            "• Professional editing\n\n"
+            "📸 *See our portfolio:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "💎 *Heirloom quality memories!*"
+        ),
+        'videography': (
+            "🎥 *Videography Package (15,000 ETB)*\n"
+            "__________________________\n\n"
+            "• Full video coverage\n"
+            "• Edited video (soft copy)\n"
+            "• 4 hours coverage\n"
+            "• Highlight reel\n\n"
+            "📸 *See our portfolio:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "🎥 *Relive your special moments!*"
+        ),
+        
         'contact_text': (
             "📞 *Contact Us*\n\n"
             "⏰ *Working Hours:* 8:00 AM - 8:00 PM (Local Time)\n"
@@ -143,20 +211,44 @@ CONTENT = {
             "📸 *Instagram:* [@agospostpartum](https://instagram.com/agospostpartum)\n"
             "🎵 *TikTok:* [@agos_postpartumcare](https://www.tiktok.com/@agos_postpartumcare)\n"
             "🌐 *Website:* [www.agospostpartumcare.com](https://www.agospostpartumcare.com/)\n"
-            "📍 *Location:* [Piassa, Abat Commercial](https://maps.google.com/?q=Piassa+Abat+Commercial+Addis+Ababa)\n\n"
-            "💬 *Telegram Username:* @agos_postpartumcare"
+            "📍 *Location:* [Piassa, Abat Commercial](https://maps.google.com/?q=Piassa+Abat+Commercial+Addis+Ababa)"
         ),
         'agree_btn': "I Agree ✅",
         'back': "🔙 Back to Menu",
         'change_lang': "🌍 Change Language / ቋንቋ ቀይር",
         'q_back': "⬅️ Previous Question",
-        'discover_more': (
-            "✨ *Thank you for your booking!* ✨\n\n"
-            "Now that you've chosen your decor package, why not check out our other services?\n\n"
+        
+        # Dynamic Discover More messages
+        'discover_after_decor': (
+            "✨ *Thank you for your decor booking!* ✨\n\n"
+            "Your decor is going to look amazing! Now, why not complete your celebration with:\n\n"
             "🚗 *Limousine Service* - Make a grand entrance\n"
             "📸 *Photography Packages* - Capture every moment\n\n"
             "Click below to explore more!"
-        )
+        ),
+        'discover_after_limo': (
+            "✨ *Thank you for your limousine booking!* ✨\n\n"
+            "Your grand entrance is set! Now, why not add:\n\n"
+            "🎁 *Decor Packages* - Create a beautiful space\n"
+            "📸 *Photography Packages* - Capture the moment\n\n"
+            "Click below to explore more!"
+        ),
+        'discover_after_photo': (
+            "✨ *Thank you for your photography booking!* ✨\n\n"
+            "Your memories will be beautifully captured! Now, why not add:\n\n"
+            "🎁 *Decor Packages* - Create a beautiful space\n"
+            "🚗 *Limousine Service* - Make a grand entrance\n\n"
+            "Click below to explore more!"
+        ),
+        'discover_complete': (
+            "🎉 *You've explored all our services!* 🎉\n\n"
+            "Thank you for choosing AGOS for your celebrations. You've booked:\n"
+            "{booked_services}\n\n"
+            "Want to add more? Contact us for custom packages!\n\n"
+            "📞 *Contact:* @agos_postpartumcare\n"
+            "📱 *Phone:* +251 967 621 545"
+        ),
+        'book_now': "📝 Book Now / አሁን ይያዙ"
     },
     'am': {
         'welcome': (
@@ -166,59 +258,112 @@ CONTENT = {
             "📸 ፕሮፌሽናል ፎቶግራፍ እና ቪዲዮግራፊ\n\n"
             "🌐 www.agospostpartumcare.com"
         ),
-        'btns': ["🎁 የዲኮር ፓኬጆች", "🚗 የሊሙዚን አገልግሎት", "📸 የሚዲያ አገልግሎቶች", "📞 ያግኙን", "📋 የአገልግሎት ካታሎግ", "🎁 ዲኮር ይዘዙ", "🚗 ሊሙዚን ይዘዙ", "📸 ሚዲያ ይዘዙ"],
-        'decor_text': (
-            "🎁 *የዲኮር ፓኬጆች*\n"
+        'btns': ["🎁 የዲኮር ፓኬጆች", "🚗 የሊሙዚን አገልግሎት", "📸 የሚዲያ አገልግሎቶች", "📞 ያግኙን", "📋 የአገልግሎት ካታሎግ"],
+        
+        # Individual Decor Package Pages with Book Buttons (Amharic)
+        'decor_basic': (
+            "🔸 *መደበኛ ዲኮር (15,000 ብር)*\n"
             "__________________________\n\n"
-            "🔸 **መደበኛ ዲኮር (15,000 ብር)**\n\n"
-            "• የመኝታ ቤት ዲኮር\n\n"
-            "• የወለል ዲኮር\n\n"
-            "• የኮሪደር ዲኮር\n\n"
+            "• የመኝታ ቤት ዲኮር\n"
+            "• የወለል ዲኮር\n"
+            "• የኮሪደር ዲኮር\n"
             "• የሳሎን ዲኮር\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)"
+        ),
+        'decor_deluxe': (
+            "💎 *ደልክስ ዲኮር (20,000 ብር)*\n"
             "__________________________\n\n"
-            "💎 **ደልክስ ዲኮር (20,000 ብር)**\n\n"
-            "• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n\n"
+            "• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n"
+            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ መደበኛ ኬክ\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)"
+        ),
+        'decor_premium': (
+            "👑 *ፕሪሚየም ዲኮር (25,000 ብር)*\n"
             "__________________________\n\n"
-            "👑 **ፕሪሚየም ዲኮር (25,000 ብር)**\n\n"
-            "• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ ጋር (2 ሳምንት)\n\n"
-            "• የኮሪደር እና ሳሎን ዲኮር\n\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n\n"
+            "• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ ጋር (2 ሳምንት)\n"
+            "• የኮሪደር እና ሳሎን ዲኮር\n"
+            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/decor)"
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)"
         ),
-        'limousine_text': (
-            "🚗 *የሊሙዚን አገልግሎት*\n"
+        
+        # Limousine Package Pages with Book Buttons (Amharic)
+        'limo_grand': (
+            "⭐ *መደበኛ አቀባበል (25,000 ብር)*\n"
             "__________________________\n\n"
-            "⭐ **መደበኛ አቀባበል (25,000 ብር)**\n\n"
-            "• ልዩ የሊሙዚን አገልግሎት\n\n"
-            "📸 *አቀባበሎቻችንን ይመልከቱ:* [TikTok](https://www.tiktok.com/@agos_postpartumcare) | [Instagram](https://instagram.com/agospostpartum)\n\n"
-            "__________________________\n\n"
-            "✨ **ልዩ አቀባበል (30,000 ብር)**\n\n"
-            "• ልዩ የሊሙዚን አገልግሎት\n\n"
-            "__________________________\n\n"
-            "👑 **የሮያል አቀባበል (35,000 ብር)**\n\n"
-            "• ፕሪሚየም የሊሙዚን አገልግሎት"
+            "• ልዩ የሊሙዚን አገልግሎት\n"
+            "• የተዘጋጀ የአበባ ዝግጅት\n\n"
+            "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)"
         ),
-        'media_text': (
-            "📸 *ፎቶ እና ቪዲዮ አገልግሎቶች*\n"
+        'limo_special': (
+            "✨ *ልዩ አቀባበል (30,000 ብር)*\n"
             "__________________________\n\n"
-            "📱 **ዲጂታል ፎቶግራፍ (10,000 ብር)**\n\n"
-            "• የባለሙያ ፎቶግራፍ አገልግሎት\n\n"
-            "📸 *ስራዎቻችንን ይመልከቱ:* [Instagram](https://instagram.com/agospostpartum) | [Website](https://www.agospostpartumcare.com/media)\n\n"
-            "__________________________\n\n"
-            "🖼️ **መደበኛ ፎቶግራፍ (12,000 ብር)**\n\n"
-            "• 100 የታተሙ ፎቶዎች\n\n"
-            "__________________________\n\n"
-            "💎 **ፕሪሚየም ፎቶግራፍ (15,000 ብር)**\n\n"
-            "• ላሚኔት የተደረገ አልበም\n\n"
-            "__________________________\n\n"
-            "🎥 **የቪዲዮ አገልግሎት (15,000 ብር)**\n\n"
-            "• ሙሉ የቪዲዮ ሽፋን"
+            "• ልዩ የሊሙዚን አገልግሎት\n"
+            "• የአበባ ዝግጅት እና ኬክ\n\n"
+            "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)"
         ),
+        'limo_royal': (
+            "👑 *የሮያል አቀባበል (35,000 ብር)*\n"
+            "__________________________\n\n"
+            "• ፕሪሚየም የሊሙዚን አገልግሎት\n"
+            "• ሙሉ አቀባበል ከአበባ፣ ኬክ እና ፎቶ\n\n"
+            "📸 *አቀበሎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[Instagram](https://instagram.com/agospostpartum)"
+        ),
+        
+        # Photography Package Pages with Book Buttons (Amharic)
+        'photo_digital': (
+            "📱 *ዲጂታል ፎቶግራፍ (10,000 ብር)*\n"
+            "__________________________\n\n"
+            "• የባለሙያ ፎቶግራፍ አገልግሎት\n"
+            "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
+            "📸 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)"
+        ),
+        'photo_standard': (
+            "🖼️ *መደበኛ ፎቶግራፍ (12,000 ብር)*\n"
+            "__________________________\n\n"
+            "• 100 የታተሙ ፎቶዎች\n"
+            "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
+            "📸 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)"
+        ),
+        'photo_premium': (
+            "💎 *ፕሪሚየም ፎቶግራፍ (15,000 ብር)*\n"
+            "__________________________\n\n"
+            "• ላሚኔት የተደረገ አልበም\n"
+            "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
+            "📸 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)"
+        ),
+        'videography': (
+            "🎥 *የቪዲዮ አገልግሎት (15,000 ብር)*\n"
+            "__________________________\n\n"
+            "• ሙሉ የቪዲዮ ሽፋን\n"
+            "• ኤዲት የተደረገ ቪዲዮ\n\n"
+            "📸 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/media)"
+        ),
+        
         'contact_text': (
             "📞 *ያግኙን*\n\n"
             "⏰ *የስራ ሰዓት:* 8፡00 ጥዋት - 8፡00 ማታ (በአካባቢው ሰዓት)\n"
@@ -234,24 +379,47 @@ CONTENT = {
         'back': "🔙 ወደ ዋና ማውጫ",
         'change_lang': "🌍 Change Language / ቋንቋ ቀይር",
         'q_back': "⬅️ ወደ ኋላ ተመለስ",
-        'discover_more': (
-            "✨ *ለትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
-            "አሁን የዲኮር ፓኬጅዎን ከመረጡ በኋላ፣ ሌሎች አገልግሎቶቻችንን ለምን አይመለከቱም?\n\n"
+        
+        # Dynamic Discover More messages (Amharic)
+        'discover_after_decor': (
+            "✨ *ለዲኮር ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
+            "ዲኮርዎ ድንቅ ይሆናል! አሁን ደግሞ በዓላችሁን በሚከተሉት ያሟሉት፦\n\n"
             "🚗 *የሊሙዚን አገልግሎት* - በታላቅ አቀባበል ይግቡ\n"
             "📸 *የፎቶግራፍ አገልግሎቶች* - ትዝታዎችን ይቅረጹ\n\n"
             "ለማሰስ ከታች ይጫኑ!"
-        )
+        ),
+        'discover_after_limo': (
+            "✨ *ለሊሙዚን ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
+            "አቀባበላችሁ ተዘጋጅቷል! አሁን ደግሞ በሚከተሉት ያሟሉት፦\n\n"
+            "🎁 *የዲኮር ፓኬጆች* - ውብ ቦታ ይፍጠሩ\n"
+            "📸 *የፎቶግራፍ አገልግሎቶች* - ትዝታዎችን ይቅረጹ\n\n"
+            "ለማሰስ ከታች ይጫኑ!"
+        ),
+        'discover_after_photo': (
+            "✨ *ለፎቶግራፍ ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
+            "ትዝታዎችዎ በሚያማምሩ ፎቶዎች ይቀረጻሉ! አሁን ደግሞ በሚከተሉት ያሟሉት፦\n\n"
+            "🎁 *የዲኮር ፓኬጆች* - ውብ ቦታ ይፍጠሩ\n"
+            "🚗 *የሊሙዚን አገልግሎት* - በታላቅ አቀባበል ይግቡ\n\n"
+            "ለማሰስ ከታች ይጫኑ!"
+        ),
+        'discover_complete': (
+            "🎉 *ሁሉንም አገልግሎቶቻችንን ተመልክተዋል!* 🎉\n\n"
+            "AGOSን በመምረጥዎ እናመሰግናለን። የያዙት አገልግሎት፦\n"
+            "{booked_services}\n\n"
+            "ተጨማሪ ማከል ይፈልጋሉ? ለልዩ ፓኬጆች ያግኙን!\n\n"
+            "📞 *ያግኙን:* @agos_postpartumcare\n"
+            "📱 *ስልክ:* +251 967 621 545"
+        ),
+        'book_now': "📝 አሁን ይያዙ"
     }
 }
 
-# --- PDF GENERATOR WITH LOGO ---
+# --- PDF GENERATOR FUNCTIONS ---
 def create_decor_pdf(data):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
 
-    # Add Logo if it exists
-    y_start = height - 50
     if os.path.exists(LOGO_PATH):
         try:
             logo = ImageReader(LOGO_PATH)
@@ -259,20 +427,92 @@ def create_decor_pdf(data):
         except Exception:
             pass
 
-    # Header
     c.setFont("Helvetica-Bold", 18)
     c.drawString(50, height - 50, "AGOS Decor Booking")
     c.setFont("Helvetica", 12)
     c.drawString(50, height - 70, "Official Decor Order Form")
     c.line(50, height - 85, 550, height - 85)
 
-    # Content
     c.setFont("Helvetica", 11)
     y_position = height - 120
 
     for key, value in data.items():
         if key.startswith('d_'):
             label = key[2:].replace('_', ' ').upper()
+            text = f"{label}: {value}"
+            c.drawString(50, y_position, text)
+            y_position -= 25
+            if y_position < 60:
+                c.showPage()
+                y_position = height - 50
+
+    c.setFont("Helvetica-Oblique", 9)
+    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def create_limo_pdf(data):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = ImageReader(LOGO_PATH)
+            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+        except Exception:
+            pass
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, height - 50, "AGOS Limousine Booking")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 70, "Official Limousine Order Form")
+    c.line(50, height - 85, 550, height - 85)
+
+    c.setFont("Helvetica", 11)
+    y_position = height - 120
+
+    for key, value in data.items():
+        if key.startswith('l_'):
+            label = key[2:].replace('_', ' ').upper()
+            text = f"{label}: {value}"
+            c.drawString(50, y_position, text)
+            y_position -= 25
+            if y_position < 60:
+                c.showPage()
+                y_position = height - 50
+
+    c.setFont("Helvetica-Oblique", 9)
+    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def create_photo_pdf(data):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = ImageReader(LOGO_PATH)
+            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+        except Exception:
+            pass
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, height - 50, "AGOS Media Services Booking")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 70, "Official Media Services Order Form")
+    c.line(50, height - 85, 550, height - 85)
+
+    c.setFont("Helvetica", 11)
+    y_position = height - 120
+
+    for key, value in data.items():
+        if key.startswith('ph_'):
+            label = key[3:].replace('_', ' ').upper()
             text = f"{label}: {value}"
             c.drawString(50, y_position, text)
             y_position -= 25
@@ -311,78 +551,168 @@ async def send_services_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "PDF catalog will be available soon. / የአገልግሎት ካታሎግ በቅርቡ ይገኛል።"
         )
 
-# --- NAVIGATION ---
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start command - shows working hours gate first"""
-    context.user_data.clear()
-    return await working_hours_gate(update, context)
-
-async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle after acknowledging working hours - show language selection"""
-    keyboard = [[InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-                [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]]
+# --- DYNAMIC DISCOVER MORE FUNCTION ---
+async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE, last_booking_type=None):
+    """Show dynamic discover more page based on what user has already booked"""
+    lang = context.user_data.get('lang', 'en')
     
-    if update.callback_query:
-        await update.callback_query.answer()
-        await update.callback_query.message.reply_text(
-            "🌿 Choose Language / ቋንቋ ይምረጡ:", 
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-    return ConversationHandler.END
-
-async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str = None):
-    """Show main menu after language selection"""
-    if lang:
-        context.user_data['lang'] = lang
+    # Track booked services in user_data
+    booked_services = context.user_data.get('booked_services', [])
+    if last_booking_type and last_booking_type not in booked_services:
+        booked_services.append(last_booking_type)
+        context.user_data['booked_services'] = booked_services
+    
+    # Determine which services are still available
+    all_services = ['decor', 'limo', 'photo']
+    available_services = [s for s in all_services if s not in booked_services]
+    
+    # Build buttons for available services
+    discover_buttons = []
+    
+    if 'decor' in available_services:
+        discover_buttons.append([InlineKeyboardButton("🎁 Book Decor / ዲኮር ይዘዙ", callback_data='show_decor_packages')])
+    if 'limo' in available_services:
+        discover_buttons.append([InlineKeyboardButton("🚗 Book Limousine / ሊሙዚን ይዘዙ", callback_data='show_limo_packages')])
+    if 'photo' in available_services:
+        discover_buttons.append([InlineKeyboardButton("📸 Book Media / ሚዲያ ይዘዙ", callback_data='show_photo_packages')])
+    
+    # Add menu button
+    discover_buttons.append([InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')])
+    
+    # Select appropriate message based on what's available
+    if len(available_services) == 2:
+        if 'decor' not in available_services:  # Decor already booked
+            message = CONTENT[lang]['discover_after_decor']
+        elif 'limo' not in available_services:  # Limo already booked
+            message = CONTENT[lang]['discover_after_limo']
+        else:  # Photo already booked
+            message = CONTENT[lang]['discover_after_photo']
+    elif len(available_services) == 1:
+        # All but one service booked - show appropriate message
+        if 'decor' in available_services:
+            message = "Why not add beautiful decor to complete your celebration? / በዓላችሁን ለማስዋብ ዲኮር አሁን ይዘዙ!"
+        elif 'limo' in available_services:
+            message = "Make a grand entrance with our limousine service! / በሊሙዚን አገልግሎታችን በታላቅ አቀባበል ይግቡ!"
+        else:
+            message = "Capture every moment with our photography! / ትዝታዎችን በፎቶግራፍ ይቅረጹ!"
+    elif len(available_services) == 0:
+        # All services booked!
+        booked_list = "\n".join([f"✓ {s.title()}" for s in booked_services])
+        message = CONTENT[lang]['discover_complete'].format(booked_services=booked_list)
+        # Remove menu button and add contact button
+        discover_buttons = [
+            [InlineKeyboardButton("📞 Contact Us / ያግኙን", callback_data='info_contact')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
     else:
-        lang = context.user_data.get('lang', 'en')
+        # Default (2 services available) - show generic explore message
+        message = "Explore our other services! / ሌሎች አገልግሎቶቻችንን ይመልከቱ!"
+    
+    await update.message.reply_text(
+        message,
+        reply_markup=InlineKeyboardMarkup(discover_buttons),
+        parse_mode='Markdown'
+    )
 
-    btns = CONTENT[lang]['btns']
-    keyboard = [
-        [InlineKeyboardButton(btns[0], callback_data='info_decor'), 
-         InlineKeyboardButton(btns[1], callback_data='info_limousine')],
-        [InlineKeyboardButton(btns[2], callback_data='info_media'), 
-         InlineKeyboardButton(btns[3], callback_data='info_contact')],
-        [InlineKeyboardButton(btns[5], callback_data='d_start'), 
-         InlineKeyboardButton(btns[6], callback_data='l_start')],
-        [InlineKeyboardButton(btns[7], callback_data='ph_start'),
-         InlineKeyboardButton(btns[4], callback_data='send_pdf')],
-        [InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
+# --- PACKAGE DISPLAY FUNCTIONS ---
+async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show decor package options with individual pages"""
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    # Show menu of decor packages
+    kb = [
+        [InlineKeyboardButton("🔸 Basic - 15,000 ETB", callback_data='view_decor_basic')],
+        [InlineKeyboardButton("💎 Deluxe - 20,000 ETB", callback_data='view_decor_deluxe')],
+        [InlineKeyboardButton("👑 Premium - 25,000 ETB", callback_data='view_decor_premium')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
-    query = update.callback_query
-    if query:
-        await query.answer()
-        await query.message.reply_text(
-            CONTENT[lang]['welcome'], 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
-    else:
-        await update.message.reply_text(
-            CONTENT[lang]['welcome'], 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
+    await query.message.reply_text(
+        "🎁 *Select a Decor Package to View Details*\n\n"
+        "Click on any package to see full details and book!",
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
 
-async def info_pages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle info page callbacks"""
+async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show limousine package options with individual pages"""
     query = update.callback_query
+    await query.answer()
     lang = context.user_data.get('lang', 'en')
-    choice = query.data.replace('info_', '')
-    text = CONTENT[lang].get(f'{choice}_text', "Information coming soon...")
-    back_btn = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
-    await query.message.edit_text(text, reply_markup=back_btn, parse_mode='Markdown')
+    
+    kb = [
+        [InlineKeyboardButton("⭐ Grand Arrival - 25,000 ETB", callback_data='view_limo_grand')],
+        [InlineKeyboardButton("✨ Special Arrival - 30,000 ETB", callback_data='view_limo_special')],
+        [InlineKeyboardButton("👑 Royal Welcome - 35,000 ETB", callback_data='view_limo_royal')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.reply_text(
+        "🚗 *Select a Limousine Package to View Details*\n\n"
+        "Click on any package to see full details and book!",
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
 
-# --- DECOR BOOKING FLOW (UPDATED) ---
-async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start decor booking flow"""
+async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show photography package options with individual pages"""
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton("📱 Digital Photo - 10,000 ETB", callback_data='view_photo_digital')],
+        [InlineKeyboardButton("🖼️ Standard Photo - 12,000 ETB", callback_data='view_photo_standard')],
+        [InlineKeyboardButton("💎 Premium Photo - 15,000 ETB", callback_data='view_photo_premium')],
+        [InlineKeyboardButton("🎥 Videography - 15,000 ETB", callback_data='view_videography')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.reply_text(
+        "📸 *Select a Media Package to View Details*\n\n"
+        "Click on any package to see full details and book!",
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+# --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
+async def view_package(update: Update, context: ContextTypes.DEFAULT_TYPE, package_type, content_key, booking_callback):
+    """Generic function to display a package with book button"""
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    # Get package content
+    package_text = CONTENT[lang].get(content_key, "Details coming soon...")
+    
+    # Add book button
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data=booking_callback)],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data=f'show_{package_type}_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        package_text,
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+# --- DECOR BOOKING FLOW ---
+async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
+    """Start decor booking flow with optional package pre-selection"""
     query = update.callback_query
     lang = context.user_data.get('lang', 'en')
     await query.answer()
     
+    # Store selected package if coming from package view
+    if package:
+        context.user_data['d_pkg'] = package
+    
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_decor_packages')]
     ])
     
     await query.message.reply_text(
@@ -392,7 +722,6 @@ async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_NAME
 
 async def d_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle name input"""
     context.user_data['d_name'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -400,7 +729,7 @@ async def d_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("Male / ወንድ", callback_data='Male'),
          InlineKeyboardButton("Female / ሴት", callback_data='Female')],
         [InlineKeyboardButton("Not Sure / እርግጠኛ አይደለሁም", callback_data='NotSure')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_decor_packages')]
     ]
     
     await update.message.reply_text(
@@ -410,7 +739,6 @@ async def d_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_GENDER
 
 async def d_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle gender selection"""
     query = update.callback_query
     await query.answer()
     context.user_data['d_gender'] = query.data
@@ -423,7 +751,6 @@ async def d_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_ADDR
 
 async def d_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle address input"""
     context.user_data['d_addr'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -434,7 +761,6 @@ async def d_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_PHONE
 
 async def d_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle phone input"""
     context.user_data['d_phone'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -445,7 +771,6 @@ async def d_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_USERNAME
 
 async def d_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle Telegram username input"""
     context.user_data['d_username'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -456,42 +781,50 @@ async def d_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_CONTACT
 
 async def d_step6(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle contact person input"""
     context.user_data['d_contact'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
-    # Updated package selection text
-    kb = [
-        [InlineKeyboardButton("Home Decor - 15,000 ETB / መደበኛ ዲኮር - 15,000 ብር", callback_data='15k')],
-        [InlineKeyboardButton("Home Decor Deluxe - 20,000 ETB / ደልክስ ዲኮር - 20,000 ብር", callback_data='20k')],
-        [InlineKeyboardButton("Home Decor Premium - 25,000 ETB / ፕሪሚየም ዲኮር - 25,000 ብር", callback_data='25k')],
-        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    
-    await update.message.reply_text(
-        "7. Select your preferred Decor Package / የሚፈልጉትን የዲኮር ፓኬጅ ይምረጡ:",
-        reply_markup=InlineKeyboardMarkup(kb)
-    )
-    return D_PKG
+    # If package wasn't pre-selected, show package selection
+    if 'd_pkg' not in context.user_data:
+        kb = [
+            [InlineKeyboardButton("Basic - 15,000 ETB", callback_data='15k')],
+            [InlineKeyboardButton("Deluxe - 20,000 ETB", callback_data='20k')],
+            [InlineKeyboardButton("Premium - 25,000 ETB", callback_data='25k')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_decor_packages')]
+        ]
+        
+        await update.message.reply_text(
+            "7. Select your preferred Decor Package / የሚፈልጉትን የዲኮር ፓኬጅ ይምረጡ:",
+            reply_markup=InlineKeyboardMarkup(kb)
+        )
+        return D_PKG
+    else:
+        # Skip to next question if package already selected
+        return await d_step7(update, context)
 
 async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle package selection"""
-    query = update.callback_query
-    await query.answer()
-    context.user_data['d_pkg'] = query.data
-    lang = context.user_data.get('lang', 'en')
-    
-    # Updated date/time question with new phrasing
-    await query.message.reply_text(
-        "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
-        "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ ጥዋት 4፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
-        reply_markup=get_nav_kb(lang, back_callback='d_back')
-    )
+    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+        query = update.callback_query
+        await query.answer()
+        if query.data != 'd_back':
+            context.user_data['d_pkg'] = query.data
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text(
+            "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
+            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ ጥዋት 4፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
+            reply_markup=get_nav_kb(lang, back_callback='d_back')
+        )
+    else:
+        lang = context.user_data.get('lang', 'en')
+        await update.message.reply_text(
+            "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
+            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ ጥዋት 4፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
+            reply_markup=get_nav_kb(lang, back_callback='d_back')
+        )
     return D_DATE
 
 async def d_step8(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle date/time input"""
     context.user_data['d_date'] = update.message.text
     lang = context.user_data.get('lang', 'en')
 
@@ -502,7 +835,7 @@ async def d_step8(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("G+1", callback_data='G1'),
          InlineKeyboardButton("G+2", callback_data='G2')],
         [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_decor_packages')]
     ]
 
     await update.message.reply_text(
@@ -512,7 +845,6 @@ async def d_step8(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_HOUSE
 
 async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle house type selection"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
@@ -522,7 +854,6 @@ async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     context.user_data['d_house'] = query.data
     
-    # Payment warning message
     warning_msg = (
         "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
         "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
@@ -545,7 +876,6 @@ async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_NOTES
 
 async def d_step10(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle notes input"""
     context.user_data['d_notes'] = update.message.text
     lang = context.user_data.get('lang', 'en')
 
@@ -556,7 +886,6 @@ async def d_step10(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_PAYMENT
 
 async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment screenshot and finalize booking"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -566,8 +895,6 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return D_PAYMENT
 
     pay_img = update.message.photo[-1].file_id
-    
-    # Create PDF
     pdf_file = create_decor_pdf(context.user_data)
     
     summary = (f"🔔 **NEW AGOS DECOR BOOKING / አዲስ የዲኮር ትዕዛዝ** 🔔\n\n"
@@ -581,7 +908,6 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
                f"📅 Date / ቀን: {context.user_data.get('d_date')}\n"
                f"📝 Notes / ማስታወሻ: {context.user_data.get('d_notes')}")
 
-    # Send to all admins
     for admin_id in ADMIN_IDS:
         try:
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
@@ -589,7 +915,6 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
-    # Send confirmation to user with updated status message
     pdf_file.seek(0)
     await update.message.reply_document(
         document=pdf_file, 
@@ -597,43 +922,27 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption="✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
     )
 
-    # Show discover more page
-    await show_discover_more(update, context)
+    # Show dynamic discover more page
+    await show_discover_more(update, context, 'decor')
     
     return ConversationHandler.END
 
-async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show discover more page after successful booking"""
-    lang = context.user_data.get('lang', 'en')
-    
-    discover_kb = [
-        [InlineKeyboardButton("🚗 Book Limousine / ሊሙዚን ይዘዙ", callback_data='l_start'),
-         InlineKeyboardButton("📸 Book Media / ሚዲያ ይዘዙ", callback_data='ph_start')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    
-    await update.message.reply_text(
-        CONTENT[lang]['discover_more'],
-        reply_markup=InlineKeyboardMarkup(discover_kb),
-        parse_mode='Markdown'
-    )
-
 async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle back button in decor flow"""
     query = update.callback_query
     await query.answer()
-    # Implement back navigation logic
-    return D_NAME  # Default fallback
+    return D_NAME
 
-# --- LIMOUSINE BOOKING FLOW ---
-async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start limousine booking flow"""
+# --- LIMOUSINE BOOKING FLOW (Similar pattern with package pre-selection) ---
+async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
     query = update.callback_query
     lang = context.user_data.get('lang', 'en')
     await query.answer()
+    
+    if package:
+        context.user_data['l_package'] = package
     
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_limo_packages')]
     ])
     
     await query.message.reply_text(
@@ -643,7 +952,6 @@ async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_NAME
 
 async def l_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine name input"""
     context.user_data['l_name'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -654,7 +962,6 @@ async def l_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_PHONE
 
 async def l_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine phone input"""
     context.user_data['l_phone'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -666,7 +973,6 @@ async def l_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_DATE
 
 async def l_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine date input"""
     context.user_data['l_date'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -677,53 +983,75 @@ async def l_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_ADDR
 
 async def l_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine address input"""
     context.user_data['l_addr'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
-    kb = [
-        [InlineKeyboardButton("The Grand Arrival - 25,000 ETB", callback_data='l_25k'),
-         InlineKeyboardButton("Special Arrival - 30,000 ETB", callback_data='l_30k')],
-        [InlineKeyboardButton("Royal Welcome - 35,000 ETB", callback_data='l_35k')],
-        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='l_back')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    
-    await update.message.reply_text(
-        "5. Select Package / ፓኬጅ ይምረጡ:",
-        reply_markup=InlineKeyboardMarkup(kb)
-    )
-    return L_PACKAGE
+    # If package wasn't pre-selected, show package selection
+    if 'l_package' not in context.user_data:
+        kb = [
+            [InlineKeyboardButton("Grand Arrival - 25,000 ETB", callback_data='l_25k'),
+             InlineKeyboardButton("Special Arrival - 30,000 ETB", callback_data='l_30k')],
+            [InlineKeyboardButton("Royal Welcome - 35,000 ETB", callback_data='l_35k')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='l_back')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_limo_packages')]
+        ]
+        
+        await update.message.reply_text(
+            "5. Select Package / ፓኬጅ ይምረጡ:",
+            reply_markup=InlineKeyboardMarkup(kb)
+        )
+        return L_PACKAGE
+    else:
+        return await l_step5(update, context)
 
 async def l_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine package selection"""
-    query = update.callback_query
-    await query.answer()
-    context.user_data['l_package'] = query.data
-    lang = context.user_data.get('lang', 'en')
-    
-    # Payment warning
-    warning_msg = (
-        "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-        "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-        "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
-        "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-        "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-        "👤 Account Name: AGOS POSTPARTUM CARE\n"
-        "🔢 Account Number: 10001345678901\n\n"
-        "📱 *Tele Birr / ቴሌ ብር*\n"
-        "📞 Phone: 0967621545"
-    )
-    
-    await query.message.reply_text(warning_msg, parse_mode='Markdown')
-    await query.message.reply_text(
-        "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
-        reply_markup=get_nav_kb(lang, back_callback='l_back')
-    )
+    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+        query = update.callback_query
+        await query.answer()
+        if query.data != 'l_back':
+            context.user_data['l_package'] = query.data
+        lang = context.user_data.get('lang', 'en')
+        
+        warning_msg = (
+            "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
+            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
+            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
+            "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
+            "👤 Account Name: AGOS POSTPARTUM CARE\n"
+            "🔢 Account Number: 10001345678901\n\n"
+            "📱 *Tele Birr / ቴሌ ብር*\n"
+            "📞 Phone: 0967621545"
+        )
+        
+        await query.message.reply_text(warning_msg, parse_mode='Markdown')
+        await query.message.reply_text(
+            "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
+            reply_markup=get_nav_kb(lang, back_callback='l_back')
+        )
+    else:
+        # Handle case where we skip package selection
+        lang = context.user_data.get('lang', 'en')
+        warning_msg = (
+            "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
+            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
+            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
+            "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
+            "👤 Account Name: AGOS POSTPARTUM CARE\n"
+            "🔢 Account Number: 10001345678901\n\n"
+            "📱 *Tele Birr / ቴሌ ብር*\n"
+            "📞 Phone: 0967621545"
+        )
+        
+        await update.message.reply_text(warning_msg, parse_mode='Markdown')
+        await update.message.reply_text(
+            "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
+            reply_markup=get_nav_kb(lang, back_callback='l_back')
+        )
     return L_PAYMENT
 
 async def l_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle limousine payment screenshot"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -733,6 +1061,7 @@ async def l_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return L_PAYMENT
 
     pay_img = update.message.photo[-1].file_id
+    pdf_file = create_limo_pdf(context.user_data)
     
     summary = (f"🔔 **NEW LIMOUSINE BOOKING / አዲስ የሊሙዚን ትዕዛዝ** 🔔\n\n"
                f"👤 Name / ስም: {context.user_data.get('l_name')}\n"
@@ -741,31 +1070,36 @@ async def l_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
                f"🏠 Address / አድራሻ: {context.user_data.get('l_addr')}\n"
                f"🎁 Package / ፓኬጅ: {context.user_data.get('l_package')}")
 
-    # Send to all admins
     for admin_id in ADMIN_IDS:
         try:
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
+            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Limousine_{context.user_data.get('l_name','Booking')}.pdf")
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
-    await update.message.reply_text(
-        "✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
+    pdf_file.seek(0)
+    await update.message.reply_document(
+        document=pdf_file, 
+        filename="AGOS_Limousine_Booking.pdf", 
+        caption="✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
     )
     
-    # Show discover more page
-    await show_discover_more(update, context)
+    # Show dynamic discover more page
+    await show_discover_more(update, context, 'limo')
     
     return ConversationHandler.END
 
-# --- PHOTOGRAPHY BOOKING FLOW ---
-async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start photography booking flow"""
+# --- PHOTOGRAPHY BOOKING FLOW (Similar pattern) ---
+async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
     query = update.callback_query
     lang = context.user_data.get('lang', 'en')
     await query.answer()
     
+    if package:
+        context.user_data['ph_package'] = package
+    
     kb = InlineKeyboardMarkup([
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_photo_packages')]
     ])
     
     await query.message.reply_text(
@@ -775,7 +1109,6 @@ async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_NAME
 
 async def ph_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography name input"""
     context.user_data['ph_name'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -786,7 +1119,6 @@ async def ph_step1(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_PHONE
 
 async def ph_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography phone input"""
     context.user_data['ph_phone'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -798,7 +1130,6 @@ async def ph_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_DATE
 
 async def ph_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography date input"""
     context.user_data['ph_date'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
@@ -809,54 +1140,76 @@ async def ph_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_ADDR
 
 async def ph_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography address input"""
     context.user_data['ph_addr'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
-    kb = [
-        [InlineKeyboardButton("Digital Photography - 10,000 ETB", callback_data='ph_10k')],
-        [InlineKeyboardButton("Standard Photography - 12,000 ETB", callback_data='ph_12k')],
-        [InlineKeyboardButton("Premium Photography - 15,000 ETB", callback_data='ph_15k')],
-        [InlineKeyboardButton("Videography - 15,000 ETB", callback_data='ph_15k_vid')],
-        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='ph_back')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    
-    await update.message.reply_text(
-        "5. Select Package / ፓኬጅ ይምረጡ:",
-        reply_markup=InlineKeyboardMarkup(kb)
-    )
-    return PH_PACKAGE
+    # If package wasn't pre-selected, show package selection
+    if 'ph_package' not in context.user_data:
+        kb = [
+            [InlineKeyboardButton("Digital Photography - 10,000 ETB", callback_data='ph_10k')],
+            [InlineKeyboardButton("Standard Photography - 12,000 ETB", callback_data='ph_12k')],
+            [InlineKeyboardButton("Premium Photography - 15,000 ETB", callback_data='ph_15k')],
+            [InlineKeyboardButton("Videography - 15,000 ETB", callback_data='ph_15k_vid')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='ph_back')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='show_photo_packages')]
+        ]
+        
+        await update.message.reply_text(
+            "5. Select Package / ፓኬጅ ይምረጡ:",
+            reply_markup=InlineKeyboardMarkup(kb)
+        )
+        return PH_PACKAGE
+    else:
+        return await ph_step5(update, context)
 
 async def ph_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography package selection"""
-    query = update.callback_query
-    await query.answer()
-    context.user_data['ph_package'] = query.data
-    lang = context.user_data.get('lang', 'en')
-    
-    # Payment warning
-    warning_msg = (
-        "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-        "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-        "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
-        "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-        "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-        "👤 Account Name: AGOS POSTPARTUM CARE\n"
-        "🔢 Account Number: 10001345678901\n\n"
-        "📱 *Tele Birr / ቴሌ ብር*\n"
-        "📞 Phone: 0967621545"
-    )
-    
-    await query.message.reply_text(warning_msg, parse_mode='Markdown')
-    await query.message.reply_text(
-        "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
-        reply_markup=get_nav_kb(lang, back_callback='ph_back')
-    )
+    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+        query = update.callback_query
+        await query.answer()
+        if query.data != 'ph_back':
+            context.user_data['ph_package'] = query.data
+        lang = context.user_data.get('lang', 'en')
+        
+        warning_msg = (
+            "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
+            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
+            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
+            "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
+            "👤 Account Name: AGOS POSTPARTUM CARE\n"
+            "🔢 Account Number: 10001345678901\n\n"
+            "📱 *Tele Birr / ቴሌ ብር*\n"
+            "📞 Phone: 0967621545"
+        )
+        
+        await query.message.reply_text(warning_msg, parse_mode='Markdown')
+        await query.message.reply_text(
+            "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
+            reply_markup=get_nav_kb(lang, back_callback='ph_back')
+        )
+    else:
+        # Handle case where we skip package selection
+        lang = context.user_data.get('lang', 'en')
+        warning_msg = (
+            "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
+            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
+            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
+            "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
+            "👤 Account Name: AGOS POSTPARTUM CARE\n"
+            "🔢 Account Number: 10001345678901\n\n"
+            "📱 *Tele Birr / ቴሌ ብር*\n"
+            "📞 Phone: 0967621545"
+        )
+        
+        await update.message.reply_text(warning_msg, parse_mode='Markdown')
+        await update.message.reply_text(
+            "📤 Upload Payment Screenshot / የክፍያ ስክሪን ሾት ይላኩ:",
+            reply_markup=get_nav_kb(lang, back_callback='ph_back')
+        )
     return PH_PAYMENT
 
 async def ph_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle photography payment screenshot"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -866,6 +1219,7 @@ async def ph_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return PH_PAYMENT
 
     pay_img = update.message.photo[-1].file_id
+    pdf_file = create_photo_pdf(context.user_data)
     
     summary = (f"🔔 **NEW MEDIA BOOKING / አዲስ የሚዲያ ትዕዛዝ** 🔔\n\n"
                f"👤 Name / ስም: {context.user_data.get('ph_name')}\n"
@@ -874,29 +1228,111 @@ async def ph_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
                f"🏠 Address / አድራሻ: {context.user_data.get('ph_addr')}\n"
                f"🎁 Package / ፓኬጅ: {context.user_data.get('ph_package')}")
 
-    # Send to all admins
     for admin_id in ADMIN_IDS:
         try:
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
+            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Media_{context.user_data.get('ph_name','Booking')}.pdf")
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
-    await update.message.reply_text(
-        "✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
+    pdf_file.seek(0)
+    await update.message.reply_document(
+        document=pdf_file, 
+        filename="AGOS_Media_Booking.pdf", 
+        caption="✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
     )
     
-    # Show discover more page
-    await show_discover_more(update, context)
+    # Show dynamic discover more page
+    await show_discover_more(update, context, 'photo')
     
     return ConversationHandler.END
+
+# --- NAVIGATION FUNCTIONS ---
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.clear()
+    return await working_hours_gate(update, context)
+
+async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [[InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
+                [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]]
+    
+    if update.callback_query:
+        await update.callback_query.answer()
+        await update.callback_query.message.reply_text(
+            "🌿 Choose Language / ቋንቋ ይምረጡ:", 
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+    return ConversationHandler.END
+
+async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str = None):
+    if lang:
+        context.user_data['lang'] = lang
+    else:
+        lang = context.user_data.get('lang', 'en')
+
+    btns = CONTENT[lang]['btns']
+    keyboard = [
+        [InlineKeyboardButton(btns[0], callback_data='show_decor_packages'), 
+         InlineKeyboardButton(btns[1], callback_data='show_limo_packages')],
+        [InlineKeyboardButton(btns[2], callback_data='show_photo_packages'), 
+         InlineKeyboardButton(btns[3], callback_data='info_contact')],
+        [InlineKeyboardButton(btns[4], callback_data='send_pdf')],
+        [InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
+    ]
+    
+    query = update.callback_query
+    if query:
+        await query.answer()
+        await query.message.reply_text(
+            CONTENT[lang]['welcome'], 
+            reply_markup=InlineKeyboardMarkup(keyboard), 
+            parse_mode='Markdown'
+        )
+    else:
+        await update.message.reply_text(
+            CONTENT[lang]['welcome'], 
+            reply_markup=InlineKeyboardMarkup(keyboard), 
+            parse_mode='Markdown'
+        )
+
+async def info_pages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    lang = context.user_data.get('lang', 'en')
+    choice = query.data.replace('info_', '')
+    text = CONTENT[lang].get(f'{choice}_text', "Information coming soon...")
+    back_btn = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
+    await query.message.edit_text(text, reply_markup=back_btn, parse_mode='Markdown')
 
 # --- APP RUNNER ---
 if __name__ == '__main__':
     app = Application.builder().token(TOKEN).build()
 
-    # Decor booking conversation handler
+    # Package view handlers
+    app.add_handler(CallbackQueryHandler(lambda u, c: show_decor_packages(u, c), pattern='^show_decor_packages$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: show_limo_packages(u, c), pattern='^show_limo_packages$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: show_photo_packages(u, c), pattern='^show_photo_packages$'))
+    
+    # Individual package view handlers
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_basic', 'd_start_basic'), pattern='^view_decor_basic$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_deluxe', 'd_start_deluxe'), pattern='^view_decor_deluxe$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_premium', 'd_start_premium'), pattern='^view_decor_premium$'))
+    
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_grand', 'l_start_grand'), pattern='^view_limo_grand$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_special', 'l_start_special'), pattern='^view_limo_special$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_royal', 'l_start_royal'), pattern='^view_limo_royal$'))
+    
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_digital', 'ph_start_digital'), pattern='^view_photo_digital$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_standard', 'ph_start_standard'), pattern='^view_photo_standard$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_premium', 'ph_start_premium'), pattern='^view_photo_premium$'))
+    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'videography', 'ph_start_video'), pattern='^view_videography$'))
+
+    # Decor booking conversation handler with package pre-selection
     d_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(d_start, pattern='^d_start$')],
+        entry_points=[
+            CallbackQueryHandler(lambda u, c: d_start(u, c, '15k'), pattern='^d_start_basic$'),
+            CallbackQueryHandler(lambda u, c: d_start(u, c, '20k'), pattern='^d_start_deluxe$'),
+            CallbackQueryHandler(lambda u, c: d_start(u, c, '25k'), pattern='^d_start_premium$')
+        ],
         states={
             D_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_step1)],
             D_GENDER: [CallbackQueryHandler(d_step2)],
@@ -916,9 +1352,13 @@ if __name__ == '__main__':
         allow_reentry=True
     )
 
-    # Limousine booking conversation handler
+    # Limousine booking conversation handler with package pre-selection
     l_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(l_start, pattern='^l_start$')],
+        entry_points=[
+            CallbackQueryHandler(lambda u, c: l_start(u, c, 'l_25k'), pattern='^l_start_grand$'),
+            CallbackQueryHandler(lambda u, c: l_start(u, c, 'l_30k'), pattern='^l_start_special$'),
+            CallbackQueryHandler(lambda u, c: l_start(u, c, 'l_35k'), pattern='^l_start_royal$')
+        ],
         states={
             L_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_step1)],
             L_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_step2)],
@@ -933,9 +1373,14 @@ if __name__ == '__main__':
         allow_reentry=True
     )
 
-    # Photography booking conversation handler
+    # Photography booking conversation handler with package pre-selection
     ph_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(ph_start, pattern='^ph_start$')],
+        entry_points=[
+            CallbackQueryHandler(lambda u, c: ph_start(u, c, 'ph_10k'), pattern='^ph_start_digital$'),
+            CallbackQueryHandler(lambda u, c: ph_start(u, c, 'ph_12k'), pattern='^ph_start_standard$'),
+            CallbackQueryHandler(lambda u, c: ph_start(u, c, 'ph_15k'), pattern='^ph_start_premium$'),
+            CallbackQueryHandler(lambda u, c: ph_start(u, c, 'ph_15k_vid'), pattern='^ph_start_video$')
+        ],
         states={
             PH_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_step1)],
             PH_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_step2)],
@@ -963,6 +1408,7 @@ if __name__ == '__main__':
     app.add_handler(l_conv)
     app.add_handler(ph_conv)
 
-    print("AGOS Decor Bot is live with updated features...")
-    print(f"Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00 LT")
+    print("🎨 AGOS Enhanced Services Bot is live!")
+    print(f"⏰ Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00 LT")
+    print("📱 Features: Individual package pages with booking buttons, smart discover more")
     app.run_polling()
