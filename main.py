@@ -8,10 +8,12 @@ from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
                           MessageHandler, filters, ContextTypes, ConversationHandler)
 from datetime import datetime
 import logging
+import traceback
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
@@ -29,8 +31,12 @@ SERVICES_PDF_PATH = os.environ.get("SERVICES_PDF_PATH", "services_catalog.pdf")
 WORKING_HOURS_START = 8  # 8:00 AM LT
 WORKING_HOURS_END = 20   # 8:00 PM LT
 
+print("=" * 50)
 print("DEBUG - TOKEN is:", repr(TOKEN))
 print("DEBUG - Admin IDs:", ADMIN_IDS)
+print("DEBUG - Logo Path:", LOGO_PATH)
+print("DEBUG - Services PDF Path:", SERVICES_PDF_PATH)
+print("=" * 50)
 
 # --- CONVERSATION STATES ---
 # Decor Booking States
@@ -68,12 +74,12 @@ async def working_hours_gate(update: Update, context: ContextTypes.DEFAULT_TYPE)
     
     return ConversationHandler.END
 
-# --- CONTENT (Simplified for brevity - same as before) ---
+# --- CONTENT (Full content with contact info) ---
 CONTENT = {
     'en': {
         'welcome': "🎁 *Welcome to AGOS Decor & Special Services* 🌸\n\n✨ Premium home decor for your special moments\n🚗 Luxury limousine arrivals\n📸 Professional photography & videography\n\n🌐 www.agospostpartumcare.com",
         'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Media Services", "📞 Contact Us", "📋 Services Catalog"],
-        'decor_basic': "🔸 *Home Decor (15,000 ETB)*\n__________________________\n\n• Bedroom Decoration\n• Floor Decoration\n• Corridor Decoration\n• Salon Decoration",
+        'decor_basic': "🔸 *Home Decor (15,000 ETB)*\n__________________________\n\n• Bedroom Decoration\n• Floor Decoration\n• Corridor Decoration\n• Salon Decoration\n\n📱 See our work: @agos_postpartumcare on Instagram/TikTok",
         'decor_deluxe': "💎 *Home Decor Deluxe (20,000 ETB)*\n__________________________\n\n• Bedroom, Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Normal Cake",
         'decor_premium': "👑 *Home Decor Premium (25,000 ETB)*\n__________________________\n\n• Bedroom Decor with Agober rent\n• Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Custom Cake",
         'limo_grand': "⭐ *The Grand Arrival (25,000 ETB)*\n__________________________\n\n• Special limousine service\n• Grand and elegant ride home",
@@ -83,7 +89,17 @@ CONTENT = {
         'photo_standard': "🖼️ *Standard Photography (12,000 ETB)*\n__________________________\n\n• 100 printed photos\n• Soft copy of all photos",
         'photo_premium': "💎 *Premium Photography (15,000 ETB)*\n__________________________\n\n• Laminated photo album\n• Soft copy of all photos",
         'videography': "🎥 *Videography Package (15,000 ETB)*\n__________________________\n\n• Full video coverage\n• Edited video",
-        'contact_text': "📞 *Contact Us*\n\n⏰ Working Hours: 8:00 AM - 8:00 PM\n📱 Telegram: @agos_postpartumcare\n📞 Phone: +251 967 621 545\n📸 Instagram: @agospostpartum\n📍 Piassa, Abat Commercial",
+        'contact_text': (
+            "📞 *Contact Us*\n\n"
+            "⏰ *Working Hours:* 8:00 AM - 8:00 PM (Local Time)\n"
+            "⚠️ *Note:* Not operational after 2:00 PM LT\n\n"
+            "📱 *Telegram:* @agos_postpartumcare\n"
+            "📞 *Phone:* +251 967 621 545 | +251 980 040 468\n\n"
+            "📸 *Instagram:* instagram.com/agospostpartum\n"
+            "🎵 *TikTok:* tiktok.com/@agos_postpartumcare\n"
+            "🌐 *Website:* www.agospostpartumcare.com\n"
+            "📍 *Location:* Piassa, Abat Commercial, Addis Ababa"
+        ),
         'back': "🔙 Back to Menu",
         'change_lang': "🌍 Change Language",
         'q_back': "⬅️ Previous Question",
@@ -98,7 +114,17 @@ CONTENT = {
         'decor_basic': "🔸 *መደበኛ ዲኮር (15,000 ብር)*\n__________________________\n\n• የመኝታ ቤት ዲኮር\n• የወለል ዲኮር\n• የኮሪደር ዲኮር\n• የሳሎን ዲኮር",
         'decor_deluxe': "💎 *ደልክስ ዲኮር (20,000 ብር)*\n__________________________\n\n• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n• ትልቅ የአበባ ዝግጅት\n• 2 ኪሎ ኬክ",
         'decor_premium': "👑 *ፕሪሚየም ዲኮር (25,000 ብር)*\n__________________________\n\n• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ\n• የኮሪደር እና ሳሎን ዲኮር\n• ትልቅ የአበባ ዝግጅት\n• 2 ኪሎ ኬክ በመረጡት ዲዛይን",
-        'contact_text': "📞 *ያግኙን*\n\n⏰ የስራ ሰዓት: 8 ጥዋት - 8 ማታ\n📱 ቴሌግራም: @agos_postpartumcare\n📞 ስልክ: +251 967 621 545\n📍 ፒያሳ፣ አባት ኮሜርሻል",
+        'contact_text': (
+            "📞 *ያግኙን*\n\n"
+            "⏰ *የስራ ሰዓት:* 8፡00 ጥዋት - 8፡00 ማታ\n"
+            "⚠️ *ማሳሰቢያ:* ከምሽቱ 2፡00 በኋላ አይሰራም\n\n"
+            "📱 *ቴሌግራም:* @agos_postpartumcare\n"
+            "📞 *ስልክ:* +251 967 621 545 | +251 980 040 468\n\n"
+            "📸 *ኢንስታግራም:* instagram.com/agospostpartum\n"
+            "🎵 *ቲክቶክ:* tiktok.com/@agos_postpartumcare\n"
+            "🌐 *ዌብሳይት:* www.agospostpartumcare.com\n"
+            "📍 *አድራሻ:* ፒያሳ፣ አባት ኮሜርሻል"
+        ),
         'back': "🔙 ወደ ዋና ማውጫ",
         'change_lang': "🌍 ቋንቋ ቀይር",
         'q_back': "⬅️ ወደ ኋላ",
@@ -106,117 +132,129 @@ CONTENT = {
     }
 }
 
-# --- PDF GENERATOR FUNCTIONS (Keep as before) ---
+# --- PDF GENERATOR FUNCTIONS ---
 def create_decor_pdf(data):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
+    try:
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
 
-    if os.path.exists(LOGO_PATH):
-        try:
-            logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
-        except Exception:
-            pass
+        if os.path.exists(LOGO_PATH):
+            try:
+                logo = ImageReader(LOGO_PATH)
+                c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            except Exception as e:
+                logger.error(f"Error adding logo to PDF: {e}")
 
-    c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Decor Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Decor Order Form")
-    c.line(50, height - 85, 550, height - 85)
+        c.setFont("Helvetica-Bold", 18)
+        c.drawString(50, height - 50, "AGOS Decor Booking")
+        c.setFont("Helvetica", 12)
+        c.drawString(50, height - 70, "Official Decor Order Form")
+        c.line(50, height - 85, 550, height - 85)
 
-    c.setFont("Helvetica", 11)
-    y_position = height - 120
+        c.setFont("Helvetica", 11)
+        y_position = height - 120
 
-    for key, value in data.items():
-        if key.startswith('d_'):
-            label = key[2:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
-                c.showPage()
-                y_position = height - 50
+        for key, value in data.items():
+            if key.startswith('d_') and key not in ['d_payment']:
+                label = key[2:].replace('_', ' ').upper()
+                text = f"{label}: {value}"
+                c.drawString(50, y_position, text)
+                y_position -= 25
+                if y_position < 60:
+                    c.showPage()
+                    y_position = height - 50
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
-    c.save()
-    buffer.seek(0)
-    return buffer
+        c.setFont("Helvetica-Oblique", 9)
+        c.drawString(50, 40, f"Generated via AGOS Telegram Bot on {datetime.now().strftime('%Y-%m-%d %H:%M')}. Awaiting payment confirmation.")
+        c.save()
+        buffer.seek(0)
+        return buffer
+    except Exception as e:
+        logger.error(f"Error creating decor PDF: {e}")
+        return None
 
 def create_limo_pdf(data):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
+    try:
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
 
-    if os.path.exists(LOGO_PATH):
-        try:
-            logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
-        except Exception:
-            pass
+        if os.path.exists(LOGO_PATH):
+            try:
+                logo = ImageReader(LOGO_PATH)
+                c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            except Exception as e:
+                logger.error(f"Error adding logo to PDF: {e}")
 
-    c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Limousine Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Limousine Order Form")
-    c.line(50, height - 85, 550, height - 85)
+        c.setFont("Helvetica-Bold", 18)
+        c.drawString(50, height - 50, "AGOS Limousine Booking")
+        c.setFont("Helvetica", 12)
+        c.drawString(50, height - 70, "Official Limousine Order Form")
+        c.line(50, height - 85, 550, height - 85)
 
-    c.setFont("Helvetica", 11)
-    y_position = height - 120
+        c.setFont("Helvetica", 11)
+        y_position = height - 120
 
-    for key, value in data.items():
-        if key.startswith('l_'):
-            label = key[2:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
-                c.showPage()
-                y_position = height - 50
+        for key, value in data.items():
+            if key.startswith('l_') and key not in ['l_payment']:
+                label = key[2:].replace('_', ' ').upper()
+                text = f"{label}: {value}"
+                c.drawString(50, y_position, text)
+                y_position -= 25
+                if y_position < 60:
+                    c.showPage()
+                    y_position = height - 50
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
-    c.save()
-    buffer.seek(0)
-    return buffer
+        c.setFont("Helvetica-Oblique", 9)
+        c.drawString(50, 40, f"Generated via AGOS Telegram Bot on {datetime.now().strftime('%Y-%m-%d %H:%M')}. Awaiting payment confirmation.")
+        c.save()
+        buffer.seek(0)
+        return buffer
+    except Exception as e:
+        logger.error(f"Error creating limo PDF: {e}")
+        return None
 
 def create_photo_pdf(data):
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    width, height = letter
+    try:
+        buffer = BytesIO()
+        c = canvas.Canvas(buffer, pagesize=letter)
+        width, height = letter
 
-    if os.path.exists(LOGO_PATH):
-        try:
-            logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
-        except Exception:
-            pass
+        if os.path.exists(LOGO_PATH):
+            try:
+                logo = ImageReader(LOGO_PATH)
+                c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            except Exception as e:
+                logger.error(f"Error adding logo to PDF: {e}")
 
-    c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Media Services Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Media Services Order Form")
-    c.line(50, height - 85, 550, height - 85)
+        c.setFont("Helvetica-Bold", 18)
+        c.drawString(50, height - 50, "AGOS Media Services Booking")
+        c.setFont("Helvetica", 12)
+        c.drawString(50, height - 70, "Official Media Services Order Form")
+        c.line(50, height - 85, 550, height - 85)
 
-    c.setFont("Helvetica", 11)
-    y_position = height - 120
+        c.setFont("Helvetica", 11)
+        y_position = height - 120
 
-    for key, value in data.items():
-        if key.startswith('ph_'):
-            label = key[3:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
-                c.showPage()
-                y_position = height - 50
+        for key, value in data.items():
+            if key.startswith('ph_') and key not in ['ph_payment']:
+                label = key[3:].replace('_', ' ').upper()
+                text = f"{label}: {value}"
+                c.drawString(50, y_position, text)
+                y_position -= 25
+                if y_position < 60:
+                    c.showPage()
+                    y_position = height - 50
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
-    c.save()
-    buffer.seek(0)
-    return buffer
+        c.setFont("Helvetica-Oblique", 9)
+        c.drawString(50, 40, f"Generated via AGOS Telegram Bot on {datetime.now().strftime('%Y-%m-%d %H:%M')}. Awaiting payment confirmation.")
+        c.save()
+        buffer.seek(0)
+        return buffer
+    except Exception as e:
+        logger.error(f"Error creating photo PDF: {e}")
+        return None
 
 # --- HELPERS ---
 def get_nav_kb(lang, back_callback='d_back'):
@@ -225,6 +263,44 @@ def get_nav_kb(lang, back_callback='d_back'):
         [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data=back_callback)],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ])
+
+async def notify_admins(context: ContextTypes.DEFAULT_TYPE, message: str, photo_file_id=None, document=None, filename=None):
+    """Helper function to notify all admins with error handling"""
+    success_count = 0
+    for admin_id in ADMIN_IDS:
+        try:
+            if photo_file_id:
+                await context.bot.send_photo(
+                    chat_id=admin_id, 
+                    photo=photo_file_id, 
+                    caption=message, 
+                    parse_mode='Markdown'
+                )
+                logger.info(f"Sent photo notification to admin {admin_id}")
+            elif document:
+                document.seek(0)
+                await context.bot.send_document(
+                    chat_id=admin_id, 
+                    document=document, 
+                    filename=filename,
+                    caption=message,
+                    parse_mode='Markdown'
+                )
+                logger.info(f"Sent document notification to admin {admin_id}")
+            else:
+                await context.bot.send_message(
+                    chat_id=admin_id, 
+                    text=message, 
+                    parse_mode='Markdown'
+                )
+                logger.info(f"Sent text notification to admin {admin_id}")
+            success_count += 1
+        except Exception as e:
+            logger.error(f"Failed to notify admin {admin_id}: {e}")
+            logger.error(traceback.format_exc())
+    
+    logger.info(f"Notified {success_count}/{len(ADMIN_IDS)} admins successfully")
+    return success_count
 
 async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE, last_booking_type=None):
     """Show dynamic discover more page"""
@@ -238,11 +314,11 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     ]
     
     if last_booking_type == 'decor':
-        message = CONTENT[lang]['discover_after_decor']
+        message = "✨ *Thank you for your decor booking!* ✨\n\nNow check out our other services!"
     elif last_booking_type == 'limo':
-        message = CONTENT[lang]['discover_after_limo']
+        message = "✨ *Thank you for your limousine booking!* ✨\n\nNow check out our other services!"
     elif last_booking_type == 'photo':
-        message = CONTENT[lang]['discover_after_photo']
+        message = "✨ *Thank you for your photography booking!* ✨\n\nNow check out our other services!"
     else:
         message = "Explore our other services!"
     
@@ -489,11 +565,13 @@ async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Determine which package was selected from callback data
     callback_data = query.data
     if 'basic' in callback_data:
-        context.user_data['d_pkg'] = '15k'
+        context.user_data['d_pkg'] = 'Basic - 15,000 ETB'
     elif 'deluxe' in callback_data:
-        context.user_data['d_pkg'] = '20k'
+        context.user_data['d_pkg'] = 'Deluxe - 20,000 ETB'
     elif 'premium' in callback_data:
-        context.user_data['d_pkg'] = '25k'
+        context.user_data['d_pkg'] = 'Premium - 25,000 ETB'
+    
+    logger.info(f"Starting decor booking with package: {context.user_data['d_pkg']}")
     
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
@@ -657,7 +735,7 @@ async def d_notes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_PAYMENT
 
 async def d_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment screenshot"""
+    """Handle payment screenshot and notify admins"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -666,39 +744,67 @@ async def d_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return D_PAYMENT
 
-    photo = update.message.photo[-1]
-    pay_img = photo.file_id
+    try:
+        photo = update.message.photo[-1]
+        pay_img = photo.file_id
+        
+        # Create PDF
+        pdf_file = create_decor_pdf(context.user_data)
+        if not pdf_file:
+            await update.message.reply_text("Error creating PDF. Please try again.")
+            return D_PAYMENT
+        
+        # Prepare summary message
+        summary = (
+            f"🔔 *NEW DECOR BOOKING* 🔔\n\n"
+            f"👤 *Name:* {context.user_data.get('d_name', 'N/A')}\n"
+            f"👶 *Baby Gender:* {context.user_data.get('d_gender', 'N/A')}\n"
+            f"📞 *Phone:* {context.user_data.get('d_phone', 'N/A')}\n"
+            f"📱 *Telegram:* {context.user_data.get('d_username', 'N/A')}\n"
+            f"🏠 *Address:* {context.user_data.get('d_addr', 'N/A')}\n"
+            f"🏗️ *House Type:* {context.user_data.get('d_house', 'N/A')}\n"
+            f"🎁 *Package:* {context.user_data.get('d_pkg', 'N/A')}\n"
+            f"📅 *Date:* {context.user_data.get('d_date', 'N/A')}\n"
+            f"📝 *Notes:* {context.user_data.get('d_notes', 'None')}\n"
+            f"👤 *Contact Person:* {context.user_data.get('d_contact', 'N/A')}\n\n"
+            f"⏰ *Submitted:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+
+        # Send to admins
+        logger.info(f"Sending decor booking notification to {len(ADMIN_IDS)} admins")
+        
+        # First send the photo with caption
+        photo_sent = await notify_admins(context, summary, photo_file_id=pay_img)
+        
+        # Then send the PDF document
+        if photo_sent > 0:
+            pdf_filename = f"Decor_{context.user_data.get('d_name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 *PDF Summary for {context.user_data.get('d_name', 'Booking')}*", 
+                document=pdf_file, 
+                filename=pdf_filename
+            )
+            logger.info(f"Successfully sent decor booking to {photo_sent} admins")
+        else:
+            logger.error("Failed to send decor booking to any admin")
+
+        # Send confirmation to user
+        pdf_file.seek(0)
+        await update.message.reply_document(
+            document=pdf_file, 
+            filename="AGOS_Decor_Booking.pdf", 
+            caption="✅ Booking submitted! Awaiting confirmation. We'll contact you soon."
+        )
+
+        # Show discover more page
+        await show_discover_more(update, context, 'decor')
+        
+    except Exception as e:
+        logger.error(f"Error in decor payment handler: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again or contact support.")
     
-    pdf_file = create_decor_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW DECOR BOOKING**\n\n"
-               f"👤 Name: {context.user_data.get('d_name')}\n"
-               f"👶 Gender: {context.user_data.get('d_gender')}\n"
-               f"📞 Phone: {context.user_data.get('d_phone')}\n"
-               f"📱 Telegram: {context.user_data.get('d_username')}\n"
-               f"🏠 Address: {context.user_data.get('d_addr')}\n"
-               f"🏗️ House: {context.user_data.get('d_house')}\n"
-               f"🎁 Package: {context.user_data.get('d_pkg')}\n"
-               f"📅 Date: {context.user_data.get('d_date')}\n"
-               f"📝 Notes: {context.user_data.get('d_notes')}")
-
-    # Send to admins
-    for admin_id in ADMIN_IDS:
-        try:
-            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
-            pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Decor_{context.user_data.get('d_name','Booking')}.pdf")
-        except Exception as e:
-            logger.error(f"Failed to send to admin {admin_id}: {e}")
-
-    pdf_file.seek(0)
-    await update.message.reply_document(
-        document=pdf_file, 
-        filename="AGOS_Decor_Booking.pdf", 
-        caption="✅ Booking submitted! Awaiting confirmation."
-    )
-
-    await show_discover_more(update, context, 'decor')
     return ConversationHandler.END
 
 # --- LIMOUSINE BOOKING FLOW ---
@@ -715,6 +821,8 @@ async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['l_package'] = 'Special Arrival - 30,000 ETB'
     elif 'royal' in query.data:
         context.user_data['l_package'] = 'Royal Welcome - 35,000 ETB'
+    
+    logger.info(f"Starting limousine booking with package: {context.user_data['l_package']}")
     
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
@@ -764,7 +872,6 @@ async def l_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['l_addr'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
-    # Package already selected, skip to payment
     warning_msg = (
         "⚠️ *IMPORTANT*\n\n"
         "Booking will not be confirmed without half-payment screenshot.\n\n"
@@ -782,7 +889,7 @@ async def l_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_PAYMENT
 
 async def l_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment screenshot"""
+    """Handle payment screenshot and notify admins"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -791,34 +898,59 @@ async def l_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return L_PAYMENT
 
-    photo = update.message.photo[-1]
-    pay_img = photo.file_id
+    try:
+        photo = update.message.photo[-1]
+        pay_img = photo.file_id
+        
+        # Create PDF
+        pdf_file = create_limo_pdf(context.user_data)
+        if not pdf_file:
+            await update.message.reply_text("Error creating PDF. Please try again.")
+            return L_PAYMENT
+        
+        # Prepare summary message
+        summary = (
+            f"🔔 *NEW LIMOUSINE BOOKING* 🔔\n\n"
+            f"👤 *Name:* {context.user_data.get('l_name', 'N/A')}\n"
+            f"📞 *Phone:* {context.user_data.get('l_phone', 'N/A')}\n"
+            f"📅 *Date:* {context.user_data.get('l_date', 'N/A')}\n"
+            f"🏠 *Address:* {context.user_data.get('l_addr', 'N/A')}\n"
+            f"🎁 *Package:* {context.user_data.get('l_package', 'N/A')}\n\n"
+            f"⏰ *Submitted:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+
+        # Send to admins
+        logger.info(f"Sending limousine booking notification to {len(ADMIN_IDS)} admins")
+        
+        photo_sent = await notify_admins(context, summary, photo_file_id=pay_img)
+        
+        if photo_sent > 0:
+            pdf_filename = f"Limousine_{context.user_data.get('l_name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 *PDF Summary for {context.user_data.get('l_name', 'Booking')}*", 
+                document=pdf_file, 
+                filename=pdf_filename
+            )
+            logger.info(f"Successfully sent limousine booking to {photo_sent} admins")
+        else:
+            logger.error("Failed to send limousine booking to any admin")
+
+        # Send confirmation to user
+        pdf_file.seek(0)
+        await update.message.reply_document(
+            document=pdf_file, 
+            filename="AGOS_Limousine_Booking.pdf", 
+            caption="✅ Booking submitted! Awaiting confirmation. We'll contact you soon."
+        )
+
+        await show_discover_more(update, context, 'limo')
+        
+    except Exception as e:
+        logger.error(f"Error in limousine payment handler: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again or contact support.")
     
-    pdf_file = create_limo_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW LIMOUSINE BOOKING**\n\n"
-               f"👤 Name: {context.user_data.get('l_name')}\n"
-               f"📞 Phone: {context.user_data.get('l_phone')}\n"
-               f"📅 Date: {context.user_data.get('l_date')}\n"
-               f"🏠 Address: {context.user_data.get('l_addr')}\n"
-               f"🎁 Package: {context.user_data.get('l_package')}")
-
-    for admin_id in ADMIN_IDS:
-        try:
-            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
-            pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Limousine_{context.user_data.get('l_name','Booking')}.pdf")
-        except Exception as e:
-            logger.error(f"Failed to send to admin {admin_id}: {e}")
-
-    pdf_file.seek(0)
-    await update.message.reply_document(
-        document=pdf_file, 
-        filename="AGOS_Limousine_Booking.pdf", 
-        caption="✅ Booking submitted! Awaiting confirmation."
-    )
-
-    await show_discover_more(update, context, 'limo')
     return ConversationHandler.END
 
 # --- PHOTOGRAPHY BOOKING FLOW ---
@@ -837,6 +969,8 @@ async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['ph_package'] = 'Premium Photography - 15,000 ETB'
     elif 'video' in query.data:
         context.user_data['ph_package'] = 'Videography - 15,000 ETB'
+    
+    logger.info(f"Starting photography booking with package: {context.user_data['ph_package']}")
     
     kb = InlineKeyboardMarkup([
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
@@ -886,7 +1020,6 @@ async def ph_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['ph_addr'] = update.message.text
     lang = context.user_data.get('lang', 'en')
     
-    # Package already selected, skip to payment
     warning_msg = (
         "⚠️ *IMPORTANT*\n\n"
         "Booking will not be confirmed without half-payment screenshot.\n\n"
@@ -904,7 +1037,7 @@ async def ph_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_PAYMENT
 
 async def ph_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment screenshot"""
+    """Handle payment screenshot and notify admins"""
     if not update.message.photo:
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
@@ -913,34 +1046,59 @@ async def ph_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return PH_PAYMENT
 
-    photo = update.message.photo[-1]
-    pay_img = photo.file_id
+    try:
+        photo = update.message.photo[-1]
+        pay_img = photo.file_id
+        
+        # Create PDF
+        pdf_file = create_photo_pdf(context.user_data)
+        if not pdf_file:
+            await update.message.reply_text("Error creating PDF. Please try again.")
+            return PH_PAYMENT
+        
+        # Prepare summary message
+        summary = (
+            f"🔔 *NEW MEDIA BOOKING* 🔔\n\n"
+            f"👤 *Name:* {context.user_data.get('ph_name', 'N/A')}\n"
+            f"📞 *Phone:* {context.user_data.get('ph_phone', 'N/A')}\n"
+            f"📅 *Date:* {context.user_data.get('ph_date', 'N/A')}\n"
+            f"🏠 *Address:* {context.user_data.get('ph_addr', 'N/A')}\n"
+            f"🎁 *Package:* {context.user_data.get('ph_package', 'N/A')}\n\n"
+            f"⏰ *Submitted:* {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+
+        # Send to admins
+        logger.info(f"Sending media booking notification to {len(ADMIN_IDS)} admins")
+        
+        photo_sent = await notify_admins(context, summary, photo_file_id=pay_img)
+        
+        if photo_sent > 0:
+            pdf_filename = f"Media_{context.user_data.get('ph_name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 *PDF Summary for {context.user_data.get('ph_name', 'Booking')}*", 
+                document=pdf_file, 
+                filename=pdf_filename
+            )
+            logger.info(f"Successfully sent media booking to {photo_sent} admins")
+        else:
+            logger.error("Failed to send media booking to any admin")
+
+        # Send confirmation to user
+        pdf_file.seek(0)
+        await update.message.reply_document(
+            document=pdf_file, 
+            filename="AGOS_Media_Booking.pdf", 
+            caption="✅ Booking submitted! Awaiting confirmation. We'll contact you soon."
+        )
+
+        await show_discover_more(update, context, 'photo')
+        
+    except Exception as e:
+        logger.error(f"Error in media payment handler: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again or contact support.")
     
-    pdf_file = create_photo_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW MEDIA BOOKING**\n\n"
-               f"👤 Name: {context.user_data.get('ph_name')}\n"
-               f"📞 Phone: {context.user_data.get('ph_phone')}\n"
-               f"📅 Date: {context.user_data.get('ph_date')}\n"
-               f"🏠 Address: {context.user_data.get('ph_addr')}\n"
-               f"🎁 Package: {context.user_data.get('ph_package')}")
-
-    for admin_id in ADMIN_IDS:
-        try:
-            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
-            pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Media_{context.user_data.get('ph_name','Booking')}.pdf")
-        except Exception as e:
-            logger.error(f"Failed to send to admin {admin_id}: {e}")
-
-    pdf_file.seek(0)
-    await update.message.reply_document(
-        document=pdf_file, 
-        filename="AGOS_Media_Booking.pdf", 
-        caption="✅ Booking submitted! Awaiting confirmation."
-    )
-
-    await show_discover_more(update, context, 'photo')
     return ConversationHandler.END
 
 # --- BACK BUTTON HANDLERS ---
@@ -949,7 +1107,6 @@ async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     
-    # Determine which state to go back to based on callback data
     callback = query.data
     
     if callback == 'd_back_to_name':
@@ -958,7 +1115,16 @@ async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("1. Full Name:", reply_markup=kb)
         return D_NAME
     elif callback == 'd_back_to_gender':
-        return await d_name(update, context)
+        lang = context.user_data.get('lang', 'en')
+        kb = [
+            [InlineKeyboardButton("Male", callback_data='d_gender_male'),
+             InlineKeyboardButton("Female", callback_data='d_gender_female')],
+            [InlineKeyboardButton("Not Sure", callback_data='d_gender_unsure')],
+            [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back_to_name')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+        await query.message.reply_text("2. Gender of the Newborn:", reply_markup=InlineKeyboardMarkup(kb))
+        return D_GENDER
     elif callback == 'd_back_to_address':
         return await d_gender(update, context)
     elif callback == 'd_back_to_phone':
@@ -991,13 +1157,30 @@ async def l_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("1. Full Name:", reply_markup=kb)
         return L_NAME
     elif callback == 'l_back_to_phone':
-        return await l_name(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("2. Phone Number:", reply_markup=get_nav_kb(lang, 'l_back_to_name'))
+        return L_PHONE
     elif callback == 'l_back_to_date':
-        return await l_phone(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("3. Preferred Date & Time\nFormat: DD/MM/YYYY, Time:", reply_markup=get_nav_kb(lang, 'l_back_to_phone'))
+        return L_DATE
     elif callback == 'l_back_to_address':
-        return await l_date(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("4. Pickup Address:", reply_markup=get_nav_kb(lang, 'l_back_to_date'))
+        return L_ADDR
     elif callback == 'l_back_to_payment':
-        return await l_address(update, context)
+        lang = context.user_data.get('lang', 'en')
+        warning_msg = (
+            "⚠️ *IMPORTANT*\n\n"
+            "Booking will not be confirmed without half-payment screenshot.\n\n"
+            "🏦 Bank: Commercial Bank of Ethiopia\n"
+            "👤 AGOS POSTPARTUM CARE\n"
+            "🔢 10001345678901\n"
+            "📱 Tele Birr: 0967621545"
+        )
+        await query.message.reply_text(warning_msg, parse_mode='Markdown')
+        await query.message.reply_text("5. Upload Payment Screenshot:", reply_markup=get_nav_kb(lang, 'l_back_to_address'))
+        return L_PAYMENT
     
     return L_NAME
 
@@ -1014,13 +1197,30 @@ async def ph_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("1. Full Name:", reply_markup=kb)
         return PH_NAME
     elif callback == 'ph_back_to_phone':
-        return await ph_name(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("2. Phone Number:", reply_markup=get_nav_kb(lang, 'ph_back_to_name'))
+        return PH_PHONE
     elif callback == 'ph_back_to_date':
-        return await ph_phone(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("3. Event Date & Time\nFormat: DD/MM/YYYY, Time:", reply_markup=get_nav_kb(lang, 'ph_back_to_phone'))
+        return PH_DATE
     elif callback == 'ph_back_to_address':
-        return await ph_date(update, context)
+        lang = context.user_data.get('lang', 'en')
+        await query.message.reply_text("4. Event Address:", reply_markup=get_nav_kb(lang, 'ph_back_to_date'))
+        return PH_ADDR
     elif callback == 'ph_back_to_payment':
-        return await ph_address(update, context)
+        lang = context.user_data.get('lang', 'en')
+        warning_msg = (
+            "⚠️ *IMPORTANT*\n\n"
+            "Booking will not be confirmed without half-payment screenshot.\n\n"
+            "🏦 Bank: Commercial Bank of Ethiopia\n"
+            "👤 AGOS POSTPARTUM CARE\n"
+            "🔢 10001345678901\n"
+            "📱 Tele Birr: 0967621545"
+        )
+        await query.message.reply_text(warning_msg, parse_mode='Markdown')
+        await query.message.reply_text("5. Upload Payment Screenshot:", reply_markup=get_nav_kb(lang, 'ph_back_to_address'))
+        return PH_PAYMENT
     
     return PH_NAME
 
@@ -1028,6 +1228,7 @@ async def ph_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Start command"""
     context.user_data.clear()
+    logger.info("Bot started by user")
     return await working_hours_gate(update, context)
 
 async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1055,6 +1256,7 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if query.data.startswith('lang_'):
             lang = query.data.split('_')[1]
             context.user_data['lang'] = lang
+            logger.info(f"User selected language: {lang}")
         else:
             lang = context.user_data.get('lang', 'en')
         
@@ -1063,7 +1265,7 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [InlineKeyboardButton(btns[0], callback_data='show_decor_packages'), 
              InlineKeyboardButton(btns[1], callback_data='show_limo_packages')],
             [InlineKeyboardButton(btns[2], callback_data='show_photo_packages'), 
-             InlineKeyboardButton(btns[3], callback_data='info_contact')],
+             InlineKeyboardButton(btns[3], callback_data='contact_info')],
             [InlineKeyboardButton(btns[4], callback_data='send_pdf')],
             [InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
         ]
@@ -1074,10 +1276,11 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode='Markdown'
         )
 
-async def info_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def contact_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle contact info page"""
     query = update.callback_query
     await query.answer()
+    logger.info("Contact button clicked - showing contact info")
     lang = context.user_data.get('lang', 'en')
     back_btn = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
     await query.message.edit_text(
@@ -1092,13 +1295,19 @@ async def send_services_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     
     if os.path.exists(SERVICES_PDF_PATH):
-        with open(SERVICES_PDF_PATH, 'rb') as pdf_file:
-            await query.message.reply_document(
-                document=pdf_file,
-                filename="AGOS_Services_Catalog.pdf",
-                caption="📋 Our complete services catalog"
-            )
+        try:
+            with open(SERVICES_PDF_PATH, 'rb') as pdf_file:
+                await query.message.reply_document(
+                    document=pdf_file,
+                    filename="AGOS_Services_Catalog.pdf",
+                    caption="📋 Our complete services catalog"
+                )
+            logger.info("Services PDF sent to user")
+        except Exception as e:
+            logger.error(f"Error sending PDF: {e}")
+            await query.message.reply_text("Error sending PDF. Please try again.")
     else:
+        logger.warning(f"PDF not found at path: {SERVICES_PDF_PATH}")
         await query.message.reply_text("PDF catalog coming soon!")
 
 # --- MAIN ---
@@ -1190,7 +1399,7 @@ def main():
     application.add_handler(CallbackQueryHandler(after_hours_handler, pattern='^after_hours$'))
     application.add_handler(CallbackQueryHandler(show_menu, pattern='^lang_'))
     application.add_handler(CallbackQueryHandler(show_menu, pattern='^menu$'))
-    application.add_handler(CallbackQueryHandler(info_contact, pattern='^info_contact$'))
+    application.add_handler(CallbackQueryHandler(contact_info, pattern='^contact_info$'))
     application.add_handler(CallbackQueryHandler(send_services_pdf, pattern='^send_pdf$'))
     application.add_handler(CallbackQueryHandler(start, pattern='^restart$'))
     
@@ -1217,13 +1426,17 @@ def main():
     application.add_handler(photo_conv)
 
     # Start bot
-    print("🤖 AGOS Bot is starting with FIXED conversation flows!")
+    print("=" * 50)
+    print("🤖 AGOS Bot is starting with FIXED admin notifications!")
     print(f"⏰ Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00")
-    print("✅ Decor booking: 10 steps")
-    print("✅ Limousine booking: 5 steps")
-    print("✅ Photography booking: 5 steps")
+    print(f"👥 Admin IDs: {ADMIN_IDS}")
+    print("✅ Decor booking: 10 steps with admin notifications")
+    print("✅ Limousine booking: 5 steps with admin notifications")
+    print("✅ Photography booking: 5 steps with admin notifications")
     print("✅ Contact page: Working")
     print("✅ Back buttons: Working")
+    print("✅ Admin notifications: FIXED - will send to all configured admins")
+    print("=" * 50)
     
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
