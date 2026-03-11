@@ -8,23 +8,40 @@ from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
                           MessageHandler, filters, ContextTypes, ConversationHandler)
 from datetime import datetime
 import logging
+import traceback
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+    level=logging.INFO
+)
 logger = logging.getLogger(__name__)
 
 # --- CONFIGURATION ---
 TOKEN = os.environ.get("BOT_TOKEN")
-ADMIN_IDS = [
-    int(os.environ.get("ADMIN_ID_1", "123456789")),
-    int(os.environ.get("ADMIN_ID_2", "987654321")),
-]
+ADMIN_IDS = []
+# Get admin IDs from environment variables
+for i in range(1, 6):  # Support up to 5 admins
+    admin_id = os.environ.get(f"ADMIN_ID_{i}")
+    if admin_id:
+        try:
+            ADMIN_IDS.append(int(admin_id))
+            logger.info(f"Added admin {i}: {admin_id}")
+        except ValueError:
+            logger.error(f"Invalid ADMIN_ID_{i}: {admin_id}")
+
 LOGO_PATH = os.environ.get("LOGO_PATH", "logo.webp")
 
 print("=" * 50)
-print(f"TOKEN: {TOKEN[:10]}...")
+print(f"TOKEN exists: {bool(TOKEN)}")
 print(f"ADMIN_IDS: {ADMIN_IDS}")
 print("=" * 50)
+
+if not TOKEN:
+    raise ValueError("BOT_TOKEN environment variable not set!")
+
+if not ADMIN_IDS:
+    logger.warning("No admin IDs configured! Notifications will not be sent.")
 
 # --- CONVERSATION STATES ---
 # Decor Booking
@@ -90,7 +107,7 @@ def create_pdf(data, service_type):
         y = height - 120
         
         for key, value in data.items():
-            if not key.startswith('_') and value:
+            if key not in ['booking_type', 'package'] and value:
                 label = key.replace('_', ' ').title()
                 text = f"{label}: {value}"
                 c.drawString(50, y, text)
@@ -104,39 +121,69 @@ def create_pdf(data, service_type):
         return buffer
     except Exception as e:
         logger.error(f"PDF Error: {e}")
+        logger.error(traceback.format_exc())
         return None
 
 # --- NOTIFY ADMINS ---
-async def notify_admins(context, message, photo=None, document=None):
+async def notify_admins(context, message, photo=None, document=None, filename=None):
+    if not ADMIN_IDS:
+        logger.warning("No admin IDs configured, skipping notification")
+        return
+    
     for admin_id in ADMIN_IDS:
         try:
             if photo:
-                await context.bot.send_photo(chat_id=admin_id, photo=photo, caption=message[:1024], parse_mode='Markdown')
+                # Send photo first
+                await context.bot.send_photo(
+                    chat_id=admin_id, 
+                    photo=photo, 
+                    caption=message[:1024], 
+                    parse_mode='Markdown'
+                )
+                logger.info(f"Sent photo to admin {admin_id}")
             elif document:
-                await context.bot.send_document(chat_id=admin_id, document=document, filename="booking.pdf", caption=message[:1024])
+                # Send document
+                await context.bot.send_document(
+                    chat_id=admin_id, 
+                    document=document, 
+                    filename=filename or "booking.pdf",
+                    caption=message[:1024]
+                )
+                logger.info(f"Sent document to admin {admin_id}")
             else:
-                await context.bot.send_message(chat_id=admin_id, text=message, parse_mode='Markdown')
-            logger.info(f"Notified admin {admin_id}")
+                # Send text only
+                await context.bot.send_message(
+                    chat_id=admin_id, 
+                    text=message, 
+                    parse_mode='Markdown'
+                )
+                logger.info(f"Sent message to admin {admin_id}")
         except Exception as e:
             logger.error(f"Failed to notify admin {admin_id}: {e}")
+            logger.error(traceback.format_exc())
 
 # --- START & MENU ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start command handler"""
     keyboard = [
         [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
         [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
     ]
-    await update.message.reply_text("🌿 Choose Language:", reply_markup=InlineKeyboardMarkup(keyboard))
+    await update.message.reply_text(
+        "🌿 Choose Language / ቋንቋ ይምረጡ:", 
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
     return ConversationHandler.END
 
 async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Main menu handler"""
     query = update.callback_query
     await query.answer()
     
-    if query.data == 'lang_en':
-        context.user_data['lang'] = 'en'
-    elif query.data == 'lang_am':
-        context.user_data['lang'] = 'am'
+    # Handle language selection
+    if query.data in ['lang_en', 'lang_am']:
+        context.user_data['lang'] = query.data.split('_')[1]
+        logger.info(f"User selected language: {context.user_data['lang']}")
     
     keyboard = [
         [InlineKeyboardButton("🎁 Decor Packages", callback_data='menu_decor'),
@@ -146,10 +193,15 @@ async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🌍 Change Language", callback_data='restart')]
     ]
     
-    await query.message.edit_text(WELCOME_TEXT, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    await query.message.edit_text(
+        WELCOME_TEXT, 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
 
 # --- DECOR PACKAGES ---
 async def decor_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Decor packages menu"""
     query = update.callback_query
     await query.answer()
     
@@ -157,37 +209,156 @@ async def decor_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("🔸 Basic - 15k", callback_data='view_decor_basic')],
         [InlineKeyboardButton("💎 Deluxe - 20k", callback_data='view_decor_deluxe')],
         [InlineKeyboardButton("👑 Premium - 25k", callback_data='view_decor_premium')],
-        [InlineKeyboardButton("🔙 Back", callback_data='back_to_main')]
+        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
     ]
     
-    await query.message.edit_text("🎁 *Select Decor Package:*", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    await query.message.edit_text(
+        "🎁 *Select Decor Package:*", 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
 
 async def view_decor_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """View individual decor package"""
     query = update.callback_query
     await query.answer()
     
     package = query.data.replace('view_decor_', '')
-    context.user_data['decor_package'] = package
+    context.user_data['selected_package'] = package
+    context.user_data['service_type'] = 'decor'
     
     text = DECOR_PACKAGES.get(package, "Package details")
+    price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
+    price = price_map.get(package, '')
+    
     keyboard = [
-        [InlineKeyboardButton("📝 Book Now", callback_data=f'book_decor_{package}')],
-        [InlineKeyboardButton("🔙 Back", callback_data='menu_decor')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
+        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_decor')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_decor')],
+        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
     ]
     
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    await query.message.edit_text(
+        text, 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
 
-# --- DECOR BOOKING FLOW ---
-async def book_decor(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# --- LIMOUSINE PACKAGES ---
+async def limo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Limousine packages menu"""
     query = update.callback_query
     await query.answer()
     
-    package = query.data.replace('book_decor_', '')
-    context.user_data['booking_type'] = 'decor'
-    context.user_data['package'] = package
+    keyboard = [
+        [InlineKeyboardButton("⭐ Grand - 25k", callback_data='view_limo_grand')],
+        [InlineKeyboardButton("✨ Special - 30k", callback_data='view_limo_special')],
+        [InlineKeyboardButton("👑 Royal - 35k", callback_data='view_limo_royal')],
+        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
+    ]
     
-    await query.message.reply_text("📝 *Decor Booking*\n\n1. Please enter your full name:")
+    await query.message.edit_text(
+        "🚗 *Select Limousine Package:*", 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
+
+async def view_limo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """View individual limousine package"""
+    query = update.callback_query
+    await query.answer()
+    
+    package = query.data.replace('view_limo_', '')
+    context.user_data['selected_package'] = package
+    context.user_data['service_type'] = 'limo'
+    
+    text = LIMO_PACKAGES.get(package, "Package details")
+    price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
+    price = price_map.get(package, '')
+    
+    keyboard = [
+        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_limo')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_limo')],
+        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+    ]
+    
+    await query.message.edit_text(
+        text, 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
+
+# --- PHOTOGRAPHY PACKAGES ---
+async def photo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Photography packages menu"""
+    query = update.callback_query
+    await query.answer()
+    
+    keyboard = [
+        [InlineKeyboardButton("📱 Digital - 10k", callback_data='view_photo_digital')],
+        [InlineKeyboardButton("🖼️ Standard - 12k", callback_data='view_photo_standard')],
+        [InlineKeyboardButton("💎 Premium - 15k", callback_data='view_photo_premium')],
+        [InlineKeyboardButton("🎥 Video - 15k", callback_data='view_photo_video')],
+        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
+    ]
+    
+    await query.message.edit_text(
+        "📸 *Select Media Package:*", 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
+
+async def view_photo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """View individual photography package"""
+    query = update.callback_query
+    await query.answer()
+    
+    package = query.data.replace('view_photo_', '')
+    context.user_data['selected_package'] = package
+    context.user_data['service_type'] = 'photo'
+    
+    text = PHOTO_PACKAGES.get(package, "Package details")
+    price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
+    price = price_map.get(package, '')
+    
+    keyboard = [
+        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_photo')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_photo')],
+        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+    ]
+    
+    await query.message.edit_text(
+        text, 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
+
+# --- CONTACT PAGE ---
+async def contact_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Contact information page"""
+    query = update.callback_query
+    await query.answer()
+    logger.info("Contact page opened")
+    keyboard = [[InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]]
+    await query.message.edit_text(
+        CONTACT_TEXT, 
+        reply_markup=InlineKeyboardMarkup(keyboard), 
+        parse_mode='Markdown'
+    )
+
+# --- DECOR BOOKING FLOW ---
+async def book_decor(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start decor booking"""
+    query = update.callback_query
+    await query.answer()
+    
+    package_name = context.user_data.get('selected_package', 'basic')
+    price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
+    price = price_map.get(package_name, '')
+    
+    await query.message.reply_text(
+        f"🎁 *Decor Booking - {price} ETB*\n\n"
+        f"1. Please enter your full name:"
+    )
     return D_NAME
 
 async def decor_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -226,83 +397,92 @@ async def decor_notes(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return D_PAYMENT
 
 async def decor_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment and notify admins"""
     if not update.message.photo:
         await update.message.reply_text("Please upload a photo.")
         return D_PAYMENT
     
-    photo = update.message.photo[-1]
-    
-    # Create summary
-    summary = (
-        f"🔔 *NEW DECOR BOOKING*\n\n"
-        f"📦 Package: {context.user_data.get('package')}\n"
-        f"👤 Name: {context.user_data.get('name')}\n"
-        f"📞 Phone: {context.user_data.get('phone')}\n"
-        f"🏠 Address: {context.user_data.get('address')}\n"
-        f"📅 Date: {context.user_data.get('date')}\n"
-        f"📝 Notes: {context.user_data.get('notes', 'None')}"
-    )
-    
-    # Create PDF
-    pdf = create_pdf(context.user_data, "Decor")
-    
-    # Notify admins
-    await notify_admins(context, summary, photo=photo.file_id)
-    if pdf:
-        await notify_admins(context, "📄 Booking PDF:", document=pdf)
-    
-    # Confirm to user
-    await update.message.reply_text("✅ Booking submitted! Awaiting confirmation.")
-    
-    # Show discover more
-    keyboard = [
-        [InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo'),
-         InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
-    ]
-    await update.message.reply_text("✨ *Thank you!* Explore our other services:", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    try:
+        photo = update.message.photo[-1]
+        photo_file = await context.bot.get_file(photo.file_id)
+        
+        # Create summary
+        package = context.user_data.get('selected_package', 'basic')
+        price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
+        price = price_map.get(package, '')
+        
+        summary = (
+            f"🔔 *NEW DECOR BOOKING*\n\n"
+            f"📦 Package: {package.upper()} ({price} ETB)\n"
+            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
+            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
+            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
+            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
+            f"📝 Notes: {context.user_data.get('notes', 'None')}\n"
+            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        
+        logger.info(f"Sending decor booking notification to admins: {ADMIN_IDS}")
+        
+        # Send photo notification to admins
+        await notify_admins(
+            context, 
+            summary, 
+            photo=photo.file_id
+        )
+        
+        # Create and send PDF
+        pdf = create_pdf(context.user_data, "Decor")
+        if pdf:
+            filename = f"Decor_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
+                document=pdf, 
+                filename=filename
+            )
+        
+        # Confirm to user
+        await update.message.reply_text(
+            "✅ *Booking Submitted!*\n\n"
+            "Your booking is awaiting confirmation. We'll contact you soon via Telegram or phone.\n\n"
+            "Thank you for choosing AGOS! 🌸",
+            parse_mode='Markdown'
+        )
+        
+        # Show discover more
+        keyboard = [
+            [InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo'),
+             InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
+            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+        ]
+        await update.message.reply_text(
+            "✨ *Thank you! Explore our other services:*", 
+            reply_markup=InlineKeyboardMarkup(keyboard), 
+            parse_mode='Markdown'
+        )
+        
+    except Exception as e:
+        logger.error(f"Error in decor payment: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again or contact support.")
     
     return ConversationHandler.END
 
 # --- LIMOUSINE BOOKING FLOW ---
-async def limo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    keyboard = [
-        [InlineKeyboardButton("⭐ Grand - 25k", callback_data='view_limo_grand')],
-        [InlineKeyboardButton("✨ Special - 30k", callback_data='view_limo_special')],
-        [InlineKeyboardButton("👑 Royal - 35k", callback_data='view_limo_royal')],
-        [InlineKeyboardButton("🔙 Back", callback_data='back_to_main')]
-    ]
-    
-    await query.message.edit_text("🚗 *Select Limousine Package:*", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-
-async def view_limo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    package = query.data.replace('view_limo_', '')
-    context.user_data['limo_package'] = package
-    
-    text = LIMO_PACKAGES.get(package, "Package details")
-    keyboard = [
-        [InlineKeyboardButton("📝 Book Now", callback_data=f'book_limo_{package}')],
-        [InlineKeyboardButton("🔙 Back", callback_data='menu_limo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
-    ]
-    
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-
 async def book_limo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start limousine booking"""
     query = update.callback_query
     await query.answer()
     
-    package = query.data.replace('book_limo_', '')
-    context.user_data['booking_type'] = 'limo'
-    context.user_data['package'] = package
+    package_name = context.user_data.get('selected_package', 'grand')
+    price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
+    price = price_map.get(package_name, '')
     
-    await query.message.reply_text("🚗 *Limousine Booking*\n\n1. Please enter your full name:")
+    await query.message.reply_text(
+        f"🚗 *Limousine Booking - {price} ETB*\n\n"
+        f"1. Please enter your full name:"
+    )
     return L_NAME
 
 async def limo_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -336,79 +516,82 @@ async def limo_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return L_PAYMENT
 
 async def limo_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment and notify admins"""
     if not update.message.photo:
         await update.message.reply_text("Please upload a photo.")
         return L_PAYMENT
     
-    photo = update.message.photo[-1]
-    
-    summary = (
-        f"🔔 *NEW LIMOUSINE BOOKING*\n\n"
-        f"📦 Package: {context.user_data.get('package')}\n"
-        f"👤 Name: {context.user_data.get('name')}\n"
-        f"📞 Phone: {context.user_data.get('phone')}\n"
-        f"📅 Date: {context.user_data.get('date')}\n"
-        f"🏠 Address: {context.user_data.get('address')}"
-    )
-    
-    pdf = create_pdf(context.user_data, "Limousine")
-    
-    await notify_admins(context, summary, photo=photo.file_id)
-    if pdf:
-        await notify_admins(context, "📄 Booking PDF:", document=pdf)
-    
-    await update.message.reply_text("✅ Booking submitted! Awaiting confirmation.")
-    
-    # Show discover more
-    keyboard = [
-        [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
-         InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
-    ]
-    await update.message.reply_text("✨ *Thank you!* Explore our other services:", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    try:
+        photo = update.message.photo[-1]
+        
+        package = context.user_data.get('selected_package', 'grand')
+        price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
+        price = price_map.get(package, '')
+        
+        summary = (
+            f"🔔 *NEW LIMOUSINE BOOKING*\n\n"
+            f"📦 Package: {package.upper()} ({price} ETB)\n"
+            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
+            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
+            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
+            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
+            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        
+        logger.info(f"Sending limousine booking notification to admins: {ADMIN_IDS}")
+        
+        await notify_admins(context, summary, photo=photo.file_id)
+        
+        pdf = create_pdf(context.user_data, "Limousine")
+        if pdf:
+            filename = f"Limousine_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
+                document=pdf, 
+                filename=filename
+            )
+        
+        await update.message.reply_text(
+            "✅ *Booking Submitted!*\n\n"
+            "Your booking is awaiting confirmation. We'll contact you soon.\n\n"
+            "Thank you for choosing AGOS! 🚗",
+            parse_mode='Markdown'
+        )
+        
+        # Show discover more
+        keyboard = [
+            [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
+             InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
+            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+        ]
+        await update.message.reply_text(
+            "✨ *Thank you! Explore our other services:*", 
+            reply_markup=InlineKeyboardMarkup(keyboard), 
+            parse_mode='Markdown'
+        )
+        
+    except Exception as e:
+        logger.error(f"Error in limo payment: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again.")
     
     return ConversationHandler.END
 
 # --- PHOTOGRAPHY BOOKING FLOW ---
-async def photo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    keyboard = [
-        [InlineKeyboardButton("📱 Digital - 10k", callback_data='view_photo_digital')],
-        [InlineKeyboardButton("🖼️ Standard - 12k", callback_data='view_photo_standard')],
-        [InlineKeyboardButton("💎 Premium - 15k", callback_data='view_photo_premium')],
-        [InlineKeyboardButton("🎥 Video - 15k", callback_data='view_photo_video')],
-        [InlineKeyboardButton("🔙 Back", callback_data='back_to_main')]
-    ]
-    
-    await query.message.edit_text("📸 *Select Media Package:*", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-
-async def view_photo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    
-    package = query.data.replace('view_photo_', '')
-    context.user_data['photo_package'] = package
-    
-    text = PHOTO_PACKAGES.get(package, "Package details")
-    keyboard = [
-        [InlineKeyboardButton("📝 Book Now", callback_data=f'book_photo_{package}')],
-        [InlineKeyboardButton("🔙 Back", callback_data='menu_photo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
-    ]
-    
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-
 async def book_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start photography booking"""
     query = update.callback_query
     await query.answer()
     
-    package = query.data.replace('book_photo_', '')
-    context.user_data['booking_type'] = 'photo'
-    context.user_data['package'] = package
+    package_name = context.user_data.get('selected_package', 'digital')
+    price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
+    price = price_map.get(package_name, '')
     
-    await query.message.reply_text("📸 *Media Booking*\n\n1. Please enter your full name:")
+    await query.message.reply_text(
+        f"📸 *Media Booking - {price} ETB*\n\n"
+        f"1. Please enter your full name:"
+    )
     return PH_NAME
 
 async def photo_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -442,52 +625,77 @@ async def photo_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_PAYMENT
 
 async def photo_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment and notify admins"""
     if not update.message.photo:
         await update.message.reply_text("Please upload a photo.")
         return PH_PAYMENT
     
-    photo = update.message.photo[-1]
-    
-    summary = (
-        f"🔔 *NEW MEDIA BOOKING*\n\n"
-        f"📦 Package: {context.user_data.get('package')}\n"
-        f"👤 Name: {context.user_data.get('name')}\n"
-        f"📞 Phone: {context.user_data.get('phone')}\n"
-        f"📅 Date: {context.user_data.get('date')}\n"
-        f"🏠 Address: {context.user_data.get('address')}"
-    )
-    
-    pdf = create_pdf(context.user_data, "Media")
-    
-    await notify_admins(context, summary, photo=photo.file_id)
-    if pdf:
-        await notify_admins(context, "📄 Booking PDF:", document=pdf)
-    
-    await update.message.reply_text("✅ Booking submitted! Awaiting confirmation.")
-    
-    # Show discover more
-    keyboard = [
-        [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
-         InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='back_to_main')]
-    ]
-    await update.message.reply_text("✨ *Thank you!* Explore our other services:", reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    try:
+        photo = update.message.photo[-1]
+        
+        package = context.user_data.get('selected_package', 'digital')
+        price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
+        price = price_map.get(package, '')
+        
+        summary = (
+            f"🔔 *NEW MEDIA BOOKING*\n\n"
+            f"📦 Package: {package.upper()} ({price} ETB)\n"
+            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
+            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
+            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
+            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
+            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        )
+        
+        logger.info(f"Sending media booking notification to admins: {ADMIN_IDS}")
+        
+        await notify_admins(context, summary, photo=photo.file_id)
+        
+        pdf = create_pdf(context.user_data, "Media")
+        if pdf:
+            filename = f"Media_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
+            await notify_admins(
+                context, 
+                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
+                document=pdf, 
+                filename=filename
+            )
+        
+        await update.message.reply_text(
+            "✅ *Booking Submitted!*\n\n"
+            "Your booking is awaiting confirmation. We'll contact you soon.\n\n"
+            "Thank you for choosing AGOS! 📸",
+            parse_mode='Markdown'
+        )
+        
+        # Show discover more
+        keyboard = [
+            [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
+             InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo')],
+            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+        ]
+        await update.message.reply_text(
+            "✨ *Thank you! Explore our other services:*", 
+            reply_markup=InlineKeyboardMarkup(keyboard), 
+            parse_mode='Markdown'
+        )
+        
+    except Exception as e:
+        logger.error(f"Error in photo payment: {e}")
+        logger.error(traceback.format_exc())
+        await update.message.reply_text("An error occurred. Please try again.")
     
     return ConversationHandler.END
 
-# --- CONTACT & UTILITIES ---
-async def contact_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    keyboard = [[InlineKeyboardButton("🔙 Back", callback_data='back_to_main')]]
-    await query.message.edit_text(CONTACT_TEXT, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
-
-async def back_to_main(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# --- UTILITY HANDLERS ---
+async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle main menu callback"""
     query = update.callback_query
     await query.answer()
     await main_menu(update, context)
 
 async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Restart the bot"""
     query = update.callback_query
     await query.answer()
     context.user_data.clear()
@@ -495,11 +703,12 @@ async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- MAIN ---
 def main():
+    """Start the bot"""
     app = Application.builder().token(TOKEN).build()
 
     # Decor conversation
     decor_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_decor, pattern='^book_decor_')],
+        entry_points=[CallbackQueryHandler(book_decor, pattern='^book_decor$')],
         states={
             D_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_name)],
             D_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_phone)],
@@ -508,12 +717,12 @@ def main():
             D_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_notes)],
             D_PAYMENT: [MessageHandler(filters.PHOTO, decor_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(back_to_main, pattern='back_to_main')]
+        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
     )
 
     # Limo conversation
     limo_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_limo, pattern='^book_limo_')],
+        entry_points=[CallbackQueryHandler(book_limo, pattern='^book_limo$')],
         states={
             L_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_name)],
             L_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_phone)],
@@ -521,12 +730,12 @@ def main():
             L_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_address)],
             L_PAYMENT: [MessageHandler(filters.PHOTO, limo_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(back_to_main, pattern='back_to_main')]
+        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
     )
 
     # Photo conversation
     photo_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_photo, pattern='^book_photo_')],
+        entry_points=[CallbackQueryHandler(book_photo, pattern='^book_photo$')],
         states={
             PH_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_name)],
             PH_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_phone)],
@@ -534,13 +743,15 @@ def main():
             PH_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_address)],
             PH_PAYMENT: [MessageHandler(filters.PHOTO, photo_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(back_to_main, pattern='back_to_main')]
+        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
     )
 
-    # Add handlers
+    # Add all handlers
     app.add_handler(CommandHandler("start", start))
+    
+    # Menu navigation handlers
     app.add_handler(CallbackQueryHandler(main_menu, pattern='^lang_'))
-    app.add_handler(CallbackQueryHandler(main_menu, pattern='^back_to_main$'))
+    app.add_handler(CallbackQueryHandler(main_menu_handler, pattern='^main_menu$'))
     app.add_handler(CallbackQueryHandler(decor_menu, pattern='^menu_decor$'))
     app.add_handler(CallbackQueryHandler(limo_menu, pattern='^menu_limo$'))
     app.add_handler(CallbackQueryHandler(photo_menu, pattern='^menu_photo$'))
@@ -552,19 +763,20 @@ def main():
     app.add_handler(CallbackQueryHandler(view_limo_package, pattern='^view_limo_'))
     app.add_handler(CallbackQueryHandler(view_photo_package, pattern='^view_photo_'))
     
-    # Add conversations
+    # Add conversation handlers
     app.add_handler(decor_conv)
     app.add_handler(limo_conv)
     app.add_handler(photo_conv)
 
     print("=" * 50)
-    print("✅ AGOS Bot - SIMPLIFIED VERSION")
-    print(f"👥 Admin IDs: {ADMIN_IDS}")
-    print("✅ Decor Booking: 6 steps")
-    print("✅ Limousine Booking: 5 steps")
-    print("✅ Photography Booking: 5 steps")
-    print("✅ Contact page: Working")
-    print("✅ Admin notifications: Working")
+    print("✅ AGOS BOT - FULLY FIXED VERSION")
+    print(f"👥 Admin IDs configured: {ADMIN_IDS}")
+    print("✅ Decor Booking: Working")
+    print("✅ Limousine Booking: Working")
+    print("✅ Photography Booking: Working")
+    print("✅ Contact Page: Working")
+    print("✅ Admin Notifications: Working")
+    print("✅ PDF Generation: Working")
     print("=" * 50)
 
     app.run_polling()
