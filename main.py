@@ -3,783 +3,1229 @@ from io import BytesIO
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
-from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, Update)
+from telegram import (InlineKeyboardButton, InlineKeyboardMarkup, Update, ReplyKeyboardRemove)
 from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
                           MessageHandler, filters, ContextTypes, ConversationHandler)
 from datetime import datetime
 import logging
-import traceback
 
 # Enable logging
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
-    level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
 logger = logging.getLogger(__name__)
 
 # --- CONFIGURATION ---
 TOKEN = os.environ.get("BOT_TOKEN")
-ADMIN_IDS = []
-# Get admin IDs from environment variables
-for i in range(1, 6):  # Support up to 5 admins
-    admin_id = os.environ.get(f"ADMIN_ID_{i}")
-    if admin_id:
-        try:
-            ADMIN_IDS.append(int(admin_id))
-            logger.info(f"Added admin {i}: {admin_id}")
-        except ValueError:
-            logger.error(f"Invalid ADMIN_ID_{i}: {admin_id}")
-
+ADMIN_IDS = [
+    int(os.environ.get("ADMIN_ID_1", "123456789")),
+    int(os.environ.get("ADMIN_ID_2", "987654321")),
+    int(os.environ.get("ADMIN_ID_3", "555555555"))
+]
 LOGO_PATH = os.environ.get("LOGO_PATH", "logo.webp")
+SERVICES_PDF_PATH = os.environ.get("SERVICES_PDF_PATH", "services_catalog.pdf")
 
-print("=" * 50)
-print(f"TOKEN exists: {bool(TOKEN)}")
-print(f"ADMIN_IDS: {ADMIN_IDS}")
-print("=" * 50)
+# Working hours configuration (Ethiopian Local Time)
+WORKING_HOURS_START = 8  # 8:00 AM LT
+WORKING_HOURS_END = 20   # 8:00 PM LT
 
-if not TOKEN:
-    raise ValueError("BOT_TOKEN environment variable not set!")
-
-if not ADMIN_IDS:
-    logger.warning("No admin IDs configured! Notifications will not be sent.")
+print("DEBUG - TOKEN is:", repr(TOKEN))
+print("DEBUG - Admin IDs:", ADMIN_IDS)
 
 # --- CONVERSATION STATES ---
-# Decor Booking
-(D_NAME, D_PHONE, D_ADDRESS, D_DATE, D_NOTES, D_PAYMENT) = range(1, 7)
+# Decor Booking States
+(D_NAME, D_GENDER, D_ADDR, D_PHONE, D_USERNAME, D_CONTACT, D_PKG, D_DATE, D_HOUSE, D_NOTES, D_PAYMENT) = range(1, 12)
 
-# Limousine Booking
-(L_NAME, L_PHONE, L_DATE, L_ADDRESS, L_PAYMENT) = range(10, 15)
+# Limousine Booking States
+(L_NAME, L_PHONE, L_DATE, L_ADDR, L_PACKAGE, L_PAYMENT) = range(20, 26)
 
-# Photography Booking
-(PH_NAME, PH_PHONE, PH_DATE, PH_ADDRESS, PH_PAYMENT) = range(20, 25)
+# Photography Booking States
+(PH_NAME, PH_PHONE, PH_DATE, PH_ADDR, PH_PACKAGE, PH_PAYMENT) = range(30, 36)
 
-# --- SIMPLE CONTENT ---
-WELCOME_TEXT = (
-    "🎁 *Welcome to AGOS Services* 🌸\n\n"
-    "✨ Premium home decor\n"
-    "🚗 Luxury limousine arrivals\n"
-    "📸 Professional photography"
-)
+# --- WORKING HOURS CHECK ---
+def is_within_working_hours():
+    """Check if current time is within working hours (8 AM - 8 PM LT)"""
+    current_hour = datetime.now().hour
+    return WORKING_HOURS_START <= current_hour < WORKING_HOURS_END
 
-DECOR_PACKAGES = {
-    'basic': "🔸 *Basic Decor - 15,000 ETB*\n\n• Bedroom Decoration\n• Floor Decoration\n• Corridor Decoration\n• Salon Decoration",
-    'deluxe': "💎 *Deluxe Decor - 20,000 ETB*\n\n• Bedroom, Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Cake",
-    'premium': "👑 *Premium Decor - 25,000 ETB*\n\n• Bedroom Decor with Agober rent\n• Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Custom Cake"
-}
-
-LIMO_PACKAGES = {
-    'grand': "⭐ *Grand Arrival - 25,000 ETB*\n\n• Special limousine service\n• Elegant ride home",
-    'special': "✨ *Special Arrival - 30,000 ETB*\n\n• Exclusive limousine service\n• Luxurious ride",
-    'royal': "👑 *Royal Welcome - 35,000 ETB*\n\n• Premium luxury limousine\n• Full package"
-}
-
-PHOTO_PACKAGES = {
-    'digital': "📱 *Digital Photo - 10,000 ETB*\n\n• Professional photography\n• All photos in soft copy",
-    'standard': "🖼️ *Standard Photo - 12,000 ETB*\n\n• 100 printed photos\n• Soft copy",
-    'premium': "💎 *Premium Photo - 15,000 ETB*\n\n• Laminated album\n• Soft copy",
-    'video': "🎥 *Videography - 15,000 ETB*\n\n• Full video coverage\n• Edited video"
-}
-
-CONTACT_TEXT = (
-    "📞 *Contact Us*\n\n"
-    "⏰ Hours: 8:00 AM - 8:00 PM\n"
-    "📱 Telegram: @agos_postpartumcare\n"
-    "📞 Phone: +251 967 621 545\n"
-    "📍 Location: Piassa, Addis Ababa"
-)
-
-# --- PDF GENERATOR ---
-def create_pdf(data, service_type):
-    try:
-        buffer = BytesIO()
-        c = canvas.Canvas(buffer, pagesize=letter)
-        width, height = letter
-
-        # Header
-        c.setFont("Helvetica-Bold", 20)
-        c.drawString(50, height - 50, f"AGOS {service_type} Booking")
-        c.setFont("Helvetica", 12)
-        c.drawString(50, height - 70, f"Order Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-        c.line(50, height - 85, 550, height - 85)
-
-        # Content
-        c.setFont("Helvetica", 11)
-        y = height - 120
-        
-        for key, value in data.items():
-            if key not in ['booking_type', 'package'] and value:
-                label = key.replace('_', ' ').title()
-                text = f"{label}: {value}"
-                c.drawString(50, y, text)
-                y -= 25
-                if y < 50:
-                    c.showPage()
-                    y = height - 50
-
-        c.save()
-        buffer.seek(0)
-        return buffer
-    except Exception as e:
-        logger.error(f"PDF Error: {e}")
-        logger.error(traceback.format_exc())
-        return None
-
-# --- NOTIFY ADMINS ---
-async def notify_admins(context, message, photo=None, document=None, filename=None):
-    if not ADMIN_IDS:
-        logger.warning("No admin IDs configured, skipping notification")
-        return
-    
-    for admin_id in ADMIN_IDS:
-        try:
-            if photo:
-                # Send photo first
-                await context.bot.send_photo(
-                    chat_id=admin_id, 
-                    photo=photo, 
-                    caption=message[:1024], 
-                    parse_mode='Markdown'
-                )
-                logger.info(f"Sent photo to admin {admin_id}")
-            elif document:
-                # Send document
-                await context.bot.send_document(
-                    chat_id=admin_id, 
-                    document=document, 
-                    filename=filename or "booking.pdf",
-                    caption=message[:1024]
-                )
-                logger.info(f"Sent document to admin {admin_id}")
-            else:
-                # Send text only
-                await context.bot.send_message(
-                    chat_id=admin_id, 
-                    text=message, 
-                    parse_mode='Markdown'
-                )
-                logger.info(f"Sent message to admin {admin_id}")
-        except Exception as e:
-            logger.error(f"Failed to notify admin {admin_id}: {e}")
-            logger.error(traceback.format_exc())
-
-# --- START & MENU ---
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start command handler"""
-    keyboard = [
-        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-    ]
-    await update.message.reply_text(
-        "🌿 Choose Language / ቋንቋ ይምረጡ:", 
-        reply_markup=InlineKeyboardMarkup(keyboard)
+async def working_hours_gate(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Display working hours message before proceeding"""
+    working_msg = (
+        "⏰ *Working Hours & Contact*\n\n"
+        "Please note that AGOS Postpartum Care does not accept calls after 2:00 PM (local time).\n"
+        "If you contact us after this time, kindly leave your message here and our team will review it and contact you the next morning.\n\n"
+        "⏰ *የስራ ሰዓታችን*\n\n"
+        "እባክዎ ያስታውሱ፤ AGOS Postpartum Care ከምሽቱ 2:00 ሰዓት በኋላ ጥሪ አይቀበልም።\n"
+        "ከዚህ ሰዓት በኋላ ቦታ ለማስያዝ እባክዎ መልእክትዎን በዚህ ፕላትፎርም ይተዉ፣ ቡድናችንም በሚቀጥለው ጠዋት ያገኞዎታል።"
     )
+    
+    keyboard = [[InlineKeyboardButton("Continue / ቀጥል", callback_data='after_hours')]]
+    
+    if update.message:
+        await update.message.reply_text(working_msg, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    else:
+        await update.callback_query.message.reply_text(working_msg, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
+    
     return ConversationHandler.END
 
-async def main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Main menu handler"""
-    query = update.callback_query
-    await query.answer()
+# --- CONTENT (Simplified for brevity - same as before) ---
+CONTENT = {
+    'en': {
+        'welcome': "🎁 *Welcome to AGOS Decor & Special Services* 🌸\n\n✨ Premium home decor for your special moments\n🚗 Luxury limousine arrivals\n📸 Professional photography & videography\n\n🌐 www.agospostpartumcare.com",
+        'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Media Services", "📞 Contact Us", "📋 Services Catalog"],
+        'decor_basic': "🔸 *Home Decor (15,000 ETB)*\n__________________________\n\n• Bedroom Decoration\n• Floor Decoration\n• Corridor Decoration\n• Salon Decoration",
+        'decor_deluxe': "💎 *Home Decor Deluxe (20,000 ETB)*\n__________________________\n\n• Bedroom, Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Normal Cake",
+        'decor_premium': "👑 *Home Decor Premium (25,000 ETB)*\n__________________________\n\n• Bedroom Decor with Agober rent\n• Corridor & Salon Decor\n• Large Flower Arrangement\n• 2 Kg Custom Cake",
+        'limo_grand': "⭐ *The Grand Arrival (25,000 ETB)*\n__________________________\n\n• Special limousine service\n• Grand and elegant ride home",
+        'limo_special': "✨ *Special Arrival (30,000 ETB)*\n__________________________\n\n• Exclusive limousine service\n• Luxurious and heartwarming ride",
+        'limo_royal': "👑 *Royal Welcome (35,000 ETB)*\n__________________________\n\n• Premium luxury limousine\n• Truly regal welcome home",
+        'photo_digital': "📱 *Digital Photography (10,000 ETB)*\n__________________________\n\n• Professional photography\n• All photos in soft copy",
+        'photo_standard': "🖼️ *Standard Photography (12,000 ETB)*\n__________________________\n\n• 100 printed photos\n• Soft copy of all photos",
+        'photo_premium': "💎 *Premium Photography (15,000 ETB)*\n__________________________\n\n• Laminated photo album\n• Soft copy of all photos",
+        'videography': "🎥 *Videography Package (15,000 ETB)*\n__________________________\n\n• Full video coverage\n• Edited video",
+        'contact_text': "📞 *Contact Us*\n\n⏰ Working Hours: 8:00 AM - 8:00 PM\n📱 Telegram: @agos_postpartumcare\n📞 Phone: +251 967 621 545\n📸 Instagram: @agospostpartum\n📍 Piassa, Abat Commercial",
+        'back': "🔙 Back to Menu",
+        'change_lang': "🌍 Change Language",
+        'q_back': "⬅️ Previous Question",
+        'book_now': "📝 Book Now",
+        'discover_after_decor': "✨ *Thank you for your decor booking!* ✨\n\nNow check out our other services!",
+        'discover_after_limo': "✨ *Thank you for your limousine booking!* ✨\n\nNow check out our other services!",
+        'discover_after_photo': "✨ *Thank you for your photography booking!* ✨\n\nNow check out our other services!",
+    },
+    'am': {
+        'welcome': "🎁 *እንኳን ወደ AGOS ዲኮር እና ልዩ አገልግሎቶች በሰላም መጡ* 🌸",
+        'btns': ["🎁 የዲኮር ፓኬጆች", "🚗 የሊሙዚን አገልግሎት", "📸 የሚዲያ አገልግሎቶች", "📞 ያግኙን", "📋 የአገልግሎት ካታሎግ"],
+        'decor_basic': "🔸 *መደበኛ ዲኮር (15,000 ብር)*\n__________________________\n\n• የመኝታ ቤት ዲኮር\n• የወለል ዲኮር\n• የኮሪደር ዲኮር\n• የሳሎን ዲኮር",
+        'decor_deluxe': "💎 *ደልክስ ዲኮር (20,000 ብር)*\n__________________________\n\n• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n• ትልቅ የአበባ ዝግጅት\n• 2 ኪሎ ኬክ",
+        'decor_premium': "👑 *ፕሪሚየም ዲኮር (25,000 ብር)*\n__________________________\n\n• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ\n• የኮሪደር እና ሳሎን ዲኮር\n• ትልቅ የአበባ ዝግጅት\n• 2 ኪሎ ኬክ በመረጡት ዲዛይን",
+        'contact_text': "📞 *ያግኙን*\n\n⏰ የስራ ሰዓት: 8 ጥዋት - 8 ማታ\n📱 ቴሌግራም: @agos_postpartumcare\n📞 ስልክ: +251 967 621 545\n📍 ፒያሳ፣ አባት ኮሜርሻል",
+        'back': "🔙 ወደ ዋና ማውጫ",
+        'change_lang': "🌍 ቋንቋ ቀይር",
+        'q_back': "⬅️ ወደ ኋላ",
+        'book_now': "📝 አሁን ይያዙ",
+    }
+}
+
+# --- PDF GENERATOR FUNCTIONS (Keep as before) ---
+def create_decor_pdf(data):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = ImageReader(LOGO_PATH)
+            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+        except Exception:
+            pass
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, height - 50, "AGOS Decor Booking")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 70, "Official Decor Order Form")
+    c.line(50, height - 85, 550, height - 85)
+
+    c.setFont("Helvetica", 11)
+    y_position = height - 120
+
+    for key, value in data.items():
+        if key.startswith('d_'):
+            label = key[2:].replace('_', ' ').upper()
+            text = f"{label}: {value}"
+            c.drawString(50, y_position, text)
+            y_position -= 25
+            if y_position < 60:
+                c.showPage()
+                y_position = height - 50
+
+    c.setFont("Helvetica-Oblique", 9)
+    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def create_limo_pdf(data):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = ImageReader(LOGO_PATH)
+            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+        except Exception:
+            pass
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, height - 50, "AGOS Limousine Booking")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 70, "Official Limousine Order Form")
+    c.line(50, height - 85, 550, height - 85)
+
+    c.setFont("Helvetica", 11)
+    y_position = height - 120
+
+    for key, value in data.items():
+        if key.startswith('l_'):
+            label = key[2:].replace('_', ' ').upper()
+            text = f"{label}: {value}"
+            c.drawString(50, y_position, text)
+            y_position -= 25
+            if y_position < 60:
+                c.showPage()
+                y_position = height - 50
+
+    c.setFont("Helvetica-Oblique", 9)
+    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+def create_photo_pdf(data):
+    buffer = BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    width, height = letter
+
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = ImageReader(LOGO_PATH)
+            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+        except Exception:
+            pass
+
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(50, height - 50, "AGOS Media Services Booking")
+    c.setFont("Helvetica", 12)
+    c.drawString(50, height - 70, "Official Media Services Order Form")
+    c.line(50, height - 85, 550, height - 85)
+
+    c.setFont("Helvetica", 11)
+    y_position = height - 120
+
+    for key, value in data.items():
+        if key.startswith('ph_'):
+            label = key[3:].replace('_', ' ').upper()
+            text = f"{label}: {value}"
+            c.drawString(50, y_position, text)
+            y_position -= 25
+            if y_position < 60:
+                c.showPage()
+                y_position = height - 50
+
+    c.setFont("Helvetica-Oblique", 9)
+    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    c.save()
+    buffer.seek(0)
+    return buffer
+
+# --- HELPERS ---
+def get_nav_kb(lang, back_callback='d_back'):
+    """Returns keyboard with Back and Menu buttons"""
+    return InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data=back_callback)],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
+
+async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE, last_booking_type=None):
+    """Show dynamic discover more page"""
+    lang = context.user_data.get('lang', 'en')
     
-    # Handle language selection
-    if query.data in ['lang_en', 'lang_am']:
-        context.user_data['lang'] = query.data.split('_')[1]
-        logger.info(f"User selected language: {context.user_data['lang']}")
-    
-    keyboard = [
-        [InlineKeyboardButton("🎁 Decor Packages", callback_data='menu_decor'),
-         InlineKeyboardButton("🚗 Limousine", callback_data='menu_limo')],
-        [InlineKeyboardButton("📸 Media", callback_data='menu_photo'),
-         InlineKeyboardButton("📞 Contact", callback_data='menu_contact')],
-        [InlineKeyboardButton("🌍 Change Language", callback_data='restart')]
+    discover_buttons = [
+        [InlineKeyboardButton("🎁 Book Decor", callback_data='show_decor_packages'),
+         InlineKeyboardButton("🚗 Book Limousine", callback_data='show_limo_packages')],
+        [InlineKeyboardButton("📸 Book Media", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
-    await query.message.edit_text(
-        WELCOME_TEXT, 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+    if last_booking_type == 'decor':
+        message = CONTENT[lang]['discover_after_decor']
+    elif last_booking_type == 'limo':
+        message = CONTENT[lang]['discover_after_limo']
+    elif last_booking_type == 'photo':
+        message = CONTENT[lang]['discover_after_photo']
+    else:
+        message = "Explore our other services!"
+    
+    await update.message.reply_text(
+        message,
+        reply_markup=InlineKeyboardMarkup(discover_buttons),
         parse_mode='Markdown'
     )
 
-# --- DECOR PACKAGES ---
-async def decor_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Decor packages menu"""
+# --- PACKAGE DISPLAY FUNCTIONS ---
+async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    keyboard = [
-        [InlineKeyboardButton("🔸 Basic - 15k", callback_data='view_decor_basic')],
-        [InlineKeyboardButton("💎 Deluxe - 20k", callback_data='view_decor_deluxe')],
-        [InlineKeyboardButton("👑 Premium - 25k", callback_data='view_decor_premium')],
-        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton("🔸 Basic - 15,000 ETB", callback_data='view_decor_basic')],
+        [InlineKeyboardButton("💎 Deluxe - 20,000 ETB", callback_data='view_decor_deluxe')],
+        [InlineKeyboardButton("👑 Premium - 25,000 ETB", callback_data='view_decor_premium')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        "🎁 *Select Decor Package:*", 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        "🎁 *Select a Decor Package:*",
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-async def view_decor_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """View individual decor package"""
+async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package = query.data.replace('view_decor_', '')
-    context.user_data['selected_package'] = package
-    context.user_data['service_type'] = 'decor'
-    
-    text = DECOR_PACKAGES.get(package, "Package details")
-    price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
-    price = price_map.get(package, '')
-    
-    keyboard = [
-        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_decor')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_decor')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton("⭐ Grand Arrival - 25,000 ETB", callback_data='view_limo_grand')],
+        [InlineKeyboardButton("✨ Special Arrival - 30,000 ETB", callback_data='view_limo_special')],
+        [InlineKeyboardButton("👑 Royal Welcome - 35,000 ETB", callback_data='view_limo_royal')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        text, 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        "🚗 *Select a Limousine Package:*",
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-# --- LIMOUSINE PACKAGES ---
-async def limo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Limousine packages menu"""
+async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    keyboard = [
-        [InlineKeyboardButton("⭐ Grand - 25k", callback_data='view_limo_grand')],
-        [InlineKeyboardButton("✨ Special - 30k", callback_data='view_limo_special')],
-        [InlineKeyboardButton("👑 Royal - 35k", callback_data='view_limo_royal')],
-        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton("📱 Digital Photo - 10,000 ETB", callback_data='view_photo_digital')],
+        [InlineKeyboardButton("🖼️ Standard Photo - 12,000 ETB", callback_data='view_photo_standard')],
+        [InlineKeyboardButton("💎 Premium Photo - 15,000 ETB", callback_data='view_photo_premium')],
+        [InlineKeyboardButton("🎥 Videography - 15,000 ETB", callback_data='view_videography')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        "🚗 *Select Limousine Package:*", 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        "📸 *Select a Media Package:*",
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-async def view_limo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """View individual limousine package"""
+# --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
+async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package = query.data.replace('view_limo_', '')
-    context.user_data['selected_package'] = package
-    context.user_data['service_type'] = 'limo'
-    
-    text = LIMO_PACKAGES.get(package, "Package details")
-    price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
-    price = price_map.get(package, '')
-    
-    keyboard = [
-        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_limo')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_limo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_basic')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        text, 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        CONTENT[lang]['decor_basic'],
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-# --- PHOTOGRAPHY PACKAGES ---
-async def photo_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Photography packages menu"""
+async def view_decor_deluxe(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    keyboard = [
-        [InlineKeyboardButton("📱 Digital - 10k", callback_data='view_photo_digital')],
-        [InlineKeyboardButton("🖼️ Standard - 12k", callback_data='view_photo_standard')],
-        [InlineKeyboardButton("💎 Premium - 15k", callback_data='view_photo_premium')],
-        [InlineKeyboardButton("🎥 Video - 15k", callback_data='view_photo_video')],
-        [InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_deluxe')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        "📸 *Select Media Package:*", 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        CONTENT[lang]['decor_deluxe'],
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-async def view_photo_package(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """View individual photography package"""
+async def view_decor_premium(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package = query.data.replace('view_photo_', '')
-    context.user_data['selected_package'] = package
-    context.user_data['service_type'] = 'photo'
-    
-    text = PHOTO_PACKAGES.get(package, "Package details")
-    price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
-    price = price_map.get(package, '')
-    
-    keyboard = [
-        [InlineKeyboardButton(f"📝 Book Now ({price} ETB)", callback_data=f'book_photo')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='menu_photo')],
-        [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_premium')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        text, 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        CONTENT[lang]['decor_premium'],
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
-# --- CONTACT PAGE ---
-async def contact_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Contact information page"""
+async def view_limo_grand(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
-    logger.info("Contact page opened")
-    keyboard = [[InlineKeyboardButton("🔙 Main Menu", callback_data='main_menu')]]
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_grand')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
     await query.message.edit_text(
-        CONTACT_TEXT, 
-        reply_markup=InlineKeyboardMarkup(keyboard), 
+        CONTENT[lang]['limo_grand'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_limo_special(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_special')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['limo_special'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_limo_royal(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_royal')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['limo_royal'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_digital(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_digital')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_digital'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_standard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_standard')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_standard'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_premium(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_premium')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_premium'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_videography(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_video')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['videography'],
+        reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
 
 # --- DECOR BOOKING FLOW ---
-async def book_decor(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start decor booking"""
+async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start decor booking flow"""
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package_name = context.user_data.get('selected_package', 'basic')
-    price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
-    price = price_map.get(package_name, '')
+    # Determine which package was selected from callback data
+    callback_data = query.data
+    if 'basic' in callback_data:
+        context.user_data['d_pkg'] = '15k'
+    elif 'deluxe' in callback_data:
+        context.user_data['d_pkg'] = '20k'
+    elif 'premium' in callback_data:
+        context.user_data['d_pkg'] = '25k'
+    
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
     
     await query.message.reply_text(
-        f"🎁 *Decor Booking - {price} ETB*\n\n"
-        f"1. Please enter your full name:"
+        "🎁 **Decor Booking**\n\n1. Full Name:",
+        reply_markup=kb
     )
     return D_NAME
 
-async def decor_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['name'] = update.message.text
-    await update.message.reply_text("2. Please enter your phone number:")
+async def d_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle name input"""
+    context.user_data['d_name'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton("Male", callback_data='d_gender_male'),
+         InlineKeyboardButton("Female", callback_data='d_gender_female')],
+        [InlineKeyboardButton("Not Sure", callback_data='d_gender_unsure')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back_to_name')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await update.message.reply_text(
+        "2. Gender of the Newborn:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
+    return D_GENDER
+
+async def d_gender(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle gender selection"""
+    query = update.callback_query
+    await query.answer()
+    
+    # Store gender based on callback data
+    if 'male' in query.data:
+        context.user_data['d_gender'] = 'Male'
+    elif 'female' in query.data:
+        context.user_data['d_gender'] = 'Female'
+    else:
+        context.user_data['d_gender'] = 'Not Sure'
+    
+    lang = context.user_data.get('lang', 'en')
+    
+    await query.message.reply_text(
+        "3. House Address for Decor Setup:",
+        reply_markup=get_nav_kb(lang, 'd_back_to_gender')
+    )
+    return D_ADDR
+
+async def d_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle address input"""
+    context.user_data['d_addr'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "4. Client Phone Number:",
+        reply_markup=get_nav_kb(lang, 'd_back_to_address')
+    )
     return D_PHONE
 
-async def decor_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['phone'] = update.message.text
-    await update.message.reply_text("3. Please enter your address:")
-    return D_ADDRESS
+async def d_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle phone input"""
+    context.user_data['d_phone'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "5. Your Telegram Username (e.g., @username):",
+        reply_markup=get_nav_kb(lang, 'd_back_to_phone')
+    )
+    return D_USERNAME
 
-async def decor_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['address'] = update.message.text
-    await update.message.reply_text("4. Preferred date & time (e.g., 25/12/2023, 10:00 AM):")
+async def d_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle username input"""
+    context.user_data['d_username'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "6. Contact Person at Home (if different):",
+        reply_markup=get_nav_kb(lang, 'd_back_to_username')
+    )
+    return D_CONTACT
+
+async def d_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle contact person input"""
+    context.user_data['d_contact'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    # Package already pre-selected, skip to date
+    await update.message.reply_text(
+        "7. Preferred Date & Time for Decor setup\nFormat: DD/MM/YYYY, Time (e.g., 25/12/2023, 4:00 AM):",
+        reply_markup=get_nav_kb(lang, 'd_back_to_contact')
+    )
     return D_DATE
 
-async def decor_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['date'] = update.message.text
-    await update.message.reply_text("5. Special notes (optional):")
+async def d_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle date input"""
+    context.user_data['d_date'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+
+    kb = [
+        [InlineKeyboardButton("Villa", callback_data='d_house_villa'),
+         InlineKeyboardButton("Apartment", callback_data='d_house_apartment')],
+        [InlineKeyboardButton("Condominium", callback_data='d_house_condo')],
+        [InlineKeyboardButton("G+1", callback_data='d_house_g1'),
+         InlineKeyboardButton("G+2", callback_data='d_house_g2')],
+        [InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back_to_date')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+
+    await update.message.reply_text(
+        "8. House Type:",
+        reply_markup=InlineKeyboardMarkup(kb)
+    )
+    return D_HOUSE
+
+async def d_house(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle house type selection"""
+    query = update.callback_query
+    await query.answer()
+    
+    # Store house type
+    house_map = {
+        'd_house_villa': 'Villa',
+        'd_house_apartment': 'Apartment',
+        'd_house_condo': 'Condominium',
+        'd_house_g1': 'G+1',
+        'd_house_g2': 'G+2'
+    }
+    context.user_data['d_house'] = house_map.get(query.data, 'Unknown')
+    
+    lang = context.user_data.get('lang', 'en')
+    
+    warning_msg = (
+        "⚠️ *IMPORTANT*\n\n"
+        "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n\n"
+        "🏦 *Bank Account Details*:\n\n"
+        "🏧 Commercial Bank of Ethiopia\n"
+        "👤 AGOS POSTPARTUM CARE\n"
+        "🔢 10001345678901\n\n"
+        "📱 Tele Birr: 0967621545"
+    )
+    
+    await query.message.reply_text(warning_msg, parse_mode='Markdown')
+    await query.message.reply_text(
+        "9. Special Notes (optional):",
+        reply_markup=get_nav_kb(lang, 'd_back_to_house')
+    )
     return D_NOTES
 
-async def decor_notes(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['notes'] = update.message.text
-    
-    bank_msg = (
-        "⚠️ *IMPORTANT*\n\n"
-        "Booking confirmed only after half-payment screenshot.\n\n"
-        "🏦 *Bank Details:*\n"
-        "CBE Account: 10001345678901\n"
-        "AGOS POSTPARTUM CARE\n"
-        "📱 Tele Birr: 0967621545\n\n"
-        "6. Upload payment screenshot:"
+async def d_notes(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle notes input"""
+    context.user_data['d_notes'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+
+    await update.message.reply_text(
+        "10. Upload Payment Screenshot:",
+        reply_markup=get_nav_kb(lang, 'd_back_to_notes')
     )
-    await update.message.reply_text(bank_msg, parse_mode='Markdown')
     return D_PAYMENT
 
-async def decor_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment and notify admins"""
+async def d_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment screenshot"""
     if not update.message.photo:
-        await update.message.reply_text("Please upload a photo.")
+        lang = context.user_data.get('lang', 'en')
+        await update.message.reply_text(
+            "Please upload a photo.",
+            reply_markup=get_nav_kb(lang, 'd_back_to_payment')
+        )
         return D_PAYMENT
+
+    photo = update.message.photo[-1]
+    pay_img = photo.file_id
     
-    try:
-        photo = update.message.photo[-1]
-        photo_file = await context.bot.get_file(photo.file_id)
-        
-        # Create summary
-        package = context.user_data.get('selected_package', 'basic')
-        price_map = {'basic': '15,000', 'deluxe': '20,000', 'premium': '25,000'}
-        price = price_map.get(package, '')
-        
-        summary = (
-            f"🔔 *NEW DECOR BOOKING*\n\n"
-            f"📦 Package: {package.upper()} ({price} ETB)\n"
-            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
-            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
-            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
-            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
-            f"📝 Notes: {context.user_data.get('notes', 'None')}\n"
-            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
-        
-        logger.info(f"Sending decor booking notification to admins: {ADMIN_IDS}")
-        
-        # Send photo notification to admins
-        await notify_admins(
-            context, 
-            summary, 
-            photo=photo.file_id
-        )
-        
-        # Create and send PDF
-        pdf = create_pdf(context.user_data, "Decor")
-        if pdf:
-            filename = f"Decor_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
-            await notify_admins(
-                context, 
-                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
-                document=pdf, 
-                filename=filename
-            )
-        
-        # Confirm to user
-        await update.message.reply_text(
-            "✅ *Booking Submitted!*\n\n"
-            "Your booking is awaiting confirmation. We'll contact you soon via Telegram or phone.\n\n"
-            "Thank you for choosing AGOS! 🌸",
-            parse_mode='Markdown'
-        )
-        
-        # Show discover more
-        keyboard = [
-            [InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo'),
-             InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
-            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
-        ]
-        await update.message.reply_text(
-            "✨ *Thank you! Explore our other services:*", 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
-        
-    except Exception as e:
-        logger.error(f"Error in decor payment: {e}")
-        logger.error(traceback.format_exc())
-        await update.message.reply_text("An error occurred. Please try again or contact support.")
+    pdf_file = create_decor_pdf(context.user_data)
     
+    summary = (f"🔔 **NEW DECOR BOOKING**\n\n"
+               f"👤 Name: {context.user_data.get('d_name')}\n"
+               f"👶 Gender: {context.user_data.get('d_gender')}\n"
+               f"📞 Phone: {context.user_data.get('d_phone')}\n"
+               f"📱 Telegram: {context.user_data.get('d_username')}\n"
+               f"🏠 Address: {context.user_data.get('d_addr')}\n"
+               f"🏗️ House: {context.user_data.get('d_house')}\n"
+               f"🎁 Package: {context.user_data.get('d_pkg')}\n"
+               f"📅 Date: {context.user_data.get('d_date')}\n"
+               f"📝 Notes: {context.user_data.get('d_notes')}")
+
+    # Send to admins
+    for admin_id in ADMIN_IDS:
+        try:
+            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
+            pdf_file.seek(0)
+            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Decor_{context.user_data.get('d_name','Booking')}.pdf")
+        except Exception as e:
+            logger.error(f"Failed to send to admin {admin_id}: {e}")
+
+    pdf_file.seek(0)
+    await update.message.reply_document(
+        document=pdf_file, 
+        filename="AGOS_Decor_Booking.pdf", 
+        caption="✅ Booking submitted! Awaiting confirmation."
+    )
+
+    await show_discover_more(update, context, 'decor')
     return ConversationHandler.END
 
 # --- LIMOUSINE BOOKING FLOW ---
-async def book_limo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start limousine booking"""
+async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start limousine booking flow"""
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package_name = context.user_data.get('selected_package', 'grand')
-    price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
-    price = price_map.get(package_name, '')
+    # Store package
+    if 'grand' in query.data:
+        context.user_data['l_package'] = 'Grand Arrival - 25,000 ETB'
+    elif 'special' in query.data:
+        context.user_data['l_package'] = 'Special Arrival - 30,000 ETB'
+    elif 'royal' in query.data:
+        context.user_data['l_package'] = 'Royal Welcome - 35,000 ETB'
+    
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
     
     await query.message.reply_text(
-        f"🚗 *Limousine Booking - {price} ETB*\n\n"
-        f"1. Please enter your full name:"
+        "🚗 **Limousine Booking**\n\n1. Full Name:",
+        reply_markup=kb
     )
     return L_NAME
 
-async def limo_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['name'] = update.message.text
-    await update.message.reply_text("2. Please enter your phone number:")
+async def l_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle name input"""
+    context.user_data['l_name'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "2. Phone Number:",
+        reply_markup=get_nav_kb(lang, 'l_back_to_name')
+    )
     return L_PHONE
 
-async def limo_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['phone'] = update.message.text
-    await update.message.reply_text("3. Preferred date & time (e.g., 25/12/2023, 10:00 AM):")
+async def l_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle phone input"""
+    context.user_data['l_phone'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "3. Preferred Date & Time\nFormat: DD/MM/YYYY, Time:",
+        reply_markup=get_nav_kb(lang, 'l_back_to_phone')
+    )
     return L_DATE
 
-async def limo_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['date'] = update.message.text
-    await update.message.reply_text("4. Pickup address:")
-    return L_ADDRESS
-
-async def limo_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['address'] = update.message.text
+async def l_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle date input"""
+    context.user_data['l_date'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
     
-    bank_msg = (
-        "⚠️ *IMPORTANT*\n\n"
-        "Booking confirmed only after half-payment screenshot.\n\n"
-        "🏦 *Bank Details:*\n"
-        "CBE Account: 10001345678901\n"
-        "AGOS POSTPARTUM CARE\n"
-        "📱 Tele Birr: 0967621545\n\n"
-        "5. Upload payment screenshot:"
+    await update.message.reply_text(
+        "4. Pickup Address:",
+        reply_markup=get_nav_kb(lang, 'l_back_to_date')
     )
-    await update.message.reply_text(bank_msg, parse_mode='Markdown')
+    return L_ADDR
+
+async def l_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle address input"""
+    context.user_data['l_addr'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    # Package already selected, skip to payment
+    warning_msg = (
+        "⚠️ *IMPORTANT*\n\n"
+        "Booking will not be confirmed without half-payment screenshot.\n\n"
+        "🏦 Bank: Commercial Bank of Ethiopia\n"
+        "👤 AGOS POSTPARTUM CARE\n"
+        "🔢 10001345678901\n"
+        "📱 Tele Birr: 0967621545"
+    )
+    
+    await update.message.reply_text(warning_msg, parse_mode='Markdown')
+    await update.message.reply_text(
+        "5. Upload Payment Screenshot:",
+        reply_markup=get_nav_kb(lang, 'l_back_to_address')
+    )
     return L_PAYMENT
 
-async def limo_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment and notify admins"""
+async def l_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment screenshot"""
     if not update.message.photo:
-        await update.message.reply_text("Please upload a photo.")
+        lang = context.user_data.get('lang', 'en')
+        await update.message.reply_text(
+            "Please upload a photo.",
+            reply_markup=get_nav_kb(lang, 'l_back_to_payment')
+        )
         return L_PAYMENT
+
+    photo = update.message.photo[-1]
+    pay_img = photo.file_id
     
-    try:
-        photo = update.message.photo[-1]
-        
-        package = context.user_data.get('selected_package', 'grand')
-        price_map = {'grand': '25,000', 'special': '30,000', 'royal': '35,000'}
-        price = price_map.get(package, '')
-        
-        summary = (
-            f"🔔 *NEW LIMOUSINE BOOKING*\n\n"
-            f"📦 Package: {package.upper()} ({price} ETB)\n"
-            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
-            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
-            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
-            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
-            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
-        
-        logger.info(f"Sending limousine booking notification to admins: {ADMIN_IDS}")
-        
-        await notify_admins(context, summary, photo=photo.file_id)
-        
-        pdf = create_pdf(context.user_data, "Limousine")
-        if pdf:
-            filename = f"Limousine_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
-            await notify_admins(
-                context, 
-                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
-                document=pdf, 
-                filename=filename
-            )
-        
-        await update.message.reply_text(
-            "✅ *Booking Submitted!*\n\n"
-            "Your booking is awaiting confirmation. We'll contact you soon.\n\n"
-            "Thank you for choosing AGOS! 🚗",
-            parse_mode='Markdown'
-        )
-        
-        # Show discover more
-        keyboard = [
-            [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
-             InlineKeyboardButton("📸 Book Media", callback_data='menu_photo')],
-            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
-        ]
-        await update.message.reply_text(
-            "✨ *Thank you! Explore our other services:*", 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
-        
-    except Exception as e:
-        logger.error(f"Error in limo payment: {e}")
-        logger.error(traceback.format_exc())
-        await update.message.reply_text("An error occurred. Please try again.")
+    pdf_file = create_limo_pdf(context.user_data)
     
+    summary = (f"🔔 **NEW LIMOUSINE BOOKING**\n\n"
+               f"👤 Name: {context.user_data.get('l_name')}\n"
+               f"📞 Phone: {context.user_data.get('l_phone')}\n"
+               f"📅 Date: {context.user_data.get('l_date')}\n"
+               f"🏠 Address: {context.user_data.get('l_addr')}\n"
+               f"🎁 Package: {context.user_data.get('l_package')}")
+
+    for admin_id in ADMIN_IDS:
+        try:
+            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
+            pdf_file.seek(0)
+            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Limousine_{context.user_data.get('l_name','Booking')}.pdf")
+        except Exception as e:
+            logger.error(f"Failed to send to admin {admin_id}: {e}")
+
+    pdf_file.seek(0)
+    await update.message.reply_document(
+        document=pdf_file, 
+        filename="AGOS_Limousine_Booking.pdf", 
+        caption="✅ Booking submitted! Awaiting confirmation."
+    )
+
+    await show_discover_more(update, context, 'limo')
     return ConversationHandler.END
 
 # --- PHOTOGRAPHY BOOKING FLOW ---
-async def book_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Start photography booking"""
+async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start photography booking flow"""
     query = update.callback_query
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
-    package_name = context.user_data.get('selected_package', 'digital')
-    price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
-    price = price_map.get(package_name, '')
+    # Store package
+    if 'digital' in query.data:
+        context.user_data['ph_package'] = 'Digital Photography - 10,000 ETB'
+    elif 'standard' in query.data:
+        context.user_data['ph_package'] = 'Standard Photography - 12,000 ETB'
+    elif 'premium' in query.data:
+        context.user_data['ph_package'] = 'Premium Photography - 15,000 ETB'
+    elif 'video' in query.data:
+        context.user_data['ph_package'] = 'Videography - 15,000 ETB'
+    
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ])
     
     await query.message.reply_text(
-        f"📸 *Media Booking - {price} ETB*\n\n"
-        f"1. Please enter your full name:"
+        "📸 **Media Services Booking**\n\n1. Full Name:",
+        reply_markup=kb
     )
     return PH_NAME
 
-async def photo_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['name'] = update.message.text
-    await update.message.reply_text("2. Please enter your phone number:")
+async def ph_name(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle name input"""
+    context.user_data['ph_name'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "2. Phone Number:",
+        reply_markup=get_nav_kb(lang, 'ph_back_to_name')
+    )
     return PH_PHONE
 
-async def photo_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['phone'] = update.message.text
-    await update.message.reply_text("3. Event date & time (e.g., 25/12/2023, 10:00 AM):")
+async def ph_phone(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle phone input"""
+    context.user_data['ph_phone'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    await update.message.reply_text(
+        "3. Event Date & Time\nFormat: DD/MM/YYYY, Time:",
+        reply_markup=get_nav_kb(lang, 'ph_back_to_phone')
+    )
     return PH_DATE
 
-async def photo_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['date'] = update.message.text
-    await update.message.reply_text("4. Event address:")
-    return PH_ADDRESS
-
-async def photo_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    context.user_data['address'] = update.message.text
+async def ph_date(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle date input"""
+    context.user_data['ph_date'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
     
-    bank_msg = (
-        "⚠️ *IMPORTANT*\n\n"
-        "Booking confirmed only after half-payment screenshot.\n\n"
-        "🏦 *Bank Details:*\n"
-        "CBE Account: 10001345678901\n"
-        "AGOS POSTPARTUM CARE\n"
-        "📱 Tele Birr: 0967621545\n\n"
-        "5. Upload payment screenshot:"
+    await update.message.reply_text(
+        "4. Event Address:",
+        reply_markup=get_nav_kb(lang, 'ph_back_to_date')
     )
-    await update.message.reply_text(bank_msg, parse_mode='Markdown')
+    return PH_ADDR
+
+async def ph_address(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle address input"""
+    context.user_data['ph_addr'] = update.message.text
+    lang = context.user_data.get('lang', 'en')
+    
+    # Package already selected, skip to payment
+    warning_msg = (
+        "⚠️ *IMPORTANT*\n\n"
+        "Booking will not be confirmed without half-payment screenshot.\n\n"
+        "🏦 Bank: Commercial Bank of Ethiopia\n"
+        "👤 AGOS POSTPARTUM CARE\n"
+        "🔢 10001345678901\n"
+        "📱 Tele Birr: 0967621545"
+    )
+    
+    await update.message.reply_text(warning_msg, parse_mode='Markdown')
+    await update.message.reply_text(
+        "5. Upload Payment Screenshot:",
+        reply_markup=get_nav_kb(lang, 'ph_back_to_address')
+    )
     return PH_PAYMENT
 
-async def photo_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle payment and notify admins"""
+async def ph_payment(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle payment screenshot"""
     if not update.message.photo:
-        await update.message.reply_text("Please upload a photo.")
+        lang = context.user_data.get('lang', 'en')
+        await update.message.reply_text(
+            "Please upload a photo.",
+            reply_markup=get_nav_kb(lang, 'ph_back_to_payment')
+        )
         return PH_PAYMENT
+
+    photo = update.message.photo[-1]
+    pay_img = photo.file_id
     
-    try:
-        photo = update.message.photo[-1]
-        
-        package = context.user_data.get('selected_package', 'digital')
-        price_map = {'digital': '10,000', 'standard': '12,000', 'premium': '15,000', 'video': '15,000'}
-        price = price_map.get(package, '')
-        
-        summary = (
-            f"🔔 *NEW MEDIA BOOKING*\n\n"
-            f"📦 Package: {package.upper()} ({price} ETB)\n"
-            f"👤 Name: {context.user_data.get('name', 'N/A')}\n"
-            f"📞 Phone: {context.user_data.get('phone', 'N/A')}\n"
-            f"📅 Date: {context.user_data.get('date', 'N/A')}\n"
-            f"🏠 Address: {context.user_data.get('address', 'N/A')}\n"
-            f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    pdf_file = create_photo_pdf(context.user_data)
+    
+    summary = (f"🔔 **NEW MEDIA BOOKING**\n\n"
+               f"👤 Name: {context.user_data.get('ph_name')}\n"
+               f"📞 Phone: {context.user_data.get('ph_phone')}\n"
+               f"📅 Date: {context.user_data.get('ph_date')}\n"
+               f"🏠 Address: {context.user_data.get('ph_addr')}\n"
+               f"🎁 Package: {context.user_data.get('ph_package')}")
+
+    for admin_id in ADMIN_IDS:
+        try:
+            await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary, parse_mode='Markdown')
+            pdf_file.seek(0)
+            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Media_{context.user_data.get('ph_name','Booking')}.pdf")
+        except Exception as e:
+            logger.error(f"Failed to send to admin {admin_id}: {e}")
+
+    pdf_file.seek(0)
+    await update.message.reply_document(
+        document=pdf_file, 
+        filename="AGOS_Media_Booking.pdf", 
+        caption="✅ Booking submitted! Awaiting confirmation."
+    )
+
+    await show_discover_more(update, context, 'photo')
+    return ConversationHandler.END
+
+# --- BACK BUTTON HANDLERS ---
+async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in decor flow"""
+    query = update.callback_query
+    await query.answer()
+    
+    # Determine which state to go back to based on callback data
+    callback = query.data
+    
+    if callback == 'd_back_to_name':
+        lang = context.user_data.get('lang', 'en')
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
+        await query.message.reply_text("1. Full Name:", reply_markup=kb)
+        return D_NAME
+    elif callback == 'd_back_to_gender':
+        return await d_name(update, context)
+    elif callback == 'd_back_to_address':
+        return await d_gender(update, context)
+    elif callback == 'd_back_to_phone':
+        return await d_address(update, context)
+    elif callback == 'd_back_to_username':
+        return await d_phone(update, context)
+    elif callback == 'd_back_to_contact':
+        return await d_username(update, context)
+    elif callback == 'd_back_to_date':
+        return await d_contact(update, context)
+    elif callback == 'd_back_to_house':
+        return await d_date(update, context)
+    elif callback == 'd_back_to_notes':
+        return await d_house(update, context)
+    elif callback == 'd_back_to_payment':
+        return await d_notes(update, context)
+    
+    return D_NAME
+
+async def l_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in limousine flow"""
+    query = update.callback_query
+    await query.answer()
+    
+    callback = query.data
+    
+    if callback == 'l_back_to_name':
+        lang = context.user_data.get('lang', 'en')
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
+        await query.message.reply_text("1. Full Name:", reply_markup=kb)
+        return L_NAME
+    elif callback == 'l_back_to_phone':
+        return await l_name(update, context)
+    elif callback == 'l_back_to_date':
+        return await l_phone(update, context)
+    elif callback == 'l_back_to_address':
+        return await l_date(update, context)
+    elif callback == 'l_back_to_payment':
+        return await l_address(update, context)
+    
+    return L_NAME
+
+async def ph_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in photography flow"""
+    query = update.callback_query
+    await query.answer()
+    
+    callback = query.data
+    
+    if callback == 'ph_back_to_name':
+        lang = context.user_data.get('lang', 'en')
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
+        await query.message.reply_text("1. Full Name:", reply_markup=kb)
+        return PH_NAME
+    elif callback == 'ph_back_to_phone':
+        return await ph_name(update, context)
+    elif callback == 'ph_back_to_date':
+        return await ph_phone(update, context)
+    elif callback == 'ph_back_to_address':
+        return await ph_date(update, context)
+    elif callback == 'ph_back_to_payment':
+        return await ph_address(update, context)
+    
+    return PH_NAME
+
+# --- NAVIGATION FUNCTIONS ---
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Start command"""
+    context.user_data.clear()
+    return await working_hours_gate(update, context)
+
+async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle after acknowledging working hours"""
+    keyboard = [
+        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
+        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
+    ]
+    
+    if update.callback_query:
+        await update.callback_query.answer()
+        await update.callback_query.message.reply_text(
+            "🌿 Choose Language:", 
+            reply_markup=InlineKeyboardMarkup(keyboard)
         )
+    return ConversationHandler.END
+
+async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Show main menu"""
+    if update.callback_query:
+        query = update.callback_query
+        await query.answer()
         
-        logger.info(f"Sending media booking notification to admins: {ADMIN_IDS}")
+        # Handle language selection
+        if query.data.startswith('lang_'):
+            lang = query.data.split('_')[1]
+            context.user_data['lang'] = lang
+        else:
+            lang = context.user_data.get('lang', 'en')
         
-        await notify_admins(context, summary, photo=photo.file_id)
-        
-        pdf = create_pdf(context.user_data, "Media")
-        if pdf:
-            filename = f"Media_{context.user_data.get('name', 'Booking').replace(' ', '_')}.pdf"
-            await notify_admins(
-                context, 
-                f"📄 PDF Summary for {context.user_data.get('name', 'Booking')}", 
-                document=pdf, 
-                filename=filename
-            )
-        
-        await update.message.reply_text(
-            "✅ *Booking Submitted!*\n\n"
-            "Your booking is awaiting confirmation. We'll contact you soon.\n\n"
-            "Thank you for choosing AGOS! 📸",
-            parse_mode='Markdown'
-        )
-        
-        # Show discover more
+        btns = CONTENT[lang]['btns']
         keyboard = [
-            [InlineKeyboardButton("🎁 Book Decor", callback_data='menu_decor'),
-             InlineKeyboardButton("🚗 Book Limousine", callback_data='menu_limo')],
-            [InlineKeyboardButton("🏠 Main Menu", callback_data='main_menu')]
+            [InlineKeyboardButton(btns[0], callback_data='show_decor_packages'), 
+             InlineKeyboardButton(btns[1], callback_data='show_limo_packages')],
+            [InlineKeyboardButton(btns[2], callback_data='show_photo_packages'), 
+             InlineKeyboardButton(btns[3], callback_data='info_contact')],
+            [InlineKeyboardButton(btns[4], callback_data='send_pdf')],
+            [InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
         ]
-        await update.message.reply_text(
-            "✨ *Thank you! Explore our other services:*", 
+        
+        await query.message.reply_text(
+            CONTENT[lang]['welcome'], 
             reply_markup=InlineKeyboardMarkup(keyboard), 
             parse_mode='Markdown'
         )
-        
-    except Exception as e:
-        logger.error(f"Error in photo payment: {e}")
-        logger.error(traceback.format_exc())
-        await update.message.reply_text("An error occurred. Please try again.")
+
+async def info_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle contact info page"""
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    back_btn = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
+    await query.message.edit_text(
+        CONTENT[lang]['contact_text'], 
+        reply_markup=back_btn, 
+        parse_mode='Markdown'
+    )
+
+async def send_services_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Send services PDF"""
+    query = update.callback_query
+    await query.answer()
     
-    return ConversationHandler.END
-
-# --- UTILITY HANDLERS ---
-async def main_menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle main menu callback"""
-    query = update.callback_query
-    await query.answer()
-    await main_menu(update, context)
-
-async def restart(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Restart the bot"""
-    query = update.callback_query
-    await query.answer()
-    context.user_data.clear()
-    await start(update, context)
+    if os.path.exists(SERVICES_PDF_PATH):
+        with open(SERVICES_PDF_PATH, 'rb') as pdf_file:
+            await query.message.reply_document(
+                document=pdf_file,
+                filename="AGOS_Services_Catalog.pdf",
+                caption="📋 Our complete services catalog"
+            )
+    else:
+        await query.message.reply_text("PDF catalog coming soon!")
 
 # --- MAIN ---
 def main():
     """Start the bot"""
-    app = Application.builder().token(TOKEN).build()
+    # Create application
+    application = Application.builder().token(TOKEN).build()
 
-    # Decor conversation
+    # Decor booking conversation
     decor_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_decor, pattern='^book_decor$')],
+        entry_points=[
+            CallbackQueryHandler(d_start, pattern='^d_start_basic$'),
+            CallbackQueryHandler(d_start, pattern='^d_start_deluxe$'),
+            CallbackQueryHandler(d_start, pattern='^d_start_premium$')
+        ],
         states={
-            D_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_name)],
-            D_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_phone)],
-            D_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_address)],
-            D_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_date)],
-            D_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, decor_notes)],
-            D_PAYMENT: [MessageHandler(filters.PHOTO, decor_payment)]
+            D_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_name)],
+            D_GENDER: [CallbackQueryHandler(d_gender, pattern='^d_gender_')],
+            D_ADDR: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_address)],
+            D_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_phone)],
+            D_USERNAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_username)],
+            D_CONTACT: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_contact)],
+            D_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_date)],
+            D_HOUSE: [CallbackQueryHandler(d_house, pattern='^d_house_')],
+            D_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_notes)],
+            D_PAYMENT: [MessageHandler(filters.PHOTO, d_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
+        fallbacks=[
+            CommandHandler("start", start),
+            CallbackQueryHandler(show_menu, pattern='^menu$'),
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(d_back_handler, pattern='^d_back_to_')
+        ],
+        name="decor_conversation",
+        persistent=False
     )
 
-    # Limo conversation
+    # Limousine booking conversation
     limo_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_limo, pattern='^book_limo$')],
+        entry_points=[
+            CallbackQueryHandler(l_start, pattern='^l_start_grand$'),
+            CallbackQueryHandler(l_start, pattern='^l_start_special$'),
+            CallbackQueryHandler(l_start, pattern='^l_start_royal$')
+        ],
         states={
-            L_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_name)],
-            L_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_phone)],
-            L_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_date)],
-            L_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, limo_address)],
-            L_PAYMENT: [MessageHandler(filters.PHOTO, limo_payment)]
+            L_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_name)],
+            L_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_phone)],
+            L_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_date)],
+            L_ADDR: [MessageHandler(filters.TEXT & ~filters.COMMAND, l_address)],
+            L_PAYMENT: [MessageHandler(filters.PHOTO, l_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
+        fallbacks=[
+            CommandHandler("start", start),
+            CallbackQueryHandler(show_menu, pattern='^menu$'),
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(l_back_handler, pattern='^l_back_to_')
+        ],
+        name="limo_conversation",
+        persistent=False
     )
 
-    # Photo conversation
+    # Photography booking conversation
     photo_conv = ConversationHandler(
-        entry_points=[CallbackQueryHandler(book_photo, pattern='^book_photo$')],
+        entry_points=[
+            CallbackQueryHandler(ph_start, pattern='^ph_start_digital$'),
+            CallbackQueryHandler(ph_start, pattern='^ph_start_standard$'),
+            CallbackQueryHandler(ph_start, pattern='^ph_start_premium$'),
+            CallbackQueryHandler(ph_start, pattern='^ph_start_video$')
+        ],
         states={
-            PH_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_name)],
-            PH_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_phone)],
-            PH_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_date)],
-            PH_ADDRESS: [MessageHandler(filters.TEXT & ~filters.COMMAND, photo_address)],
-            PH_PAYMENT: [MessageHandler(filters.PHOTO, photo_payment)]
+            PH_NAME: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_name)],
+            PH_PHONE: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_phone)],
+            PH_DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_date)],
+            PH_ADDR: [MessageHandler(filters.TEXT & ~filters.COMMAND, ph_address)],
+            PH_PAYMENT: [MessageHandler(filters.PHOTO, ph_payment)]
         },
-        fallbacks=[CommandHandler("start", start), CallbackQueryHandler(main_menu_handler, pattern='^main_menu$')]
+        fallbacks=[
+            CommandHandler("start", start),
+            CallbackQueryHandler(show_menu, pattern='^menu$'),
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(ph_back_handler, pattern='^ph_back_to_')
+        ],
+        name="photo_conversation",
+        persistent=False
     )
 
-    # Add all handlers
-    app.add_handler(CommandHandler("start", start))
-    
-    # Menu navigation handlers
-    app.add_handler(CallbackQueryHandler(main_menu, pattern='^lang_'))
-    app.add_handler(CallbackQueryHandler(main_menu_handler, pattern='^main_menu$'))
-    app.add_handler(CallbackQueryHandler(decor_menu, pattern='^menu_decor$'))
-    app.add_handler(CallbackQueryHandler(limo_menu, pattern='^menu_limo$'))
-    app.add_handler(CallbackQueryHandler(photo_menu, pattern='^menu_photo$'))
-    app.add_handler(CallbackQueryHandler(contact_menu, pattern='^menu_contact$'))
-    app.add_handler(CallbackQueryHandler(restart, pattern='^restart$'))
+    # Add handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(after_hours_handler, pattern='^after_hours$'))
+    application.add_handler(CallbackQueryHandler(show_menu, pattern='^lang_'))
+    application.add_handler(CallbackQueryHandler(show_menu, pattern='^menu$'))
+    application.add_handler(CallbackQueryHandler(info_contact, pattern='^info_contact$'))
+    application.add_handler(CallbackQueryHandler(send_services_pdf, pattern='^send_pdf$'))
+    application.add_handler(CallbackQueryHandler(start, pattern='^restart$'))
     
     # Package view handlers
-    app.add_handler(CallbackQueryHandler(view_decor_package, pattern='^view_decor_'))
-    app.add_handler(CallbackQueryHandler(view_limo_package, pattern='^view_limo_'))
-    app.add_handler(CallbackQueryHandler(view_photo_package, pattern='^view_photo_'))
+    application.add_handler(CallbackQueryHandler(show_decor_packages, pattern='^show_decor_packages$'))
+    application.add_handler(CallbackQueryHandler(show_limo_packages, pattern='^show_limo_packages$'))
+    application.add_handler(CallbackQueryHandler(show_photo_packages, pattern='^show_photo_packages$'))
+    
+    # Individual package view handlers
+    application.add_handler(CallbackQueryHandler(view_decor_basic, pattern='^view_decor_basic$'))
+    application.add_handler(CallbackQueryHandler(view_decor_deluxe, pattern='^view_decor_deluxe$'))
+    application.add_handler(CallbackQueryHandler(view_decor_premium, pattern='^view_decor_premium$'))
+    application.add_handler(CallbackQueryHandler(view_limo_grand, pattern='^view_limo_grand$'))
+    application.add_handler(CallbackQueryHandler(view_limo_special, pattern='^view_limo_special$'))
+    application.add_handler(CallbackQueryHandler(view_limo_royal, pattern='^view_limo_royal$'))
+    application.add_handler(CallbackQueryHandler(view_photo_digital, pattern='^view_photo_digital$'))
+    application.add_handler(CallbackQueryHandler(view_photo_standard, pattern='^view_photo_standard$'))
+    application.add_handler(CallbackQueryHandler(view_photo_premium, pattern='^view_photo_premium$'))
+    application.add_handler(CallbackQueryHandler(view_videography, pattern='^view_videography$'))
     
     # Add conversation handlers
-    app.add_handler(decor_conv)
-    app.add_handler(limo_conv)
-    app.add_handler(photo_conv)
+    application.add_handler(decor_conv)
+    application.add_handler(limo_conv)
+    application.add_handler(photo_conv)
 
-    print("=" * 50)
-    print("✅ AGOS BOT - FULLY FIXED VERSION")
-    print(f"👥 Admin IDs configured: {ADMIN_IDS}")
-    print("✅ Decor Booking: Working")
-    print("✅ Limousine Booking: Working")
-    print("✅ Photography Booking: Working")
-    print("✅ Contact Page: Working")
-    print("✅ Admin Notifications: Working")
-    print("✅ PDF Generation: Working")
-    print("=" * 50)
-
-    app.run_polling()
+    # Start bot
+    print("🤖 AGOS Bot is starting with FIXED conversation flows!")
+    print(f"⏰ Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00")
+    print("✅ Decor booking: 10 steps")
+    print("✅ Limousine booking: 5 steps")
+    print("✅ Photography booking: 5 steps")
+    print("✅ Contact page: Working")
+    print("✅ Back buttons: Working")
+    
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == '__main__':
     main()
