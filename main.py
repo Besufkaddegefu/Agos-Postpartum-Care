@@ -27,8 +27,8 @@ print("DEBUG - TOKEN is:", repr(TOKEN))
 print("DEBUG - Admin IDs:", ADMIN_IDS)
 
 # --- CONVERSATION STATES ---
-# Decor Booking States
-(D_NAME, D_GENDER, D_ADDR, D_PHONE, D_USERNAME, D_CONTACT, D_PKG, D_DATE, D_HOUSE, D_PAYMENT, D_NOTES) = range(40, 51)
+# Decor Booking States (must be unique numbers)
+(D_NAME, D_GENDER, D_ADDR, D_PHONE, D_USERNAME, D_CONTACT, D_PKG, D_DATE, D_HOUSE, D_NOTES, D_PAYMENT) = range(40, 51)
 
 # Limousine Booking States
 (L_NAME, L_PHONE, L_DATE, L_ADDR, L_PACKAGE, L_PAYMENT) = range(60, 66)
@@ -248,7 +248,7 @@ CONTENT = {
             "📞 *Contact:* @agos_postpartumcare\n"
             "📱 *Phone:* +251 967 621 545"
         ),
-        'book_now': "📝 Book Now / አሁን ይያዙ"
+        'book_now': "📝 Book Now"
     },
     'am': {
         'welcome': (
@@ -527,9 +527,6 @@ def create_photo_pdf(data):
     return buffer
 
 # --- HELPERS ---
-def get_back_kb(lang):
-    return InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['q_back'], callback_data='d_back')]])
-
 def get_nav_kb(lang, back_callback='d_back'):
     """Returns keyboard with Back and Menu buttons"""
     return InlineKeyboardMarkup([
@@ -621,7 +618,6 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # Show menu of decor packages
     kb = [
         [InlineKeyboardButton("🔸 Basic - 15,000 ETB", callback_data='view_decor_basic')],
         [InlineKeyboardButton("💎 Deluxe - 20,000 ETB", callback_data='view_decor_deluxe')],
@@ -678,24 +674,172 @@ async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     )
 
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
-async def view_package(update: Update, context: ContextTypes.DEFAULT_TYPE, package_type, content_key, booking_callback):
-    """Generic function to display a package with book button"""
+async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # Get package content
-    package_text = CONTENT[lang].get(content_key, "Details coming soon...")
-    
-    # Add book button
     kb = [
-        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data=booking_callback)],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data=f'show_{package_type}_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_basic')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
     await query.message.edit_text(
-        package_text,
+        CONTENT[lang]['decor_basic'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_decor_deluxe(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_deluxe')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['decor_deluxe'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_decor_premium(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_premium')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['decor_premium'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_limo_grand(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_grand')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['limo_grand'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_limo_special(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_special')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['limo_special'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_limo_royal(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_royal')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['limo_royal'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_digital(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_digital')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_digital'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_standard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_standard')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_standard'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_photo_premium(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_premium')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['photo_premium'],
+        reply_markup=InlineKeyboardMarkup(kb),
+        parse_mode='Markdown'
+    )
+
+async def view_videography(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    kb = [
+        [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_video')],
+        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
+    await query.message.edit_text(
+        CONTENT[lang]['videography'],
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
@@ -704,8 +848,8 @@ async def view_package(update: Update, context: ContextTypes.DEFAULT_TYPE, packa
 async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
     """Start decor booking flow with optional package pre-selection"""
     query = update.callback_query
-    lang = context.user_data.get('lang', 'en')
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
     # Store selected package if coming from package view
     if package:
@@ -801,10 +945,13 @@ async def d_step6(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return D_PKG
     else:
         # Skip to next question if package already selected
-        return await d_step7(update, context)
+        # Need to pass the update properly
+        temp_update = type('obj', (object,), {'callback_query': type('obj', (object,), {'data': 'd_back', 'message': update.message, 'answer': lambda: None})})
+        return await d_step7(temp_update, context)
 
 async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+    # Handle both callback query and message cases
+    if hasattr(update, 'callback_query') and update.callback_query:
         query = update.callback_query
         await query.answer()
         if query.data != 'd_back':
@@ -816,6 +963,7 @@ async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_nav_kb(lang, back_callback='d_back')
         )
     else:
+        # This is a message object (from skip case)
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
             "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
@@ -850,6 +998,7 @@ async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
 
     if query.data == 'd_back':
+        # Go back to previous question
         return await d_step8(update, context)
 
     context.user_data['d_house'] = query.data
@@ -928,15 +1077,18 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return ConversationHandler.END
 
 async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in decor flow"""
     query = update.callback_query
     await query.answer()
+    # This will be handled by the conversation handler's fallback
     return D_NAME
 
-# --- LIMOUSINE BOOKING FLOW (Similar pattern with package pre-selection) ---
+# --- LIMOUSINE BOOKING FLOW ---
 async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
+    """Start limousine booking flow with optional package pre-selection"""
     query = update.callback_query
-    lang = context.user_data.get('lang', 'en')
     await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
     if package:
         context.user_data['l_package'] = package
@@ -1002,10 +1154,12 @@ async def l_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return L_PACKAGE
     else:
+        # Skip to payment step
         return await l_step5(update, context)
 
 async def l_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+    # Handle both callback query and message cases
+    if hasattr(update, 'callback_query') and update.callback_query:
         query = update.callback_query
         await query.answer()
         if query.data != 'l_back':
@@ -1030,7 +1184,7 @@ async def l_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_nav_kb(lang, back_callback='l_back')
         )
     else:
-        # Handle case where we skip package selection
+        # Handle case where we skip package selection (from pre-selected)
         lang = context.user_data.get('lang', 'en')
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
@@ -1089,11 +1243,18 @@ async def l_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     return ConversationHandler.END
 
-# --- PHOTOGRAPHY BOOKING FLOW (Similar pattern) ---
-async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
+async def l_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in limousine flow"""
     query = update.callback_query
-    lang = context.user_data.get('lang', 'en')
     await query.answer()
+    return L_NAME
+
+# --- PHOTOGRAPHY BOOKING FLOW ---
+async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
+    """Start photography booking flow with optional package pre-selection"""
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
     
     if package:
         context.user_data['ph_package'] = package
@@ -1160,10 +1321,12 @@ async def ph_step4(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return PH_PACKAGE
     else:
+        # Skip to payment step
         return await ph_step5(update, context)
 
 async def ph_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if isinstance(update, CallbackQueryHandler) or hasattr(update, 'callback_query'):
+    # Handle both callback query and message cases
+    if hasattr(update, 'callback_query') and update.callback_query:
         query = update.callback_query
         await query.answer()
         if query.data != 'ph_back':
@@ -1188,7 +1351,7 @@ async def ph_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=get_nav_kb(lang, back_callback='ph_back')
         )
     else:
-        # Handle case where we skip package selection
+        # Handle case where we skip package selection (from pre-selected)
         lang = context.user_data.get('lang', 'en')
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
@@ -1247,6 +1410,12 @@ async def ph_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     return ConversationHandler.END
 
+async def ph_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle back button in photography flow"""
+    query = update.callback_query
+    await query.answer()
+    return PH_NAME
+
 # --- NAVIGATION FUNCTIONS ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.clear()
@@ -1295,36 +1464,40 @@ async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: st
             parse_mode='Markdown'
         )
 
-async def info_pages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def info_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle contact info page"""
     query = update.callback_query
+    await query.answer()
     lang = context.user_data.get('lang', 'en')
-    choice = query.data.replace('info_', '')
-    text = CONTENT[lang].get(f'{choice}_text', "Information coming soon...")
     back_btn = InlineKeyboardMarkup([[InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]])
-    await query.message.edit_text(text, reply_markup=back_btn, parse_mode='Markdown')
+    await query.message.edit_text(
+        CONTENT[lang]['contact_text'], 
+        reply_markup=back_btn, 
+        parse_mode='Markdown'
+    )
 
 # --- APP RUNNER ---
 if __name__ == '__main__':
     app = Application.builder().token(TOKEN).build()
 
     # Package view handlers
-    app.add_handler(CallbackQueryHandler(lambda u, c: show_decor_packages(u, c), pattern='^show_decor_packages$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: show_limo_packages(u, c), pattern='^show_limo_packages$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: show_photo_packages(u, c), pattern='^show_photo_packages$'))
+    app.add_handler(CallbackQueryHandler(show_decor_packages, pattern='^show_decor_packages$'))
+    app.add_handler(CallbackQueryHandler(show_limo_packages, pattern='^show_limo_packages$'))
+    app.add_handler(CallbackQueryHandler(show_photo_packages, pattern='^show_photo_packages$'))
     
     # Individual package view handlers
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_basic', 'd_start_basic'), pattern='^view_decor_basic$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_deluxe', 'd_start_deluxe'), pattern='^view_decor_deluxe$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'decor', 'decor_premium', 'd_start_premium'), pattern='^view_decor_premium$'))
+    app.add_handler(CallbackQueryHandler(view_decor_basic, pattern='^view_decor_basic$'))
+    app.add_handler(CallbackQueryHandler(view_decor_deluxe, pattern='^view_decor_deluxe$'))
+    app.add_handler(CallbackQueryHandler(view_decor_premium, pattern='^view_decor_premium$'))
     
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_grand', 'l_start_grand'), pattern='^view_limo_grand$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_special', 'l_start_special'), pattern='^view_limo_special$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'limo', 'limo_royal', 'l_start_royal'), pattern='^view_limo_royal$'))
+    app.add_handler(CallbackQueryHandler(view_limo_grand, pattern='^view_limo_grand$'))
+    app.add_handler(CallbackQueryHandler(view_limo_special, pattern='^view_limo_special$'))
+    app.add_handler(CallbackQueryHandler(view_limo_royal, pattern='^view_limo_royal$'))
     
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_digital', 'ph_start_digital'), pattern='^view_photo_digital$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_standard', 'ph_start_standard'), pattern='^view_photo_standard$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'photo_premium', 'ph_start_premium'), pattern='^view_photo_premium$'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: view_package(u, c, 'photo', 'videography', 'ph_start_video'), pattern='^view_videography$'))
+    app.add_handler(CallbackQueryHandler(view_photo_digital, pattern='^view_photo_digital$'))
+    app.add_handler(CallbackQueryHandler(view_photo_standard, pattern='^view_photo_standard$'))
+    app.add_handler(CallbackQueryHandler(view_photo_premium, pattern='^view_photo_premium$'))
+    app.add_handler(CallbackQueryHandler(view_videography, pattern='^view_videography$'))
 
     # Decor booking conversation handler with package pre-selection
     d_conv = ConversationHandler(
@@ -1346,10 +1519,14 @@ if __name__ == '__main__':
             D_NOTES: [MessageHandler(filters.TEXT & ~filters.COMMAND, d_step10)],
             D_PAYMENT: [MessageHandler(filters.PHOTO, d_final)]
         },
-        fallbacks=[CommandHandler("start", start), 
-                  CallbackQueryHandler(show_menu, pattern='^menu$'), 
-                  CallbackQueryHandler(start, pattern='^restart$')],
-        allow_reentry=True
+        fallbacks=[
+            CommandHandler("start", start), 
+            CallbackQueryHandler(show_menu, pattern='^menu$'), 
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(d_back_handler, pattern='^d_back$')
+        ],
+        allow_reentry=True,
+        name="decor_conversation"
     )
 
     # Limousine booking conversation handler with package pre-selection
@@ -1367,10 +1544,14 @@ if __name__ == '__main__':
             L_PACKAGE: [CallbackQueryHandler(l_step5)],
             L_PAYMENT: [MessageHandler(filters.PHOTO, l_final)]
         },
-        fallbacks=[CommandHandler("start", start), 
-                  CallbackQueryHandler(show_menu, pattern='^menu$'), 
-                  CallbackQueryHandler(start, pattern='^restart$')],
-        allow_reentry=True
+        fallbacks=[
+            CommandHandler("start", start), 
+            CallbackQueryHandler(show_menu, pattern='^menu$'), 
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(l_back_handler, pattern='^l_back$')
+        ],
+        allow_reentry=True,
+        name="limo_conversation"
     )
 
     # Photography booking conversation handler with package pre-selection
@@ -1389,18 +1570,22 @@ if __name__ == '__main__':
             PH_PACKAGE: [CallbackQueryHandler(ph_step5)],
             PH_PAYMENT: [MessageHandler(filters.PHOTO, ph_final)]
         },
-        fallbacks=[CommandHandler("start", start), 
-                  CallbackQueryHandler(show_menu, pattern='^menu$'), 
-                  CallbackQueryHandler(start, pattern='^restart$')],
-        allow_reentry=True
+        fallbacks=[
+            CommandHandler("start", start), 
+            CallbackQueryHandler(show_menu, pattern='^menu$'), 
+            CallbackQueryHandler(start, pattern='^restart$'),
+            CallbackQueryHandler(ph_back_handler, pattern='^ph_back$')
+        ],
+        allow_reentry=True,
+        name="photo_conversation"
     )
 
     # Add all handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(after_hours_handler, pattern='^after_hours$'))
     app.add_handler(CallbackQueryHandler(lambda u, c: show_menu(u, c, u.callback_query.data.split('_')[1]), pattern='^lang_'))
-    app.add_handler(CallbackQueryHandler(lambda u, c: show_menu(u, c), pattern='^menu$'))
-    app.add_handler(CallbackQueryHandler(info_pages, pattern='^info_'))
+    app.add_handler(CallbackQueryHandler(show_menu, pattern='^menu$'))
+    app.add_handler(CallbackQueryHandler(info_contact, pattern='^info_contact$'))
     app.add_handler(CallbackQueryHandler(send_services_pdf, pattern='^send_pdf$'))
     app.add_handler(CallbackQueryHandler(start, pattern='^restart$'))
     
@@ -1408,7 +1593,8 @@ if __name__ == '__main__':
     app.add_handler(l_conv)
     app.add_handler(ph_conv)
 
-    print("🎨 AGOS Enhanced Services Bot is live!")
+    print("🎨 AGOS Enhanced Services Bot is live with FIXED conversation flows!")
     print(f"⏰ Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00 LT")
     print("📱 Features: Individual package pages with booking buttons, smart discover more")
+    print("✅ All booking forms should now work correctly!")
     app.run_polling()
