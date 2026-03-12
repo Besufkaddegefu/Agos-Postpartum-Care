@@ -239,11 +239,11 @@ CONTENT = {
             "📞 **Phone:** \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
-            "🎵 **Follow us on :**\n"
+            "🎵 **Follow us on :**\n\n"
             "📸 *Instagram:* (https://instagram.com/agos_postpartumcare)\n"
             "🎵 *TikTok:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "📱 *Telegram:* (https://t.me/Agospostpartumcare0)\n"
-            "🌐 *Website:* [www.agospostpartumcare.com]\n"
+            "📱 *Telegram:* (https://t.me/Agospostpartumcare0)\n\n"
+            "🌐 *Website:* [www.agospostpartumcare.com]\n\n"
             "📍 *Location:* [Piassa, Abat Commercial](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "I Agree ✅",
@@ -428,11 +428,11 @@ CONTENT = {
             "📞 **ስልክ:** \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
-            "🎵 ** የሶሻል ሚዲያ ገፃችንን ይጎብኙ :**\n"
+            "🎵 ** የሶሻል ሚዲያ ገፃችንን ይጎብኙ :**\n\n"
             "📸 *ኢንስታግራም:* (https://instagram.com/agos_postpartumcare)\n"
             "🎵 *ቲክቶክ:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "📱 *ቴሌግራም:* (https://t.me/Agospostpartumcare0)\n"
-            "🌐 *ዌብሳይት:* [www.agospostpartumcare.com]\n"
+            "📱 *ቴሌግራም:* (https://t.me/Agospostpartumcare0)\n\n"
+            "🌐 *ዌብሳይት:* [www.agospostpartumcare.com]\n\n"
             "📍 *አድራሻ:* [ፒያሳ፣ አባት ኮሜርሻል](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "እስማማለሁ ✅",
@@ -1663,3 +1663,4 @@ if __name__ == '__main__':
     print("📱 Features: Individual package pages with booking buttons, smart discover more")
     print("✅ All booking forms should now work correctly!")
     app.run_polling()
+
