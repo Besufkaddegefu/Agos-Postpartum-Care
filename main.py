@@ -90,10 +90,14 @@ CONTENT = {
             "• Corridor Decoration\n"
             "• Salon Decoration\n\n"
             "📱 *See our work:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
-            "✨ *Perfect for intimate celebrations!*"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "✨ *Perfect for intimate celebrations!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'decor_deluxe': (
             "💎 *Home Decor Deluxe (20,000 ETB)*\n"
@@ -102,10 +106,15 @@ CONTENT = {
             "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Normal Cake\n\n"
             "📱 *See our work:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
-            "🌟 *Our most popular choice!*"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "🌟 *Our most popular choice!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'decor_premium': (
             "👑 *Home Decor Premium (25,000 ETB)*\n"
@@ -115,10 +124,18 @@ CONTENT = {
             "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Custom Made Cake - 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
             "📱 *See our work:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[TikTok](https://surl.li/iiicng) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
+            "[TikTok](https://https://surli.cc/ysmgqa) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
-            "👑 *The ultimate luxury experience!*"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "👑 *The ultimate luxury experience!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         # Limousine Package Pages with Book Buttons
@@ -130,9 +147,10 @@ CONTENT = {
             "• Professional chauffeur\n"
             "• Rose petals & welcome drinks\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
-            "🚗 *Make a stylish entrance!*"
+            "🚗 *Make a stylish entrance!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_special': (
             "✨ *Special Arrival (30,000 ETB)*\n"
@@ -142,9 +160,10 @@ CONTENT = {
             "• Professional chauffeur\n"
             "• Rose petals, welcome drinks & cake\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
-            "✨ *Extra touches for a special day!*"
+            "✨ *Extra touches for a special day!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_royal': (
             "👑 *Royal Welcome (35,000 ETB)*\n"
@@ -154,9 +173,10 @@ CONTENT = {
             "• Professional chauffeur in formal attire\n"
             "• Full package: drinks, cake, flowers, photos\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
-            "👑 *Royal treatment for royalty!*"
+            "👑 *Royal treatment for royalty!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         # Photography Package Pages with Book Buttons
@@ -170,7 +190,8 @@ CONTENT = {
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
             "[Website](https://www.agospostpartumcare.com/media)\n\n"
-            "📱 *Perfect for digital sharing!*"
+            "📱 *Perfect for digital sharing!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_standard': (
             "🖼️ *Standard Photography (12,000 ETB)*\n"
@@ -181,7 +202,8 @@ CONTENT = {
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
             "[Website](https://www.agospostpartumcare.com/media)\n\n"
-            "🖼️ *Beautiful memories you can hold!*"
+            "🖼️ *Beautiful memories you can hold!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_premium': (
             "💎 *Premium Photography (15,000 ETB)*\n"
@@ -193,7 +215,8 @@ CONTENT = {
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
             "[Website](https://www.agospostpartumcare.com/media)\n\n"
-            "💎 *Heirloom quality memories!*"
+            "💎 *Heirloom quality memories!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'videography': (
             "🎥 *Videography Package (15,000 ETB)*\n"
@@ -205,18 +228,22 @@ CONTENT = {
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
             "[Website](https://www.agospostpartumcare.com/media)\n\n"
-            "🎥 *Relive your special moments!*"
+            "🎥 *Relive your special moments!*\n\n"
+            "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         'contact_text': (
-            "📞 *Contact Us*\n\n"
+            "📞 **Contact Us**\n\n"
             "⏰ *Working Hours:* 8:00 AM - 8:00 PM (Local Time)\n"
             "⚠️ *Note:* Not operational before 2:00 LT / 8:00 PM\n\n"
-            "📱 *Telegram:* [@Agospostpartumcare0](https://t.me/Agospostpartumcare0)\n"
-            "📞 *Phone:* +251 967 621 545 | +251 980 040 468\n\n"
-            "📸 *Instagram:* [@agos_postpartumcare](https://instagram.com/agos_postpartumcare)\n"
-            "🎵 *TikTok:* [@agos_postpartumcare](https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "🌐 *Website:* [www.agospostpartumcare.com](https://www.agospostpartumcare.com/)\n"
+            "📞 **Phone:** \n\n"
+            "📱 +251 967 621 545\n"
+            "📱 +251 980 040 468\n\n"
+            "🎵 **Follow us on :**\n"
+            "📸 *Instagram:* (https://instagram.com/agos_postpartumcare)\n"
+            "🎵 *TikTok:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
+            "📱 *Telegram:* (https://t.me/Agospostpartumcare0)\n"
+            "🌐 *Website:* [www.agospostpartumcare.com]\n"
             "📍 *Location:* [Piassa, Abat Commercial](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "I Agree ✅",
@@ -253,7 +280,7 @@ CONTENT = {
             "Want to add more? Contact us for custom packages!\n\n"
             "📞 *Contact:* @agos_postpartumcare\n"
             "📱 *Phone:* +251 967 621 545"
-            "📱 *Phone:* +251 967 621 545"
+            "📱 *Phone:* +251 980 040 468"
         ),
         'book_now': "📝 Book Now"
     },
@@ -276,7 +303,10 @@ CONTENT = {
             "• የኮሪደር ዲኮር\n"
             "• የሳሎን ዲኮር\n\n"
             "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
             "[Website](https://www.agospostpartumcare.com/decor)"
         ),
@@ -287,9 +317,14 @@ CONTENT = {
             "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ መደበኛ ኬክ\n\n"
             "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)"
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'decor_premium': (
             "👑 *ፕሪሚየም ዲኮር (25,000 ብር)*\n"
@@ -299,9 +334,17 @@ CONTENT = {
             "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
             "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[TikTok](https://surl.li/iiicng) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
+            "[TikTok](https://https://surli.cc/ysmgqa) | "
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)"
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         # Limousine Package Pages with Book Buttons (Amharic)
@@ -311,8 +354,9 @@ CONTENT = {
             "• ልዩ የሊሙዚን አገልግሎት\n"
             "• የእቅፍ አበባ ዝግጅት\n\n"
             "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
-            "[Instagram](https://instagram.com/agospostpartum)"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_special': (
             "✨ *ልዩ አቀባበል (30,000 ብር)*\n"
@@ -320,8 +364,9 @@ CONTENT = {
             "• ልዩ የሊሙዚን አገልግሎት\n"
             "• እቅፍ አበባ እና ኬክ\n\n"
             "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
-            "[Instagram](https://instagram.com/agospostpartum)"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_royal': (
             "👑 *የሮያል አቀባበል (35,000 ብር)*\n"
@@ -329,8 +374,9 @@ CONTENT = {
             "• ፕሪሚየም የሊሙዚን አገልግሎት\n"
             "• ሙሉ አቀባበል ከእቅፍ አበባ፣ ኬክ እና ፎቶ\n\n"
             "📸 *አቀበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare) | "
-            "[Instagram](https://instagram.com/agospostpartum)"
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740e) | "
+            "[Instagram](https://instagram.com/agospostpartum)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         # Photography Package Pages with Book Buttons (Amharic)
@@ -341,7 +387,8 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)"
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_standard': (
             "🖼️ *መደበኛ ፎቶግራፍ (12,000 ብር)*\n"
@@ -350,7 +397,8 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)"
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_premium': (
             "💎 *ፕሪሚየም ፎቶግራፍ (15,000 ብር)*\n"
@@ -359,7 +407,8 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)"
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'videography': (
             "🎥 *የቪዲዮ አገልግሎት (15,000 ብር)*\n"
@@ -368,18 +417,22 @@ CONTENT = {
             "• በባለሙያ ኤዲት የተደረገ ቪዲዮ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)"
+            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         'contact_text': (
-            "📞 *ያግኙን*\n\n"
+            "📞 **ያግኙን**\n\n"
             "⏰ *የስራ ሰዓት:* 2፡00 ጥዋት - 2፡00 ማታ (በአካባቢው ሰዓት)\n"
             "⚠️ *ማሳሰቢያ:* ከምሽቱ 2፡00 ሰዓት በፊት አይሰራም\n\n"
-            "📱 *ቴሌግራም:* [@Agospostpartumcare0](https://t.me/Agospostpartumcare0)\n"
-            "📞 *ስልክ:* +251 967 621 545 | +251 980 040 468\n\n"
-            "📸 *ኢንስታግራም:* [@agos_postpartumcare](https://instagram.com/agos_postpartumcare)\n"
-            "🎵 *ቲክቶክ:* [@agos_postpartumcare](https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "🌐 *ዌብሳይት:* [www.agospostpartumcare.com](https://www.agospostpartumcare.com/)\n"
+            "📞 **ስልክ:** \n\n"
+            "📱 +251 967 621 545\n"
+            "📱 +251 980 040 468\n\n"
+            "🎵 ** የሶሻል ሚዲያ ገፃችንን ይጎብኙ :**\n"
+            "📸 *ኢንስታግራም:* (https://instagram.com/agos_postpartumcare)\n"
+            "🎵 *ቲክቶክ:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
+            "📱 *ቴሌግራም:* (https://t.me/Agospostpartumcare0)\n"
+            "🌐 *ዌብሳይት:* [www.agospostpartumcare.com]\n"
             "📍 *አድራሻ:* [ፒያሳ፣ አባት ኮሜርሻል](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "እስማማለሁ ✅",
