@@ -648,14 +648,14 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     )
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
-# --- FIXED PACKAGE DISPLAY FUNCTIONS ---
 
+# --- PACKAGE DISPLAY FUNCTIONS ---
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # Combine the exact strings from your dictionary
+    # Combined exact text from dictionary
     text = (
         f"{CONTENT[lang]['decor_basic']}\n\n"
         "__________________________\n\n"
@@ -673,10 +673,10 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     ]
     
     try:
-        # Changed back to 'Markdown' so your * and [] symbols work
+        # Switching back to 'Markdown' allows your [video](url) and *bold* to work
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
-    except Exception:
-        # Safety: if Markdown fails, show as plain text so buttons still work
+    except Exception as e:
+        # Fallback for Amharic special characters: send as plain text if Markdown fails
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
 
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -726,25 +726,6 @@ async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
     except Exception:
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
-    query = update.callback_query
-    await query.answer()
-    lang = context.user_data.get('lang', 'en')
-    
-    text = (
-        f"{CONTENT[lang]['photo_digital']}\n\n"
-        f"{CONTENT[lang]['photo_standard']}\n\n"
-        f"{CONTENT[lang]['photo_premium']}\n\n"
-        f"{CONTENT[lang]['videography']}"
-    )
-
-    kb = [
-        [InlineKeyboardButton("📝 Book Digital", callback_data='ph_start_digital')],
-        [InlineKeyboardButton("📝 Book Standard", callback_data='ph_start_standard')],
-        [InlineKeyboardButton("📝 Book Premium", callback_data='ph_start_premium')],
-        [InlineKeyboardButton("🎥 Book Video", callback_data='ph_start_video')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
 
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
 async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
