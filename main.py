@@ -288,41 +288,49 @@ CONTENT = {
             "• የወለል ዲኮር\n"
             "• የኮሪደር ዲኮር\n"
             "• የሳሎን ዲኮር\n\n"
-            "📱 *👇👇👇ከዚህ በፊት በ 15,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
-            "[video](https://vm.tiktok.com/ZMA2PAHdX) | "
-            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[video](https://vm.tiktok.com/ZMA2PV8vt) | "
-            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
-             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"),
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
+        ),
         'decor_deluxe': (
             "💎 *ደልክስ ዲኮር (20,000 ብር)*\n"
             "__________________________\n\n"
             "• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ እቅፍ አበባ\n"
+            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ መደበኛ ኬክ\n\n"
-            "📱 *👇👇👇ከዚህ በፊት በ 20,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
-            "[video](https://vm.tiktok.com/ZMA2PQp4k) | "
-            "[video](https://vm.tiktok.com/ZMA2PPv9g) | "
-            "[video](https://vm.tiktok.com/ZMA2PbLWU) | "
-            "[video](https://vm.tiktok.com/ZMA2PfLwK) | "
-            "[video](https://vm.tiktok.com/ZMA2PG9Nd) | "
-            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
         ),
         'decor_premium': (
             "👑 *ፕሪሚየም ዲኮር (25,000 ብር)*\n"
             "__________________________\n\n"
             "• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ ጋር (2 ሳምንት)\n"
             "• የኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ እቅፍ አበባ\n"
+            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
             "• 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *👇👇👇ከዚህ በፊት በ 25,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇*\n"
-            "[video](https://vm.tiktok.com/ZMA2Pb9Pp) | "
-            "[video](https://vm.tiktok.com/ZMA2Pq1V8) | "
-            "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
-            "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
-            "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
+            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
+            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[TikTok](https://surl.li/iiicng) | "
+            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
+            "[Instagram](https://instagram.com/agospostpartum) | "
+            "[Website](https://www.agospostpartumcare.com)\n\n"
+            "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
         ),
         
         # Limousine Package Pages with Book Buttons (Amharic)
@@ -663,16 +671,24 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         f"{deluxe}\n\n"
         "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
         f"{premium}\n\n"
-        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
+        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለማዘዝ አንዱን ይምረጡ፦*"
     )
 
-    # Dynamic buttons that change based on language
-    kb = [
-        [InlineKeyboardButton("📝 Book Basic (15k)" if lang == 'en' else "📝 መደበኛ (15k) ያዝ", callback_data='d_start_basic')],
-        [InlineKeyboardButton("📝 Book Deluxe (20k)" if lang == 'en' else "📝 ደልክስ (20k) ያዝ", callback_data='d_start_deluxe')],
-        [InlineKeyboardButton("📝 Book Premium (25k)" if lang == 'en' else "📝 ፕሪሚየም (25k) ያዝ", callback_data='d_start_premium')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
+    # Dynamic buttons that change based on language - THIS WAS THE MAIN ISSUE
+    if lang == 'en':
+        kb = [
+            [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
+            [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
+            [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    else:
+        kb = [
+            [InlineKeyboardButton("📝 መደበኛ (15k) ይዘዙ", callback_data='d_start_basic')],
+            [InlineKeyboardButton("📝 ደልክስ (20k) ይዘዙ", callback_data='d_start_deluxe')],
+            [InlineKeyboardButton("📝 ፕሪሚየም (25k) ይዘዙ", callback_data='d_start_premium')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
     
     try:
         # We use Markdown because your content uses [video](link)
@@ -683,6 +699,7 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
             disable_web_page_preview=True
         )
     except Exception as e:
+        print(f"Markdown error: {e}")
         # Fallback: if there's any weird character, show it as plain text
         await query.message.edit_text(
             text, 
