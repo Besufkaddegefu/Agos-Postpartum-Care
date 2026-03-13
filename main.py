@@ -648,19 +648,21 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     )
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
+# --- FIXED PACKAGE DISPLAY FUNCTIONS ---
+
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # This pulls the EXACT text you have in your CONTENT dictionary
+    # Combine the exact strings from your dictionary
     text = (
-        f"{CONTENT[lang]['decor_basic']}\n"
+        f"{CONTENT[lang]['decor_basic']}\n\n"
         "__________________________\n\n"
-        f"{CONTENT[lang]['decor_deluxe']}\n"
+        f"{CONTENT[lang]['decor_deluxe']}\n\n"
         "__________________________\n\n"
         f"{CONTENT[lang]['decor_premium']}\n\n"
-        "👇 **Choose a package to book:**" if lang == 'en' else "👇 **ለመያዝ አንዱን ይምረጡ፦**"
+        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
     )
 
     kb = [
@@ -669,17 +671,23 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
-    # disable_web_page_preview=True prevents 10 TikTok boxes from cluttering the screen
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
+    
+    try:
+        # Changed back to 'Markdown' so your * and [] symbols work
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
+    except Exception:
+        # Safety: if Markdown fails, show as plain text so buttons still work
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
+
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
     text = (
-        f"{CONTENT[lang]['limo_grand']}\n"
+        f"{CONTENT[lang]['limo_grand']}\n\n"
         "__________________________\n\n"
-        f"{CONTENT[lang]['limo_special']}\n"
+        f"{CONTENT[lang]['limo_special']}\n\n"
         "__________________________\n\n"
         f"{CONTENT[lang]['limo_royal']}"
     )
@@ -690,8 +698,34 @@ async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE)
         [InlineKeyboardButton("📝 Book Royal", callback_data='l_start_royal')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
+    try:
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
+    except Exception:
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
+
 async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    lang = context.user_data.get('lang', 'en')
+    
+    text = (
+        f"{CONTENT[lang]['photo_digital']}\n\n"
+        f"{CONTENT[lang]['photo_standard']}\n\n"
+        f"{CONTENT[lang]['photo_premium']}\n\n"
+        f"{CONTENT[lang]['videography']}"
+    )
+
+    kb = [
+        [InlineKeyboardButton("📝 Book Digital", callback_data='ph_start_digital')],
+        [InlineKeyboardButton("📝 Book Standard", callback_data='ph_start_standard')],
+        [InlineKeyboardButton("📝 Book Premium", callback_data='ph_start_premium')],
+        [InlineKeyboardButton("🎥 Book Video", callback_data='ph_start_video')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    try:
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
+    except Exception:
+        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
