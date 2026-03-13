@@ -650,45 +650,56 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
 # --- PACKAGE DISPLAY FUNCTIONS ---
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
+import re
+
+def escape_markdown(text):
+    """Helper to prevent Amharic characters and links from crashing Telegram"""
+    # Characters that often break MarkdownV2
+    escape_chars = r'_*[]()~`>#+-=|{}.!'
+    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
+
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # This pulls the EXACT text from your dictionary
-    text = (
-        f"{CONTENT[lang]['decor_basic']}\n\n"
-        "__________________________\n\n"
-        f"{CONTENT[lang]['decor_deluxe']}\n\n"
-        "__________________________\n\n"
-        f"{CONTENT[lang]['decor_premium']}\n\n"
-        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
-    )
-
-    kb = [
-        [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
-        [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
-        [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
-    
+    # We pull the text and use a try/except block as a total safety net
     try:
-        # Changed back to 'Markdown' so your * and [] symbols work correctly
+        text = (
+            f"{CONTENT[lang]['decor_basic']}\n"
+            "__________________________\n\n"
+            f"{CONTENT[lang]['decor_deluxe']}\n"
+            "__________________________\n\n"
+            f"{CONTENT[lang]['decor_premium']}\n\n"
+            "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
+        )
+        
+        # We try 'Markdown' first
         await query.message.edit_text(
             text, 
-            reply_markup=InlineKeyboardMarkup(kb), 
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
+                [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
+                [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
+                [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+            ]), 
             parse_mode='Markdown', 
             disable_web_page_preview=True
         )
-    except Exception:
-        # SAFETY FALLBACK: If Markdown fails, show the text as plain text
-        # This prevents the "empty message" problem you are having.
+    except Exception as e:
+        # If the Amharic formatting crashes (which is happening now), 
+        # this fallback sends it as plain text so it NEVER disappears again.
         await query.message.edit_text(
             text, 
-            reply_markup=InlineKeyboardMarkup(kb), 
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
+                [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
+                [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
+                [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+            ]), 
             disable_web_page_preview=True
         )
-        
+
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
