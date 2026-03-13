@@ -89,13 +89,11 @@ CONTENT = {
             "• Floor Decoration\n"
             "• Corridor Decoration\n"
             "• Salon Decoration\n\n"
-            "📱 *See our work:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "📱 *👇👇👇See the previous projects we have done for 15,000 birr 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[video](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
             "✨ *Perfect for intimate celebrations!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -105,14 +103,12 @@ CONTENT = {
             "• Bedroom, Corridor & Salon Decor\n"
             "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Normal Cake\n\n"
-            "📱 *See our work:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "📱 *👇👇👇See the previous projects we have done for 20,000 birr 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[video](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[video](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[video](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[video](https://vm.tiktok.com/ZMA2PG9Nd) | "
             "🌟 *Our most popular choice!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -123,17 +119,15 @@ CONTENT = {
             "• Corridor & Salon Decor\n"
             "• Large Flower Arrangement (Bouquet + Floor) - እቅፍ አበባ\n"
             "• 2 Kg Custom Made Cake - 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *See our work:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[TikTok](https://surl.li/iiicng) | "
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "[TikTok](https://https://surli.cc/ysmgqa) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/)\n\n"
+            "📱 *👇👇👇See the previous projects we have done for 25,000 birr 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[video](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[video](https://surl.li/iiicng) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
+            "[video](https://https://surli.cc/ysmgqa) | "
             "👑 *The ultimate luxury experience!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -145,9 +139,8 @@ CONTENT = {
             "• Special limousine service\n"
             "• Grand and elegant ride home\n"
             "• Professional chauffeur\n"
-            "• Rose petals & welcome drinks\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "🚗 *Make a stylish entrance!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
@@ -158,9 +151,8 @@ CONTENT = {
             "• Exclusive limousine service\n"
             "• Luxurious and heartwarming ride\n"
             "• Professional chauffeur\n"
-            "• Rose petals, welcome drinks & cake\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "✨ *Extra touches for a special day!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
@@ -171,9 +163,8 @@ CONTENT = {
             "• Premium luxury limousine\n"
             "• Truly regal welcome home\n"
             "• Professional chauffeur in formal attire\n"
-            "• Full package: drinks, cake, flowers, photos\n\n"
             "📸 *See our arrivals:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "👑 *Royal treatment for royalty!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
@@ -189,7 +180,7 @@ CONTENT = {
             "• (No physical album)\n\n"
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "📱 *Perfect for digital sharing!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -201,7 +192,7 @@ CONTENT = {
             "• 3 hours coverage\n\n"
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "🖼️ *Beautiful memories you can hold!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -214,7 +205,7 @@ CONTENT = {
             "• Professional editing\n\n"
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "💎 *Heirloom quality memories!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -227,24 +218,24 @@ CONTENT = {
             "• Highlight reel\n\n"
             "📸 *See our portfolio:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "🎥 *Relive your special moments!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         'contact_text': (
-            "📞 **Contact Us**\n\n"
-            "⏰ *Working Hours:* 8:00 AM - 8:00 PM (Local Time)\n"
-            "⚠️ *Note:* Not operational before 2:00 LT / 8:00 PM\n\n"
-            "📞 **Phone:** \n\n"
+            "📞 ••Contact Us••\n\n"
+            "⏰ •Working Hours:• 8:00 AM - 8:00 PM (Local Time)\n"
+            "⚠️ •Note:• Not operational before 2:00 LT / 8:00 PM\n\n"
+            "📞 ••Phone:•• \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
-            "🎵 **Follow us on :**\n\n"
-            "📸 *Instagram:* (https://instagram.com/agos_postpartumcare)\n"
-            "🎵 *TikTok:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "📱 *Telegram:* (https://t.me/Agospostpartumcare0)\n\n"
-            "🌐 *Website:* [www.agospostpartumcare.com]\n\n"
-            "📍 *Location:* [Piassa, Abat Commercial](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
+            "🎵 ••Follow us on :••\n"
+            "📸 •Instagram: (https://instagram.com/agos_postpartumcare)\n"
+            "🎵 •TikTok: (https://www.tiktok.com/@Agos_postpartumCare)\n"
+            "📱 •Telegram: (https://t.me/Agospostpartumcare0)\n"
+            "🌐 •Website: [www.agospostpartumcare.com]\n"
+            "📍 •Location: [Piassa, Abat Commercial](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "I Agree ✅",
         'back': "🔙 Back to Menu",
@@ -253,24 +244,21 @@ CONTENT = {
         
         # Dynamic Discover More messages
         'discover_after_decor': (
-            "✨ *Thank you for your decor booking!* ✨\n\n"
-            "Your decor is going to look amazing! Now, why not complete your celebration with:\n\n"
-            "🚗 *Limousine Service* - Make a grand entrance\n"
-            "📸 *Photography Packages* - Capture every moment\n\n"
+            "✨ Select if you want additional services until your decor order is confirmed.✨\n\n"
+            "🚗 •Limousine Service - Make a grand entrance\n"
+            "📸 •Photography Packages - Capture every moment\n\n"
             "Click below to explore more!"
         ),
         'discover_after_limo': (
-            "✨ *Thank you for your limousine booking!* ✨\n\n"
-            "Your grand entrance is set! Now, why not add:\n\n"
-            "🎁 *Decor Packages* - Create a beautiful space\n"
-            "📸 *Photography Packages* - Capture the moment\n\n"
+            "✨ Select if you want additional services until your limousine order is confirmed.✨\n\n"
+            "🎁 •Decor Packages - Create a beautiful space\n"
+            "📸 •Photography Packages - Capture the moment\n\n"
             "Click below to explore more!"
         ),
         'discover_after_photo': (
-            "✨ *Thank you for your photography booking!* ✨\n\n"
-            "Your memories will be beautifully captured! Now, why not add:\n\n"
-            "🎁 *Decor Packages* - Create a beautiful space\n"
-            "🚗 *Limousine Service* - Make a grand entrance\n\n"
+            "✨ Select if you want additional services until your photography order is confirmed. ✨\n\n"
+            "🎁 •Decor Packages - Create a beautiful space\n"
+            "🚗 •Limousine Service - Make a grand entrance\n\n"
             "Click below to explore more!"
         ),
         'discover_complete': (
@@ -278,9 +266,9 @@ CONTENT = {
             "Thank you for choosing AGOS for your celebrations. You've booked:\n"
             "{booked_services}\n\n"
             "Want to add more? Contact us for custom packages!\n\n"
-            "📞 *Contact:* @agos_postpartumcare\n"
-            "📱 *Phone:* +251 967 621 545"
-            "📱 *Phone:* +251 980 040 468"
+            "📞 •Contact: @agos_postpartumcare\n"
+            "📱 •Phone: +251 967 621 545"
+            "📱 •Phone: +251 980 040 468"
         ),
         'book_now': "📝 Book Now"
     },
@@ -302,28 +290,24 @@ CONTENT = {
             "• የወለል ዲኮር\n"
             "• የኮሪደር ዲኮር\n"
             "• የሳሎን ዲኮር\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)"
-        ),
+            "📱 *👇👇👇ከዚህ በፊት በ 15,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[video](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
+             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"),
         'decor_deluxe': (
             "💎 *ደልክስ ዲኮር (20,000 ብር)*\n"
             "__________________________\n\n"
             "• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
+            "• ትልቅ እቅፍ አበባ\n"
             "• 2 ኪሎ መደበኛ ኬክ\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *👇👇👇ከዚህ በፊት በ 20,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[video](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[video](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[video](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[video](https://vm.tiktok.com/ZMA2PG9Nd) | "
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'decor_premium': (
@@ -331,19 +315,17 @@ CONTENT = {
             "__________________________\n\n"
             "• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ ጋር (2 ሳምንት)\n"
             "• የኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
+            "• ትልቅ እቅፍ አበባ\n"
             "• 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[TikTok](https://surl.li/iiicng) | "
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "[TikTok](https://https://surli.cc/ysmgqa) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *👇👇👇ከዚህ በፊት በ 25,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇*\n"
+            "[video](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[video](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[video](https://surl.li/iiicng) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
+            "[video](https://https://surli.cc/ysmgqa) | "
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
@@ -351,30 +333,27 @@ CONTENT = {
         'limo_grand': (
             "⭐ *መደበኛ አቀባበል (25,000 ብር)*\n"
             "__________________________\n\n"
-            "• ልዩ የሊሙዚን አገልግሎት\n"
-            "• የእቅፍ አበባ ዝግጅት\n\n"
+            "• ልዩ የሊሙዚን አገልግሎት\n\n"
             "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_special': (
             "✨ *ልዩ አቀባበል (30,000 ብር)*\n"
             "__________________________\n\n"
-            "• ልዩ የሊሙዚን አገልግሎት\n"
-            "• እቅፍ አበባ እና ኬክ\n\n"
+            "• ልዩ የሊሙዚን አገልግሎት\n\n"
             "📸 *አቀባበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'limo_royal': (
             "👑 *የሮያል አቀባበል (35,000 ብር)*\n"
             "__________________________\n\n"
-            "• ፕሪሚየም የሊሙዚን አገልግሎት\n"
-            "• ሙሉ አቀባበል ከእቅፍ አበባ፣ ኬክ እና ፎቶ\n\n"
+            "• ፕሪሚየም የሊሙዚን አገልግሎት\n\n"
             "📸 *አቀበሎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740e) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7566665605512809740e) | "
             "[Instagram](https://instagram.com/agospostpartum)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -387,7 +366,7 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_standard': (
@@ -397,7 +376,7 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'photo_premium': (
@@ -407,7 +386,7 @@ CONTENT = {
             "• ሁሉም ፎቶዎች በሶፍት ኮፒ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         'videography': (
@@ -417,23 +396,23 @@ CONTENT = {
             "• በባለሙያ ኤዲት የተደረገ ቪዲዮ\n\n"
             "📸 *ስራዎቻችንን ይመልከቱ:*\n"
             "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/media)\n\n"
+            "[Website](https://www.agospostpartumcare.com/)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
         'contact_text': (
-            "📞 **ያግኙን**\n\n"
-            "⏰ *የስራ ሰዓት:* 2፡00 ጥዋት - 2፡00 ማታ (በአካባቢው ሰዓት)\n"
-            "⚠️ *ማሳሰቢያ:* ከምሽቱ 2፡00 ሰዓት በፊት አይሰራም\n\n"
-            "📞 **ስልክ:** \n\n"
+            "📞 ••ያግኙን••\n\n"
+            "⏰ •የስራ ሰዓት: 2፡00 ጥዋት - 2፡00 ማታ (በአካባቢው ሰዓት)\n"
+            "⚠️ •ማሳሰቢያ: ከምሽቱ 2፡00 ሰዓት በፊት አይሰራም\n\n"
+            "📞 ••ስልክ:•• \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
-            "🎵 ** የሶሻል ሚዲያ ገፃችንን ይጎብኙ :**\n\n"
-            "📸 *ኢንስታግራም:* (https://instagram.com/agos_postpartumcare)\n"
-            "🎵 *ቲክቶክ:* (https://www.tiktok.com/@Agos_postpartumCare)\n"
-            "📱 *ቴሌግራም:* (https://t.me/Agospostpartumcare0)\n\n"
-            "🌐 *ዌብሳይት:* [www.agospostpartumcare.com]\n\n"
-            "📍 *አድራሻ:* [ፒያሳ፣ አባት ኮሜርሻል](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
+            "🎵 •• የሶሻል ሚዲያ ገፃችንን ይጎብኙ :••\n"
+            "📸 •ኢንስታግራም: (https://instagram.com/agos_postpartumcare)\n"
+            "🎵 •ቲክቶክ: (https://www.tiktok.com/@Agos_postpartumCare)\n"
+            "📱 •ቴሌግራም: (https://t.me/Agospostpartumcare0)\n"
+            "🌐 •ዌብሳይት: [www.agospostpartumcare.com]\n"
+            "📍 •አድራሻ: [ፒያሳ፣ አባት ኮሜርሻል](https://maps.app.goo.gl/mHDvo7CpFwUubWyx6)"
         ),
         'agree_btn': "እስማማለሁ ✅",
         'back': "🔙 ወደ ዋና ማውጫ",
@@ -442,34 +421,31 @@ CONTENT = {
         
         # Dynamic Discover More messages (Amharic)
         'discover_after_decor': (
-            "✨ *ለዲኮር ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
-            "ዲኮርዎ ድንቅ ይሆናል! አሁን ደግሞ ዝግጅታችሁን በሚከተሉት ያሟሉት፦\n\n"
-            "🚗 *የሊሙዚን አገልግሎት* - በታላቅ አቀባበል ይግቡ\n"
-            "📸 *የፎቶግራፍ አገልግሎቶች* - ትዝታዎችን ይቅረጹ\n\n"
+            "✨ የዲኮር ትዕዛዝዎ እስከሚረጋገጥ ድረስ ተጨማሪ አገልግሎቶችን ከፈለጉ ይምረጡ ✨\n\n"
+            "🚗 •የሊሙዚን አገልግሎት - በታላቅ አቀባበል ይግቡ\n"
+            "📸 •የፎቶግራፍ አገልግሎቶች - ትዝታዎችን ይቅረጹ\n\n"
             "ለማዘዝ ከታች ይጫኑ!"
         ),
         'discover_after_limo': (
-            "✨ *ለሊሙዚን ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
-            "አቀባበላችሁ ተዘጋጅቷል! አሁን ደግሞ በሚከተሉት ያሟሉት፦\n\n"
-            "🎁 *የዲኮር ፓኬጆች* - ውብ ቦታ ይፍጠሩ\n"
-            "📸 *የፎቶግራፍ አገልግሎቶች* - ትዝታዎችን ይቅረጹ\n\n"
+            "✨ የሊሙዚን ትዕዛዝዎ እስከሚረጋገጥ ድረስ ተጨማሪ አገልግሎቶችን ከፈለጉ ይምረጡ✨\n\n"
+            "🎁 •የዲኮር ፓኬጆች - ውብ ቦታ ይፍጠሩ\n"
+            "📸 •የፎቶግራፍ አገልግሎቶች - ትዝታዎችን ይቅረጹ\n\n"
             "ለማዘዝ ከታች ይጫኑ!"
         ),
         'discover_after_photo': (
-            "✨ *ለፎቶግራፍ ትዕዛዝዎ እናመሰግናለን!* ✨\n\n"
-            "ትዝታዎችዎ በሚያማምሩ ፎቶዎች ይቀረጻሉ! አሁን ደግሞ በሚከተሉት ያሟሉት፦\n\n"
-            "🎁 *የዲኮር ፓኬጆች* - ውብ ቦታ ይፍጠሩ\n"
-            "🚗 *የሊሙዚን አገልግሎት* - በታላቅ አቀባበል ይግቡ\n\n"
+            "✨ የፎቶግራፍ ትዕዛዝዎ እስከሚረጋገጥ ድረስ ተጨማሪ አገልግሎቶችን ከፈለጉ ይምረጡ✨\n\n"
+            "🎁 •የዲኮር ፓኬጆች - ውብ ቦታ ይፍጠሩ\n"
+            "🚗 •የሊሙዚን አገልግሎት - በታላቅ አቀባበል ይግቡ\n\n"
             "ለማዘዝ ከታች ይጫኑ!"
         ),
         'discover_complete': (
-            "🎉 *ሁሉንም አገልግሎቶቻችንን ተመልክተዋል!* 🎉\n\n"
+            "🎉 ሁሉንም አገልግሎቶቻችንን ተመልክተዋል! 🎉\n\n"
             "AGOSን በመምረጥዎ እናመሰግናለን። ያዘዙት አገልግሎት፦\n"
             "{booked_services}\n\n"
             "ተጨማሪ ማከል ይፈልጋሉ? ለልዩ ፓኬጆች ያግኙን!\n\n"
-            "📞 *ያግኙን:* @agos_postpartumcare\n"
-            "📱 *ስልክ:* +251 967 621 545"
-            "📱 *ስልክ:* +251 967 621 545"
+            "📞 •ያግኙን: @agos_postpartumcare\n"
+            "📱 •ስልክ: +251 967 621 545"
+            "📱 •ስልክ: +251 967 621 545"
         ),
         'book_now': "📝 አሁን ይዘዙ"
     }
@@ -632,7 +608,7 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     if 'limo' in available_services:
         discover_buttons.append([InlineKeyboardButton("🚗 Book Limousine / ሊሙዚን ይዘዙ", callback_data='show_limo_packages')])
     if 'photo' in available_services:
-        discover_buttons.append([InlineKeyboardButton("📸 Book Media / ሚዲያ ይዘዙ", callback_data='show_photo_packages')])
+        discover_buttons.append([InlineKeyboardButton("📸 Book Photography / የፎቶግራፍ አገልግሎት ይዘዙ", callback_data='show_photo_packages')])
     
     # Add menu button
     discover_buttons.append([InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')])
@@ -648,7 +624,7 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     elif len(available_services) == 1:
         # All but one service booked - show appropriate message
         if 'decor' in available_services:
-            message = "Why not add beautiful decor to complete your celebration? / በዓላችሁን ለማስዋብ ዲኮር አሁን ይዘዙ!"
+            message = "Why not add beautiful decor to complete your celebration? / ዝግጅታችሁን ለማስዋብ ዲኮር አሁን ይዘዙ!"
         elif 'limo' in available_services:
             message = "Make a grand entrance with our limousine service! / በሊሙዚን አገልግሎታችን በታላቅ አቀባበል ይግቡ!"
         else:
@@ -673,65 +649,98 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show decor package options with individual pages"""
+    """Consolidated decor view with details and direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    if lang == 'en':
+        text = (
+            "🎁 *Our Decor Packages*\n\n"
+            "🔸 *Basic (15,000 ETB)*: Bedroom, Floor, Corridor, & Salon decor.\n\n"
+            "💎 *Deluxe (20,000 ETB)*: Basic + Flowers + 2kg Cake.\n\n"
+            "👑 *Premium (25,000 ETB)*: Deluxe + Agober rent + Custom Cake."
+        )
+    else:
+        text = (
+            "🎁 *የዲኮር ፓኬጆቻችን*\n\n"
+            "🔸 *መደበኛ (15,000 ብር)*: የመኝታ ቤት፣ የወለል፣ የኮሪደር እና የሳሎን ዲኮር።\n\n"
+            "💎 *ደልክስ (20,000 ብር)*: መደበኛ + ትልቅ እቅፍ አበባ + 2 ኪሎ ኬክ።\n\n"
+            "👑 *ፕሪሚየም (25,000 ብር)*: ደልክስ + የአጎበር ኪራይ + በመረጡት ዲዛይን የሚሰራ ኬክ።"
+        )
+
     kb = [
-        [InlineKeyboardButton("🔸 Basic - 15,000 ETB", callback_data='view_decor_basic')],
-        [InlineKeyboardButton("💎 Deluxe - 20,000 ETB", callback_data='view_decor_deluxe')],
-        [InlineKeyboardButton("👑 Premium - 25,000 ETB", callback_data='view_decor_premium')],
+        [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
+        [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
+        [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
+        [InlineKeyboardButton("ℹ️ Full Info & TikTok Videos", callback_data='view_decor_basic')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
-    await query.message.reply_text(
-        "🎁 *Select a Decor Package to View Details*\n\n"
-        "Click on any package to see full details and book!",
-        reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode='Markdown'
-    )
+    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
 
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show limousine package options with individual pages"""
+    """Consolidated limo view with direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    if lang == 'en':
+        text = (
+            "🚗 *Limousine Services*\n\n"
+            "⭐ *Grand Arrival (25,000 ETB)*: Elegant ride home.\n"
+            "✨ *Special Arrival (30,000 ETB)*: Luxurious ride with extra touches.\n"
+            "👑 *Royal Welcome (35,000 ETB)*: Premium luxury experience."
+        )
+    else:
+        text = (
+            "🚗 *የሊሙዚን አገልግሎቶች*\n\n"
+            "⭐ *መደበኛ አቀባበል (25,000 ብር)*: ለታላቅ አቀባበል የሚሆን የሊሙዚን አገልግሎት።\n"
+            "✨ *ልዩ አቀባበል (30,000 ብር)*: ተጨማሪ ነገሮች ያሉት የቅንጦት አቀባበል።\n"
+            "👑 *የሮያል አቀባበል (35,000 ብር)*: በጣም ዘመናዊ የሆነ የሊሙዚን አገልግሎት።"
+        )
+
     kb = [
-        [InlineKeyboardButton("⭐ Grand Arrival - 25,000 ETB", callback_data='view_limo_grand')],
-        [InlineKeyboardButton("✨ Special Arrival - 30,000 ETB", callback_data='view_limo_special')],
-        [InlineKeyboardButton("👑 Royal Welcome - 35,000 ETB", callback_data='view_limo_royal')],
+        [InlineKeyboardButton("📝 Book Grand (25k)", callback_data='l_start_grand')],
+        [InlineKeyboardButton("📝 Book Special (30k)", callback_data='l_start_special')],
+        [InlineKeyboardButton("📝 Book Royal (35k)", callback_data='l_start_royal')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
-    await query.message.reply_text(
-        "🚗 *Select a Limousine Package to View Details*\n\n"
-        "Click on any package to see full details and book!",
-        reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode='Markdown'
-    )
+    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
 
 async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Show photography package options with individual pages"""
+    """Consolidated media view with direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    if lang == 'en':
+        text = (
+            "📸 *Media Packages*\n\n"
+            "📱 *Digital (10,000 ETB)*: Soft copies only.\n"
+            "🖼️ *Standard (12,000 ETB)*: 100 Printed photos + Soft copy.\n"
+            "💎 *Premium (15,000 ETB)*: Laminated Album + Soft copy.\n"
+            "🎥 *Video (15,000 ETB)*: Full edited video coverage."
+        )
+    else:
+        text = (
+            "📸 *የሚዲያ ፓኬጆች*\n\n"
+            "📱 *ዲጂታል (10,000 ብር)*: በሶፍት ኮፒ ብቻ።\n"
+            "🖼️ *መደበኛ (12,000 ብር)*: 100 የታተሙ ፎቶዎች + ሶፍት ኮፒ።\n"
+            "💎 *ፕሪሚየም (15,000 ብር)*: ላሚኔት የተደረገ አልበም + ሶፍት ኮፒ።\n"
+            "🎥 *ቪዲዮ (15,000 ብር)*: ሙሉ ኤዲት የተደረገ ቪዲዮ።"
+        )
+
     kb = [
-        [InlineKeyboardButton("📱 Digital Photo - 10,000 ETB", callback_data='view_photo_digital')],
-        [InlineKeyboardButton("🖼️ Standard Photo - 12,000 ETB", callback_data='view_photo_standard')],
-        [InlineKeyboardButton("💎 Premium Photo - 15,000 ETB", callback_data='view_photo_premium')],
-        [InlineKeyboardButton("🎥 Videography - 15,000 ETB", callback_data='view_videography')],
+        [InlineKeyboardButton("📝 Book Digital", callback_data='ph_start_digital')],
+        [InlineKeyboardButton("📝 Book Standard", callback_data='ph_start_standard')],
+        [InlineKeyboardButton("📝 Book Premium", callback_data='ph_start_premium')],
+        [InlineKeyboardButton("🎥 Book Video", callback_data='ph_start_video')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
-    await query.message.reply_text(
-        "📸 *Select a Media Package to View Details*\n\n"
-        "Click on any package to see full details and book!",
-        reply_markup=InlineKeyboardMarkup(kb),
-        parse_mode='Markdown'
-    )
+    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
 
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
 async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -949,7 +958,7 @@ async def d_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
     
     await query.message.reply_text(
-        "3. House Address for Decor Setup / ዲኮር ለመስራት የቤት አድራሻ:",
+        "3. House Address for Decor Setup / ዲኮር የሚሰራበት የቤት አድራሻ :",
         reply_markup=get_nav_kb(lang, back_callback='d_back')
     )
     return D_ADDR
@@ -979,7 +988,7 @@ async def d_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
     
     await update.message.reply_text(
-        "6. Contact Person at Home (if different) / በቤት ውስጥ የሚገኝ የደንበኛ ተወካይ (ከላይ ከተጠቀሰው ሲለይ):",
+        "6. Alternative Phone Number / አማራጭ የስልክ ቁጥር:",
         reply_markup=get_nav_kb(lang, back_callback='d_back')
     )
     return D_CONTACT
@@ -1026,8 +1035,8 @@ async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # This is a message object (from skip case)
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
-            "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
-            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ ጥዋት 4፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
+            "8. Preferred Date & Time for the Decor setup (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
+            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)\n",
             reply_markup=get_nav_kb(lang, back_callback='d_back')
         )
     return D_DATE
@@ -1180,8 +1189,8 @@ async def l_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
     
     await update.message.reply_text(
-        "3. Preferred Date & Time (e.g., Morning 8:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
-        "3. የሚፈለግ ቀን እና ሰዓት (ለምሳሌ፡ ጥዋት 8፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
+        "3. Preferred Date & Time (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
+        "3. የሚፈለግ ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
         reply_markup=get_nav_kb(lang, back_callback='l_back')
     )
     return L_DATE
@@ -1191,7 +1200,7 @@ async def l_step3(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
     
     await update.message.reply_text(
-        "4. Pickup Address / የሚነሱበት አድራሻ:",
+        "4. Pickup Address (የሚነሱበት አድራሻ) &  Destination (መዳረሻ / የቤትዎ አድራሻ)\n (ለምሳሌ፡ ከ 4 ኪሎ ሄመን ሆስፒታል ወደ ቃሊቲ) :",
         reply_markup=get_nav_kb(lang, back_callback='l_back')
     )
     return L_ADDR
@@ -1230,14 +1239,15 @@ async def l_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
             "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-            "👤 Account Name: AGOS POSTPARTUM CARE\n"
-            "🔢 Account Number: 10001345678901\n\n"
-            "📱 *Tele Birr / ቴሌ ብር*\n"
-            "📞 Phone: 0967621545"
+            "🏧 *Commercial Bank of Ethiopia (CBE) / የኢትዮጵያ ንግድ ባንክ *\n"
+            "👤 Account Name: Sara Mohammed \n"
+            "🔢 Account Number: 1000505694407\n\n"
+            "💵 Amount: 50% of the selected package \n\n"
+            "✅ After filling this form, please send a screenshot of your 50% deposit payment to confirm your booking.\n"
+            "‼️ Note: Booking will not be considered complete until the deposit is received.\n\n"
+            "✅ ይህንን ቅጽ ከሞሉ በኋላ፣ ትዕዛዝዎን ለማረጋገጥ የ50% የተቀማጭ ክፍያ ስክሪን ሾት ይላኩ።\n"
+            "‼️ ማሳሰቢያ፡- ተቀማጭ ገንዘብ እስኪደርስ ድረስ ትዕዛዝዎ እንደተጠናቀቀ አይቆጠርም።\n"
         )
         
         await query.message.reply_text(warning_msg, parse_mode='Markdown')
@@ -1250,14 +1260,15 @@ async def l_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lang = context.user_data.get('lang', 'en')
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
             "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-            "👤 Account Name: AGOS POSTPARTUM CARE\n"
-            "🔢 Account Number: 10001345678901\n\n"
-            "📱 *Tele Birr / ቴሌ ብር*\n"
-            "📞 Phone: 0967621545"
+            "🏧 *Commercial Bank of Ethiopia (CBE) / የኢትዮጵያ ንግድ ባንክ *\n"
+            "👤 Account Name: Sara Mohammed \n"
+            "🔢 Account Number: 1000505694407\n\n"
+            "💵 Amount: 50% of the selected package \n\n"
+            "✅ After filling this form, please send a screenshot of your 50% deposit payment to confirm your booking.\n"
+            "‼️ Note: Booking will not be considered complete until the deposit is received.\n\n"
+            "✅ ይህንን ቅጽ ከሞሉ በኋላ፣ ትዕዛዝዎን ለማረጋገጥ የ50% የተቀማጭ ክፍያ ስክሪን ሾት ይላኩ።\n"
+            "‼️ ማሳሰቢያ፡- ተቀማጭ ገንዘብ እስኪደርስ ድረስ ትዕዛዝዎ እንደተጠናቀቀ አይቆጠርም።\n"
         )
         
         await update.message.reply_text(warning_msg, parse_mode='Markdown')
@@ -1328,7 +1339,7 @@ async def ph_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=N
     ])
     
     await query.message.reply_text(
-        "📸 **Media Services Booking / የሚዲያ አገልግሎት ማስያዣ**\n\n1. Full Name / ሙሉ ስም:",
+        "📸 **Photograph / videography Services Booking / የፎቶግራፍ አገልግሎት ማዘዣ**\n\n1. Full Name / ሙሉ ስም:",
         reply_markup=kb
     )
     return PH_NAME
@@ -1348,8 +1359,8 @@ async def ph_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     lang = context.user_data.get('lang', 'en')
     
     await update.message.reply_text(
-        "3. Event Date & Time\nFormat: (dd/mm/yyyy), (Time)\n\n"
-        "3. የዝግጅቱ ቀን እና ሰዓት\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
+        "3. Event Date & Time (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
+        "3. የዝግጅቱ ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
         reply_markup=get_nav_kb(lang, back_callback='ph_back')
     )
     return PH_DATE
@@ -1399,14 +1410,15 @@ async def ph_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
             "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-            "👤 Account Name: AGOS POSTPARTUM CARE\n"
-            "🔢 Account Number: 10001345678901\n\n"
-            "📱 *Tele Birr / ቴሌ ብር*\n"
-            "📞 Phone: 0967621545"
+            "🏧 *Commercial Bank of Ethiopia (CBE) / የኢትዮጵያ ንግድ ባንክ *\n"
+            "👤 Account Name: Sara Mohammed \n"
+            "🔢 Account Number: 1000505694407\n\n"
+            "💵 Amount: 50% of the selected package \n\n"
+            "✅ After filling this form, please send a screenshot of your 50% deposit payment to confirm your booking.\n"
+            "‼️ Note: Booking will not be considered complete until the deposit is received.\n\n"
+            "✅ ይህንን ቅጽ ከሞሉ በኋላ፣ ትዕዛዝዎን ለማረጋገጥ የ50% የተቀማጭ ክፍያ ስክሪን ሾት ይላኩ።\n"
+            "‼️ ማሳሰቢያ፡- ተቀማጭ ገንዘብ እስኪደርስ ድረስ ትዕዛዝዎ እንደተጠናቀቀ አይቆጠርም።\n"
         )
         
         await query.message.reply_text(warning_msg, parse_mode='Markdown')
@@ -1419,14 +1431,15 @@ async def ph_step5(update: Update, context: ContextTypes.DEFAULT_TYPE):
         lang = context.user_data.get('lang', 'en')
         warning_msg = (
             "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-            "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-            "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
             "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-            "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-            "👤 Account Name: AGOS POSTPARTUM CARE\n"
-            "🔢 Account Number: 10001345678901\n\n"
-            "📱 *Tele Birr / ቴሌ ብር*\n"
-            "📞 Phone: 0967621545"
+            "🏧 *Commercial Bank of Ethiopia (CBE) / የኢትዮጵያ ንግድ ባንክ *\n"
+            "👤 Account Name: Sara Mohammed \n"
+            "🔢 Account Number: 1000505694407\n\n"
+            "💵 Amount: 50% of the selected package \n\n"
+            "✅ After filling this form, please send a screenshot of your 50% deposit payment to confirm your booking.\n"
+            "‼️ Note: Booking will not be considered complete until the deposit is received.\n\n"
+            "✅ ይህንን ቅጽ ከሞሉ በኋላ፣ ትዕዛዝዎን ለማረጋገጥ የ50% የተቀማጭ ክፍያ ስክሪን ሾት ይላኩ።\n"
+            "‼️ ማሳሰቢያ፡- ተቀማጭ ገንዘብ እስኪደርስ ድረስ ትዕዛዝዎ እንደተጠናቀቀ አይቆጠርም።\n"
         )
         
         await update.message.reply_text(warning_msg, parse_mode='Markdown')
@@ -1663,4 +1676,3 @@ if __name__ == '__main__':
     print("📱 Features: Individual package pages with booking buttons, smart discover more")
     print("✅ All booking forms should now work correctly!")
     app.run_polling()
-
