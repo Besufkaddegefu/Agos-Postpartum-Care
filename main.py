@@ -655,7 +655,7 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # Combined exact text from dictionary
+    # This pulls the EXACT text from your dictionary
     text = (
         f"{CONTENT[lang]['decor_basic']}\n\n"
         "__________________________\n\n"
@@ -673,12 +673,22 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     ]
     
     try:
-        # Switching back to 'Markdown' allows your [video](url) and *bold* to work
-        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
-    except Exception as e:
-        # Fallback for Amharic special characters: send as plain text if Markdown fails
-        await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
-
+        # Changed back to 'Markdown' so your * and [] symbols work correctly
+        await query.message.edit_text(
+            text, 
+            reply_markup=InlineKeyboardMarkup(kb), 
+            parse_mode='Markdown', 
+            disable_web_page_preview=True
+        )
+    except Exception:
+        # SAFETY FALLBACK: If Markdown fails, show the text as plain text
+        # This prevents the "empty message" problem you are having.
+        await query.message.edit_text(
+            text, 
+            reply_markup=InlineKeyboardMarkup(kb), 
+            disable_web_page_preview=True
+        )
+        
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
