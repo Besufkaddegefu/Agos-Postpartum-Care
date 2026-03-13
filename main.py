@@ -125,7 +125,6 @@ CONTENT = {
             "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
             "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
             "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[video](https://surl.li/iiicng) | "
             "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
             "👑 *The ultimate luxury experience!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
@@ -322,7 +321,6 @@ CONTENT = {
             "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
             "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
             "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[video](https://surl.li/iiicng) | "
             "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -650,30 +648,34 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     query = update.callback_query
     await query.answer()
     
-    # 1. Detect language correctly
+    # Correctly identify the user's language
     lang = context.user_data.get('lang', 'en')
     
-    # 2. Safely pull text from your dictionary
-    # We combine basic, deluxe, and premium into one message as requested
+    # Pull the pieces from your dictionary
+    basic = CONTENT[lang]['decor_basic']
+    deluxe = CONTENT[lang]['decor_deluxe']
+    premium = CONTENT[lang]['decor_premium']
+    
+    # Combine them into one text string
+    text = (
+        f"{basic}\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"{deluxe}\n\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"{premium}\n\n"
+        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
+    )
+
+    # Dynamic buttons that change based on language
+    kb = [
+        [InlineKeyboardButton("📝 Book Basic (15k)" if lang == 'en' else "📝 መደበኛ (15k) ያዝ", callback_data='d_start_basic')],
+        [InlineKeyboardButton("📝 Book Deluxe (20k)" if lang == 'en' else "📝 ደልክስ (20k) ያዝ", callback_data='d_start_deluxe')],
+        [InlineKeyboardButton("📝 Book Premium (25k)" if lang == 'en' else "📝 ፕሪሚየም (25k) ያዝ", callback_data='d_start_premium')],
+        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+    ]
+    
     try:
-        text = (
-            f"{CONTENT[lang]['decor_basic']}\n\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"{CONTENT[lang]['decor_deluxe']}\n\n"
-            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"{CONTENT[lang]['decor_premium']}\n\n"
-            "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
-        )
-
-        # 3. Dynamic Button Labels based on language
-        kb = [
-            [InlineKeyboardButton("📝 Book Basic (15k)" if lang == 'en' else "📝 መደበኛ (15k) ያዝ", callback_data='d_start_basic')],
-            [InlineKeyboardButton("📝 Book Deluxe (20k)" if lang == 'en' else "📝 ደልክስ (20k) ያዝ", callback_data='d_start_deluxe')],
-            [InlineKeyboardButton("📝 Book Premium (25k)" if lang == 'en' else "📝 ፕሪሚየም (25k) ያዝ", callback_data='d_start_premium')],
-            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-        ]
-
-        # 4. Try rendering with Markdown
+        # We use Markdown because your content uses [video](link)
         await query.message.edit_text(
             text, 
             reply_markup=InlineKeyboardMarkup(kb), 
@@ -681,9 +683,7 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
             disable_web_page_preview=True
         )
     except Exception as e:
-        # 5. SAFETY FALLBACK
-        # If Amharic characters/links crash the Markdown parser, send as plain text.
-        # This ensures the details NEVER disappear.
+        # Fallback: if there's any weird character, show it as plain text
         await query.message.edit_text(
             text, 
             reply_markup=InlineKeyboardMarkup(kb), 
