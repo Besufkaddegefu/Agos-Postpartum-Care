@@ -127,7 +127,6 @@ CONTENT = {
             "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
             "[video](https://surl.li/iiicng) | "
             "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "[video](https://https://surli.cc/ysmgqa) | "
             "👑 *The ultimate luxury experience!*\n\n"
             "👉 *For more videos, visit our TikTok page at: https://www.tiktok.com/@agos_postpartumcare*"
         ),
@@ -325,7 +324,6 @@ CONTENT = {
             "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
             "[video](https://surl.li/iiicng) | "
             "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "[video](https://https://surli.cc/ysmgqa) | "
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ፦: https://www.tiktok.com/@agos_postpartumcare*"
         ),
         
