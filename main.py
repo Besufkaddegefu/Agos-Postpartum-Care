@@ -450,42 +450,154 @@ CONTENT = {
 }
 
 # --- PDF GENERATOR FUNCTIONS ---
+# --- PDF GENERATOR FUNCTIONS (FORMAL VERSION WITH CORRECT BANK DETAILS) ---
 def create_decor_pdf(data):
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
 
+    # Add logo if exists
     if os.path.exists(LOGO_PATH):
         try:
             logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            c.drawImage(logo, 450, height - 90, width=80, height=80, mask='auto')
         except Exception:
             pass
 
+    # Header
+    c.setFont("Helvetica-Bold", 22)
+    c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Decor Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Decor Order Form")
-    c.line(50, height - 85, 550, height - 85)
-
+    c.drawString(50, height - 80, "DECOR SERVICE")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    
+    # Line separator
+    c.line(50, height - 120, 550, height - 120)
+    
+    # Booking reference and date
     c.setFont("Helvetica", 11)
-    y_position = height - 120
+    c.drawString(50, height - 140, f"Booking Reference: DEC-{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    c.drawString(50, height - 155, f"Date of Issue: {datetime.now().strftime('%B %d, %Y')}")
+    c.drawString(50, height - 170, f"Time of Issue: {datetime.now().strftime('%H:%M:%S')}")
+    
+    c.line(50, height - 180, 550, height - 180)
+
+    # Client Information Section
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, height - 200, "1. CLIENT INFORMATION")
+    c.setFont("Helvetica", 11)
+    y_position = height - 225
+
+    # Format each field properly with formal labels
+    field_mappings = {
+        'd_name': 'Full Name',
+        'd_gender': 'Gender of Newborn',
+        'd_phone': 'Primary Contact Number',
+        'd_username': 'Telegram Username',
+        'd_contact': 'Alternative Contact Number'
+    }
 
     for key, value in data.items():
-        if key.startswith('d_'):
-            label = key[2:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
+        if key.startswith('d_') and key in field_mappings:
+            label = field_mappings[key]
+            c.drawString(70, y_position, f"{label}: {value}")
+            y_position -= 20
+            
+            if y_position < 300:
                 c.showPage()
-                y_position = height - 50
+                y_position = height - 100
+                c.setFont("Helvetica", 11)
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    # Service Details Section
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "2. SERVICE DETAILS")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    
+    service_mappings = {
+        'd_addr': 'Service Address',
+        'd_house': 'House Type',
+        'd_pkg': 'Selected Package',
+        'd_date': 'Preferred Date & Time',
+        'd_notes': 'Special Requests / Notes'
+    }
+    
+    for key, value in data.items():
+        if key.startswith('d_') and key in service_mappings:
+            label = service_mappings[key]
+            # Handle long text
+            text = f"{label}: {value if value else 'None provided'}"
+            if len(text) > 80:
+                c.drawString(70, y_position, f"{label}:")
+                y_position -= 18
+                # Word wrap for long values
+                words = str(value).split()
+                line = ""
+                for word in words:
+                    test_line = line + " " + word if line else word
+                    if c.stringWidth(test_line, "Helvetica", 11) < 450:
+                        line = test_line
+                    else:
+                        c.drawString(90, y_position, line)
+                        y_position -= 18
+                        line = word
+                if line:
+                    c.drawString(90, y_position, line)
+                    y_position -= 20
+            else:
+                c.drawString(70, y_position, text)
+                y_position -= 20
+            
+            if y_position < 150:
+                c.showPage()
+                y_position = height - 100
+
+    # Payment Information Section
+    if y_position < 200:
+        c.showPage()
+        y_position = height - 100
+    
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "3. PAYMENT INFORMATION")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    c.drawString(70, y_position, "Payment Status: PENDING - Awaiting 50% Deposit Confirmation")
+    y_position -= 20
+    c.drawString(70, y_position, "Bank: Commercial Bank of Ethiopia (CBE)")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Name: Sara Mohammed")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Number: 1000505694407")
+    y_position -= 20
+    c.drawString(70, y_position, "Required Deposit: 50% of total package price")
+
+    # Terms and Conditions
+    y_position -= 30
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(50, y_position, "4. TERMS AND CONDITIONS")
+    y_position -= 20
+    c.setFont("Helvetica", 9)
+    c.drawString(70, y_position, "• This booking is provisional until payment confirmation is received.")
+    y_position -= 15
+    c.drawString(70, y_position, "• The 50% deposit must be paid within 24 hours to secure your booking.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Remaining balance is due on the day of service.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Cancellations made less than 48 hours before the event may incur charges.")
+
+    # Footer
+    c.setFont("Helvetica-Oblique", 8)
+    c.drawString(50, 50, "This is an official document generated by AGOS Postpartum Care Telegram Bot.")
+    c.drawString(50, 40, "For any inquiries, please contact: +251 967 621 545 | +251 980 040 468")
+    c.drawString(50, 30, "Website: www.agospostpartumcare.com | Email: info@agospostpartumcare.com")
+    
     c.save()
     buffer.seek(0)
     return buffer
+
 
 def create_limo_pdf(data):
     buffer = BytesIO()
@@ -495,34 +607,107 @@ def create_limo_pdf(data):
     if os.path.exists(LOGO_PATH):
         try:
             logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            c.drawImage(logo, 450, height - 90, width=80, height=80, mask='auto')
         except Exception:
             pass
 
+    # Header
+    c.setFont("Helvetica-Bold", 22)
+    c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Limousine Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Limousine Order Form")
-    c.line(50, height - 85, 550, height - 85)
-
+    c.drawString(50, height - 80, "LIMOUSINE SERVICE")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    
+    c.line(50, height - 120, 550, height - 120)
+    
     c.setFont("Helvetica", 11)
-    y_position = height - 120
+    c.drawString(50, height - 140, f"Booking Reference: LIM-{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    c.drawString(50, height - 155, f"Date of Issue: {datetime.now().strftime('%B %d, %Y')}")
+    c.drawString(50, height - 170, f"Time of Issue: {datetime.now().strftime('%H:%M:%S')}")
+    
+    c.line(50, height - 180, 550, height - 180)
+
+    # Client Information Section
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, height - 200, "1. CLIENT INFORMATION")
+    c.setFont("Helvetica", 11)
+    y_position = height - 225
+
+    field_mappings = {
+        'l_name': 'Full Name',
+        'l_phone': 'Contact Number'
+    }
 
     for key, value in data.items():
-        if key.startswith('l_'):
-            label = key[2:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
-                c.showPage()
-                y_position = height - 50
+        if key.startswith('l_') and key in field_mappings:
+            label = field_mappings[key]
+            c.drawString(70, y_position, f"{label}: {value}")
+            y_position -= 20
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    # Service Details Section
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "2. SERVICE DETAILS")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    
+    service_mappings = {
+        'l_date': 'Scheduled Date & Time',
+        'l_addr': 'Pickup & Destination Address',
+        'l_package': 'Selected Package'
+    }
+    
+    for key, value in data.items():
+        if key.startswith('l_') and key in service_mappings:
+            label = service_mappings[key]
+            c.drawString(70, y_position, f"{label}: {value}")
+            y_position -= 20
+
+    # Payment Information Section
+    if y_position < 200:
+        c.showPage()
+        y_position = height - 100
+    
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "3. PAYMENT INFORMATION")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    c.drawString(70, y_position, "Payment Status: PENDING - Awaiting 50% Deposit Confirmation")
+    y_position -= 20
+    c.drawString(70, y_position, "Bank: Commercial Bank of Ethiopia (CBE)")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Name: Sara Mohammed")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Number: 1000505694407")
+    y_position -= 20
+    c.drawString(70, y_position, "Required Deposit: 50% of total package price")
+
+    # Terms and Conditions 
+    y_position -= 30
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(50, y_position, "4. TERMS AND CONDITIONS")
+    y_position -= 20
+    c.setFont("Helvetica", 9)
+    c.drawString(70, y_position, "• This booking is provisional until payment confirmation is received.")
+    y_position -= 15
+    c.drawString(70, y_position, "• The 50% deposit must be paid within 24 hours to secure your booking.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Remaining balance is due on the day of service.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Cancellations made less than 48 hours before the event may incur charges.")
+
+    # Footer
+    c.setFont("Helvetica-Oblique", 8)
+    c.drawString(50, 50, "This is an official document generated by AGOS Postpartum Care Telegram Bot.")
+    c.drawString(50, 40, "For any inquiries, please contact: +251 967 621 545 | +251 980 040 468")
+    c.drawString(50, 30, "Website: www.agospostpartumcare.com | Email: info@agospostpartumcare.com")
+    
     c.save()
     buffer.seek(0)
     return buffer
+
 
 def create_photo_pdf(data):
     buffer = BytesIO()
@@ -532,31 +717,103 @@ def create_photo_pdf(data):
     if os.path.exists(LOGO_PATH):
         try:
             logo = ImageReader(LOGO_PATH)
-            c.drawImage(logo, 480, height - 80, width=60, height=60, mask='auto')
+            c.drawImage(logo, 450, height - 90, width=80, height=80, mask='auto')
         except Exception:
             pass
 
+    # Header
+    c.setFont("Helvetica-Bold", 22)
+    c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
-    c.drawString(50, height - 50, "AGOS Media Services Booking")
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 70, "Official Media Services Order Form")
-    c.line(50, height - 85, 550, height - 85)
-
+    c.drawString(50, height - 80, "PHOTOGRAPHY & VIDEOGRAPHY SERVICES")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    
+    c.line(50, height - 120, 550, height - 120)
+    
     c.setFont("Helvetica", 11)
-    y_position = height - 120
+    c.drawString(50, height - 140, f"Booking Reference: PHOTO-{datetime.now().strftime('%Y%m%d%H%M%S')}")
+    c.drawString(50, height - 155, f"Date of Issue: {datetime.now().strftime('%B %d, %Y')}")
+    c.drawString(50, height - 170, f"Time of Issue: {datetime.now().strftime('%H:%M:%S')}")
+    
+    c.line(50, height - 180, 550, height - 180)
+
+    # Client Information Section
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, height - 200, "1. CLIENT INFORMATION")
+    c.setFont("Helvetica", 11)
+    y_position = height - 225
+
+    field_mappings = {
+        'ph_name': 'Full Name',
+        'ph_phone': 'Contact Number'
+    }
 
     for key, value in data.items():
-        if key.startswith('ph_'):
-            label = key[3:].replace('_', ' ').upper()
-            text = f"{label}: {value}"
-            c.drawString(50, y_position, text)
-            y_position -= 25
-            if y_position < 60:
-                c.showPage()
-                y_position = height - 50
+        if key.startswith('ph_') and key in field_mappings:
+            label = field_mappings[key]
+            c.drawString(70, y_position, f"{label}: {value}")
+            y_position -= 20
 
-    c.setFont("Helvetica-Oblique", 9)
-    c.drawString(50, 40, "Generated via AGOS Telegram Bot. Awaiting payment confirmation.")
+    # Service Details Section
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "2. SERVICE DETAILS")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    
+    service_mappings = {
+        'ph_date': 'Event Date & Time',
+        'ph_addr': 'Event Address',
+        'ph_package': 'Selected Package'
+    }
+    
+    for key, value in data.items():
+        if key.startswith('ph_') and key in service_mappings:
+            label = service_mappings[key]
+            c.drawString(70, y_position, f"{label}: {value}")
+            y_position -= 20
+
+    # Payment Information Section
+    if y_position < 200:
+        c.showPage()
+        y_position = height - 100
+    
+    y_position -= 10
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(50, y_position, "3. PAYMENT INFORMATION")
+    y_position -= 25
+    c.setFont("Helvetica", 11)
+    c.drawString(70, y_position, "Payment Status: PENDING - Awaiting 50% Deposit Confirmation")
+    y_position -= 20
+    c.drawString(70, y_position, "Bank: Commercial Bank of Ethiopia (CBE)")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Name: Sara Mohammed")
+    y_position -= 20
+    c.drawString(70, y_position, "Account Number: 1000505694407")
+    y_position -= 20
+    c.drawString(70, y_position, "Required Deposit: 50% of total package price")
+
+    # Terms and Conditions
+    y_position -= 30
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(50, y_position, "4. TERMS AND CONDITIONS")
+    y_position -= 20
+    c.setFont("Helvetica", 9)
+    c.drawString(70, y_position, "• This booking is provisional until payment confirmation is received.")
+    y_position -= 15
+    c.drawString(70, y_position, "• The 50% deposit must be paid within 24 hours to secure your booking.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Remaining balance is due on the day of service.")
+    y_position -= 15
+    c.drawString(70, y_position, "• Cancellations made less than 48 hours before the event may incur charges.")
+
+    # Footer
+    c.setFont("Helvetica-Oblique", 8)
+    c.drawString(50, 50, "This is an official document generated by AGOS Postpartum Care Telegram Bot.")
+    c.drawString(50, 40, "For any inquiries, please contact: +251 967 621 545 | +251 980 040 468")
+    c.drawString(50, 30, "Website: www.agospostpartumcare.com | Email: info@agospostpartumcare.com")
+    
     c.save()
     buffer.seek(0)
     return buffer
@@ -1139,16 +1396,15 @@ async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     warning_msg = (
         "⚠️ *IMPORTANT / አስፈላጊ* ⚠️\n\n"
-        "Booking will not be confirmed unless a screenshot of the half-payment is sent.\n"
-        "ያስያዙት ቦታ የሚረጋገጠው የግማሽ ክፍያ ስክሪን ሾት ከተላከ በኋላ ብቻ ነው።\n\n"
-        "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
-        "🏧 *Commercial Bank of Ethiopia (CBE)*\n"
-        "👤 Account Name: AGOS POSTPARTUM CARE\n"
-        "🔢 Account Number: 10001345678901\n"
-        "🌍 Branch: Piassa Branch\n\n"
-        "📱 *Tele Birr / ቴሌ ብር*\n"
-        "📞 Phone: 0967621545\n"
-        "👤 Name: AGOS POSTPARTUM CARE"
+            "🏦 *Bank Account Details / የባንክ አካውንት ዝርዝር*:\n\n"
+            "🏧 *Commercial Bank of Ethiopia (CBE) / የኢትዮጵያ ንግድ ባንክ *\n"
+            "👤 Account Name: Sara Mohammed \n"
+            "🔢 Account Number: 1000505694407\n\n"
+            "💵 Amount: 50% of the selected package \n\n"
+            "✅ After filling this form, please send a screenshot of your 50% deposit payment to confirm your booking.\n"
+            "‼️ Note: Booking will not be considered complete until the deposit is received.\n\n"
+            "✅ ይህንን ቅጽ ከሞሉ በኋላ፣ ትዕዛዝዎን ለማረጋገጥ የ50% የተቀማጭ ክፍያ ስክሪን ሾት ይላኩ።\n"
+            "‼️ ማሳሰቢያ፡- ተቀማጭ ገንዘብ እስኪደርስ ድረስ ትዕዛዝዎ እንደተጠናቀቀ አይቆጠርም።\n"
     )
     
     await query.message.reply_text(warning_msg, parse_mode='Markdown')
@@ -1179,37 +1435,59 @@ async def d_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     pay_img = update.message.photo[-1].file_id
     pdf_file = create_decor_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW AGOS DECOR BOOKING / አዲስ የዲኮር ትዕዛዝ** 🔔\n\n"
-               f"👤 Name / ስም: {context.user_data.get('d_name')}\n"
-               f"👶 Baby Gender / የሕፃኑ ጾታ: {context.user_data.get('d_gender')}\n"
-               f"📞 Phone / ስልክ: {context.user_data.get('d_phone')}\n"
-               f"📱 Telegram / ቴሌግራም: {context.user_data.get('d_username')}\n"
-               f"🏠 Address / አድራሻ: {context.user_data.get('d_addr')}\n"
-               f"🏗️ House Type / የቤት አይነት: {context.user_data.get('d_house')}\n"
-               f"🎁 Package / ፓኬጅ: {context.user_data.get('d_pkg')}\n"
-               f"📅 Date / ቀን: {context.user_data.get('d_date')}\n"
-               f"📝 Notes / ማስታወሻ: {context.user_data.get('d_notes')}")
+
+    # This MUST be indented inside the function
+    summary = (
+        f"🔔 *NEW DECOR SERVICE BOOKING / አዲስ የዲኮር ትዕዛዝ* 🔔\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"*Booking Reference:* DEC-{datetime.now().strftime('%Y%m%d%H%M%S')}\n"
+        f"*Booking Date:* {datetime.now().strftime('%B %d, %Y')}\n"
+        f"*Booking Time:* {datetime.now().strftime('%H:%M:%S')}\n\n"
+        f"*1. CLIENT INFORMATION*\n"
+        f"   • Full Name: {context.user_data.get('d_name')}\n"
+        f"   • Baby Gender: {context.user_data.get('d_gender')}\n"
+        f"   • Primary Contact: {context.user_data.get('d_phone')}\n"
+        f"   • Telegram: {context.user_data.get('d_username')}\n"
+        f"   • Alternative Contact: {context.user_data.get('d_contact')}\n\n"
+        f"*2. SERVICE DETAILS*\n"
+        f"   • Package: {context.user_data.get('d_pkg')}\n"
+        f"   • Service Address: {context.user_data.get('d_addr')}\n"
+        f"   • House Type: {context.user_data.get('d_house')}\n"
+        f"   • Preferred Date: {context.user_data.get('d_date')}\n"
+        f"   • Special Requests: {context.user_data.get('d_notes') or 'None'}\n\n"
+        f"*3. PAYMENT INFORMATION*\n"
+        f"   • Bank: Commercial Bank of Ethiopia (CBE)\n"
+        f"   • Account Name: Sara Mohammed\n"
+        f"   • Account Number: 1000505694407\n"
+        f"   • Required Deposit: 50% of package price\n"
+        f"   • Status: PENDING - Payment Screenshot Received, Awaiting Verification\n\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"✅ Payment screenshot has been received.\n"
+        f"⚠️ Please verify the payment and confirm the booking by contacting the client.\n"
+        f"📱 Client Telegram: {context.user_data.get('d_username')}"
+    )
 
     for admin_id in ADMIN_IDS:
         try:
-            # Avoid Markdown parse errors in admin captions by sending plain text
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary)
             pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Decor_{context.user_data.get('d_name','Booking')}.pdf")
+            await context.bot.send_document(
+                chat_id=admin_id, 
+                document=pdf_file, 
+                filename=f"Decor_{context.user_data.get('d_name','Booking')}.pdf"
+            )
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
     pdf_file.seek(0)
+    # YOUR SIMPLE CAPTION - kept exactly as you want
     await update.message.reply_document(
         document=pdf_file, 
         filename="AGOS_Decor_Booking.pdf", 
         caption="✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
     )
 
-    # Show dynamic discover more page
     await show_discover_more(update, context, 'decor')
-    
     return ConversationHandler.END
 
 async def d_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1234,7 +1512,7 @@ async def l_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=No
     ])
     
     await query.message.reply_text(
-        "🚗 **Limousine Booking / ሊሙዚን ማስያዣ**\n\n1. Full Name / ሙሉ ስም:",
+        "🚗 **Limousine Booking / ሊሙዚን ማዘዣ**\n\n1. Full Name / ሙሉ ስም:",
         reply_markup=kb
     )
     return L_NAME
@@ -1354,24 +1632,48 @@ async def l_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     pay_img = update.message.photo[-1].file_id
     pdf_file = create_limo_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW LIMOUSINE BOOKING / አዲስ የሊሙዚን ትዕዛዝ** 🔔\n\n"
-               f"👤 Name / ስም: {context.user_data.get('l_name')}\n"
-               f"📞 Phone / ስልክ: {context.user_data.get('l_phone')}\n"
-               f"📅 Date / ቀን: {context.user_data.get('l_date')}\n"
-               f"🏠 Address / አድራሻ: {context.user_data.get('l_addr')}\n"
-               f"🎁 Package / ፓኬጅ: {context.user_data.get('l_package')}")
+
+    # Summary for admin - properly indented inside function
+    summary = (
+        f"🔔 *NEW LIMOUSINE SERVICE BOOKING / አዲስ የሊሙዚን ትዕዛዝ* 🔔\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"*Booking Reference:* LIM-{datetime.now().strftime('%Y%m%d%H%M%S')}\n"
+        f"*Booking Date:* {datetime.now().strftime('%B %d, %Y')}\n"
+        f"*Booking Time:* {datetime.now().strftime('%H:%M:%S')}\n\n"
+        f"*1. CLIENT INFORMATION*\n"
+        f"   • Full Name: {context.user_data.get('l_name')}\n"
+        f"   • Contact Number: {context.user_data.get('l_phone')}\n\n"
+        f"*2. SERVICE DETAILS*\n"
+        f"   • Package: {context.user_data.get('l_package')}\n"
+        f"   • Scheduled Date: {context.user_data.get('l_date')}\n"
+        f"   • Pickup & Destination: {context.user_data.get('l_addr')}\n\n"
+        f"*3. PAYMENT INFORMATION*\n"
+        f"   • Bank: Commercial Bank of Ethiopia (CBE)\n"
+        f"   • Account Name: Sara Mohammed\n"
+        f"   • Account Number: 1000505694407\n"
+        f"   • Required Deposit: 50% of package price\n"
+        f"   • Status: PENDING - Payment Screenshot Received, Awaiting Verification\n\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"✅ Payment screenshot has been received.\n"
+        f"⚠️ Please verify the payment and confirm the booking by contacting the client.\n"
+        f"📱 Client Phone: {context.user_data.get('l_phone')}"
+    )
 
     for admin_id in ADMIN_IDS:
         try:
             # Send plain text caption to avoid Markdown entity parsing issues
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary)
             pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Limousine_{context.user_data.get('l_name','Booking')}.pdf")
+            await context.bot.send_document(
+                chat_id=admin_id, 
+                document=pdf_file, 
+                filename=f"Limousine_{context.user_data.get('l_name','Booking')}.pdf"
+            )
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
     pdf_file.seek(0)
+    # SIMPLE CAPTION for client - exactly as you want
     await update.message.reply_document(
         document=pdf_file, 
         filename="AGOS_Limousine_Booking.pdf", 
@@ -1525,27 +1827,51 @@ async def ph_final(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     pay_img = update.message.photo[-1].file_id
     pdf_file = create_photo_pdf(context.user_data)
-    
-    summary = (f"🔔 **NEW MEDIA BOOKING / አዲስ የሚዲያ ትዕዛዝ** 🔔\n\n"
-               f"👤 Name / ስም: {context.user_data.get('ph_name')}\n"
-               f"📞 Phone / ስልክ: {context.user_data.get('ph_phone')}\n"
-               f"📅 Date / ቀን: {context.user_data.get('ph_date')}\n"
-               f"🏠 Address / አድራሻ: {context.user_data.get('ph_addr')}\n"
-               f"🎁 Package / ፓኬጅ: {context.user_data.get('ph_package')}")
+
+    # Summary for admin - properly indented inside function
+    summary = (
+        f"🔔 *NEW PHOTOGRAPHY & VIDEOGRAPHY BOOKING / አዲስ የፎቶግራፍ ትዕዛዝ* 🔔\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"*Booking Reference:* PHOTO-{datetime.now().strftime('%Y%m%d%H%M%S')}\n"
+        f"*Booking Date:* {datetime.now().strftime('%B %d, %Y')}\n"
+        f"*Booking Time:* {datetime.now().strftime('%H:%M:%S')}\n\n"
+        f"*1. CLIENT INFORMATION*\n"
+        f"   • Full Name: {context.user_data.get('ph_name')}\n"
+        f"   • Contact Number: {context.user_data.get('ph_phone')}\n\n"
+        f"*2. SERVICE DETAILS*\n"
+        f"   • Package: {context.user_data.get('ph_package')}\n"
+        f"   • Event Date: {context.user_data.get('ph_date')}\n"
+        f"   • Event Address: {context.user_data.get('ph_addr')}\n\n"
+        f"*3. PAYMENT INFORMATION*\n"
+        f"   • Bank: Commercial Bank of Ethiopia (CBE)\n"
+        f"   • Account Name: Sara Mohammed\n"
+        f"   • Account Number: 1000505694407\n"
+        f"   • Required Deposit: 50% of package price\n"
+        f"   • Status: PENDING - Payment Screenshot Received, Awaiting Verification\n\n"
+        f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        f"✅ Payment screenshot has been received.\n"
+        f"⚠️ Please verify the payment and confirm the booking by contacting the client.\n"
+        f"📱 Client Phone: {context.user_data.get('ph_phone')}"
+    )
 
     for admin_id in ADMIN_IDS:
         try:
             # Send plain text caption to avoid Markdown entity parsing issues
             await context.bot.send_photo(chat_id=admin_id, photo=pay_img, caption=summary)
             pdf_file.seek(0)
-            await context.bot.send_document(chat_id=admin_id, document=pdf_file, filename=f"Media_{context.user_data.get('ph_name','Booking')}.pdf")
+            await context.bot.send_document(
+                chat_id=admin_id, 
+                document=pdf_file, 
+                filename=f"Photography_{context.user_data.get('ph_name','Booking')}.pdf"
+            )
         except Exception as e:
             print(f"Failed to send to admin {admin_id}: {e}")
 
     pdf_file.seek(0)
+    # SIMPLE CAPTION for client - exactly as you want
     await update.message.reply_document(
         document=pdf_file, 
-        filename="AGOS_Media_Booking.pdf", 
+        filename="AGOS_Photography_Booking.pdf", 
         caption="✅ Your booking is awaiting confirmation. / ማረጋገጫ በመጠበቅ ላይ።"
     )
     
