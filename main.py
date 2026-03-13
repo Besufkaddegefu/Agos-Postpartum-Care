@@ -648,55 +648,47 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     )
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
-
-# --- PACKAGE DISPLAY FUNCTIONS ---
-import re
-
-def escape_markdown(text):
-    """Helper to prevent Amharic characters and links from crashing Telegram"""
-    # Characters that often break MarkdownV2
-    escape_chars = r'_*[]()~`>#+-=|{}.!'
-    return re.sub(f'([{re.escape(escape_chars)}])', r'\\\1', text)
-
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    # We pull the text and use a try/except block as a total safety net
+    # We pull the exact text from your dictionary for the selected language
     try:
+        basic = CONTENT[lang].get('decor_basic', "")
+        deluxe = CONTENT[lang].get('decor_deluxe', "")
+        premium = CONTENT[lang].get('decor_premium', "")
+        
+        # Combine them with clear separators
         text = (
-            f"{CONTENT[lang]['decor_basic']}\n"
-            "__________________________\n\n"
-            f"{CONTENT[lang]['decor_deluxe']}\n"
-            "__________________________\n\n"
-            f"{CONTENT[lang]['decor_premium']}\n\n"
+            f"{basic}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{deluxe}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{premium}\n\n"
             "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
         )
-        
-        # We try 'Markdown' first
+
+        kb = [
+            [InlineKeyboardButton("📝 Book Basic (15k)" if lang == 'en' else "📝 መደበኛ (15k) ያዝ", callback_data='d_start_basic')],
+            [InlineKeyboardButton("📝 Book Deluxe (20k)" if lang == 'en' else "📝 ደልክስ (20k) ያዝ", callback_data='d_start_deluxe')],
+            [InlineKeyboardButton("📝 Book Premium (25k)" if lang == 'en' else "📝 ፕሪሚየም (25k) ያዝ", callback_data='d_start_premium')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+
+        # Use Markdown and disable previews so 20+ TikTok links don't crowd the screen
         await query.message.edit_text(
             text, 
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
-                [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
-                [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
-                [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-            ]), 
+            reply_markup=InlineKeyboardMarkup(kb), 
             parse_mode='Markdown', 
             disable_web_page_preview=True
         )
     except Exception as e:
-        # If the Amharic formatting crashes (which is happening now), 
-        # this fallback sends it as plain text so it NEVER disappears again.
+        # If Markdown fails (due to a special character in a link), fallback to plain text
+        # This ensures the customer ALWAYS sees the info and buttons
         await query.message.edit_text(
             text, 
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
-                [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
-                [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
-                [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-            ]), 
+            reply_markup=InlineKeyboardMarkup(kb), 
             disable_web_page_preview=True
         )
 
