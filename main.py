@@ -652,6 +652,7 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
     )
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
+# --- PACKAGE DISPLAY FUNCTIONS ---
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -659,22 +660,36 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Correctly identify the user's language
     lang = context.user_data.get('lang', 'en')
     
+    # Debug prints to verify
+    print(f"🔍 DEBUG - Showing decor packages in language: {lang}")
+    print(f"🔍 DEBUG - Amharic decor_basic exists: {'decor_basic' in CONTENT['am']}")
+    
     # Pull the pieces from your dictionary
     basic = CONTENT[lang]['decor_basic']
     deluxe = CONTENT[lang]['decor_deluxe']
     premium = CONTENT[lang]['decor_premium']
     
-    # Combine them into one text string
-    text = (
-        f"{basic}\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"{deluxe}\n\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"{premium}\n\n"
-        "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለማዘዝ አንዱን ይምረጡ፦*"
-    )
+    # Combine them into one text string based on language
+    if lang == 'en':
+        text = (
+            f"{basic}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{deluxe}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{premium}\n\n"
+            "👇 *Choose a package to book:*"
+        )
+    else:
+        text = (
+            f"{basic}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{deluxe}\n\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
+            f"{premium}\n\n"
+            "👇 *ለማዘዝ አንዱን ይምረጡ፦*"
+        )
 
-    # Dynamic buttons that change based on language - THIS WAS THE MAIN ISSUE
+    # Dynamic buttons that change based on language
     if lang == 'en':
         kb = [
             [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
@@ -756,14 +771,17 @@ async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
 
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
+# --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
 async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_basic')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_decor_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -778,9 +796,11 @@ async def view_decor_deluxe(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_deluxe')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_decor_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -795,9 +815,11 @@ async def view_decor_premium(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='d_start_premium')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_decor_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_decor_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -925,6 +947,7 @@ async def view_videography(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
+
 
 # --- DECOR BOOKING FLOW ---
 async def d_start(update: Update, context: ContextTypes.DEFAULT_TYPE, package=None):
