@@ -649,88 +649,59 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
 
 # --- PACKAGE DISPLAY FUNCTIONS ---
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Consolidated decor view with details and direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    if lang == 'en':
-        text = (
-            "🎁 *Our Decor Packages*\n\n"
-            "🔸 *Basic (15,000 ETB)*: Bedroom, Floor, Corridor, & Salon decor.\n\n"
-            "💎 *Deluxe (20,000 ETB)*: Basic + Flowers + 2kg Cake.\n\n"
-            "👑 *Premium (25,000 ETB)*: Deluxe + Agober rent + Custom Cake."
-        )
-    else:
-        text = (
-            "🎁 *የዲኮር ፓኬጆቻችን*\n\n"
-            "🔸 *መደበኛ (15,000 ብር)*: የመኝታ ቤት፣ የወለል፣ የኮሪደር እና የሳሎን ዲኮር።\n\n"
-            "💎 *ደልክስ (20,000 ብር)*: መደበኛ + ትልቅ እቅፍ አበባ + 2 ኪሎ ኬክ።\n\n"
-            "👑 *ፕሪሚየም (25,000 ብር)*: ደልክስ + የአጎበር ኪራይ + በመረጡት ዲዛይን የሚሰራ ኬክ።"
-        )
+    # This pulls the EXACT text you have in your CONTENT dictionary
+    text = (
+        f"{CONTENT[lang]['decor_basic']}\n"
+        "__________________________\n\n"
+        f"{CONTENT[lang]['decor_deluxe']}\n"
+        "__________________________\n\n"
+        f"{CONTENT[lang]['decor_premium']}\n\n"
+        "👇 **Choose a package to book:**" if lang == 'en' else "👇 **ለመያዝ አንዱን ይምረጡ፦**"
+    )
 
     kb = [
         [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
         [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
         [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
-        [InlineKeyboardButton("ℹ️ Full Info & TikTok Videos", callback_data='view_decor_basic')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
-    
-    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
-
+    # disable_web_page_preview=True prevents 10 TikTok boxes from cluttering the screen
+    await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
 async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Consolidated limo view with direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    if lang == 'en':
-        text = (
-            "🚗 *Limousine Services*\n\n"
-            "⭐ *Grand Arrival (25,000 ETB)*: Elegant ride home.\n"
-            "✨ *Special Arrival (30,000 ETB)*: Luxurious ride with extra touches.\n"
-            "👑 *Royal Welcome (35,000 ETB)*: Premium luxury experience."
-        )
-    else:
-        text = (
-            "🚗 *የሊሙዚን አገልግሎቶች*\n\n"
-            "⭐ *መደበኛ አቀባበል (25,000 ብር)*: ለታላቅ አቀባበል የሚሆን የሊሙዚን አገልግሎት።\n"
-            "✨ *ልዩ አቀባበል (30,000 ብር)*: ተጨማሪ ነገሮች ያሉት የቅንጦት አቀባበል።\n"
-            "👑 *የሮያል አቀባበል (35,000 ብር)*: በጣም ዘመናዊ የሆነ የሊሙዚን አገልግሎት።"
-        )
+    text = (
+        f"{CONTENT[lang]['limo_grand']}\n"
+        "__________________________\n\n"
+        f"{CONTENT[lang]['limo_special']}\n"
+        "__________________________\n\n"
+        f"{CONTENT[lang]['limo_royal']}"
+    )
 
     kb = [
-        [InlineKeyboardButton("📝 Book Grand (25k)", callback_data='l_start_grand')],
-        [InlineKeyboardButton("📝 Book Special (30k)", callback_data='l_start_special')],
-        [InlineKeyboardButton("📝 Book Royal (35k)", callback_data='l_start_royal')],
+        [InlineKeyboardButton("📝 Book Grand", callback_data='l_start_grand')],
+        [InlineKeyboardButton("📝 Book Special", callback_data='l_start_special')],
+        [InlineKeyboardButton("📝 Book Royal", callback_data='l_start_royal')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
-    
     await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
-
 async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Consolidated media view with direct booking buttons"""
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
-    if lang == 'en':
-        text = (
-            "📸 *Media Packages*\n\n"
-            "📱 *Digital (10,000 ETB)*: Soft copies only.\n"
-            "🖼️ *Standard (12,000 ETB)*: 100 Printed photos + Soft copy.\n"
-            "💎 *Premium (15,000 ETB)*: Laminated Album + Soft copy.\n"
-            "🎥 *Video (15,000 ETB)*: Full edited video coverage."
-        )
-    else:
-        text = (
-            "📸 *የሚዲያ ፓኬጆች*\n\n"
-            "📱 *ዲጂታል (10,000 ብር)*: በሶፍት ኮፒ ብቻ።\n"
-            "🖼️ *መደበኛ (12,000 ብር)*: 100 የታተሙ ፎቶዎች + ሶፍት ኮፒ።\n"
-            "💎 *ፕሪሚየም (15,000 ብር)*: ላሚኔት የተደረገ አልበም + ሶፍት ኮፒ።\n"
-            "🎥 *ቪዲዮ (15,000 ብር)*: ሙሉ ኤዲት የተደረገ ቪዲዮ።"
-        )
+    text = (
+        f"{CONTENT[lang]['photo_digital']}\n\n"
+        f"{CONTENT[lang]['photo_standard']}\n\n"
+        f"{CONTENT[lang]['photo_premium']}\n\n"
+        f"{CONTENT[lang]['videography']}"
+    )
 
     kb = [
         [InlineKeyboardButton("📝 Book Digital", callback_data='ph_start_digital')],
@@ -739,7 +710,6 @@ async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         [InlineKeyboardButton("🎥 Book Video", callback_data='ph_start_video')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
-    
     await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown')
 
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
