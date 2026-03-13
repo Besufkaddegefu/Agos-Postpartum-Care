@@ -288,29 +288,25 @@ CONTENT = {
             "• የወለል ዲኮር\n"
             "• የኮሪደር ዲኮር\n"
             "• የሳሎን ዲኮር\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PAHdX) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PV8vt) | "
-            "[TikTok](https://vt.tiktok.com/ZSmoGPTJ6) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com/decor)\n\n"
+            "📱 *👇👇👇ከዚህ በፊት በ 15,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PAHdX) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6) | "
+            "[video](https://vm.tiktok.com/ZMA2PV8vt) | "
+            "[video](https://vt.tiktok.com/ZSmoGPTJ6)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
         ),
         'decor_deluxe': (
             "💎 *ደልክስ ዲኮር (20,000 ብር)*\n"
             "__________________________\n\n"
             "• የመኝታ ቤት፣ ኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
+            "• ትልቅ እቅፍ አበባ\n"
             "• 2 ኪሎ መደበኛ ኬክ\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2PQp4k) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPv9g) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PbLWU) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PfLwK) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PG9Nd) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com)\n\n"
+            "📱 *👇👇👇ከዚህ በፊት በ 20,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2PQp4k) | "
+            "[video](https://vm.tiktok.com/ZMA2PPv9g) | "
+            "[video](https://vm.tiktok.com/ZMA2PbLWU) | "
+            "[video](https://vm.tiktok.com/ZMA2PfLwK) | "
+            "[video](https://vm.tiktok.com/ZMA2PG9Nd)\n\n"
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
         ),
         'decor_premium': (
@@ -318,18 +314,16 @@ CONTENT = {
             "__________________________\n\n"
             "• የመኝታ ቤት ዲኮር ከአጎበር ኪራይ ጋር (2 ሳምንት)\n"
             "• የኮሪደር እና ሳሎን ዲኮር\n"
-            "• ትልቅ የአበባ ዝግጅት - እቅፍ አበባ\n"
+            "• ትልቅ እቅፍ አበባ\n"
             "• 2 ኪሎ ኬክ በመረጡት ዲዛይን\n\n"
-            "📱 *ስራዎቻችንን ይመልከቱ:*\n"
-            "[TikTok](https://vm.tiktok.com/ZMA2Pb9Pp) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pq1V8) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2Pyn8m) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PqRTh) | "
-            "[TikTok](https://vm.tiktok.com/ZMA2PPpoG) | "
-            "[TikTok](https://surl.li/iiicng) | "
-            "[TikTok](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
-            "[Instagram](https://instagram.com/agospostpartum) | "
-            "[Website](https://www.agospostpartumcare.com)\n\n"
+            "📱 *👇👇👇ከዚህ በፊት በ 25,000 ብር የሰራናቸዉን ስራዎች ይመልከቱ 👇👇👇:*\n"
+            "[video](https://vm.tiktok.com/ZMA2Pb9Pp) | "
+            "[video](https://vm.tiktok.com/ZMA2Pq1V8) | "
+            "[video](https://vm.tiktok.com/ZMA2Pyn8m) | "
+            "[video](https://vm.tiktok.com/ZMA2PqRTh) | "
+            "[video](https://vm.tiktok.com/ZMA2PPpoG) | "
+            "[video](https://surl.li/iiicng) | "
+            "[video](https://www.tiktok.com/@agos_postpartumcare/video/7551840674677591352?_r=1&_t=ZM-914EEFmhm03) | "
             "👉 *ለተጨማሪ ቪዲዮዎች የቲክቶክ ገፃችንን ይጎብኙ*: https://www.tiktok.com/@agos_postpartumcare"
         ),
         
@@ -692,16 +686,16 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
     # Dynamic buttons that change based on language
     if lang == 'en':
         kb = [
-            [InlineKeyboardButton("📝 Book Basic (15k)", callback_data='d_start_basic')],
-            [InlineKeyboardButton("📝 Book Deluxe (20k)", callback_data='d_start_deluxe')],
-            [InlineKeyboardButton("📝 Book Premium (25k)", callback_data='d_start_premium')],
+            [InlineKeyboardButton("📝 Book 🔸 Basic - 15,000 ETB", callback_data='d_start_basic')],
+            [InlineKeyboardButton("📝 Book 💎 Deluxe - 20,000 ETB", callback_data='d_start_deluxe')],
+            [InlineKeyboardButton("📝 Book 👑 Premium - 25,000 ETB", callback_data='d_start_premium')],
             [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
         ]
     else:
         kb = [
-            [InlineKeyboardButton("📝 መደበኛ (15k) ይዘዙ", callback_data='d_start_basic')],
-            [InlineKeyboardButton("📝 ደልክስ (20k) ይዘዙ", callback_data='d_start_deluxe')],
-            [InlineKeyboardButton("📝 ፕሪሚየም (25k) ይዘዙ", callback_data='d_start_premium')],
+            [InlineKeyboardButton("🔸 መደበኛ - 15,000 ETB ይዘዙ", callback_data='d_start_basic')],
+            [InlineKeyboardButton("💎 ደልክስ - 20,000 ETB ይዘዙ", callback_data='d_start_deluxe')],
+            [InlineKeyboardButton("👑 ፕሪሚየም - 25,000 ETB ይዘዙ", callback_data='d_start_premium')],
             [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
         ]
     
@@ -735,12 +729,21 @@ async def show_limo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"{CONTENT[lang]['limo_royal']}"
     )
 
-    kb = [
-        [InlineKeyboardButton("📝 Book Grand", callback_data='l_start_grand')],
-        [InlineKeyboardButton("📝 Book Special", callback_data='l_start_special')],
-        [InlineKeyboardButton("📝 Book Royal", callback_data='l_start_royal')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
+    if lang == 'en':
+        kb = [
+            [InlineKeyboardButton("⭐ Book ⭐ Grand Arrival - 25,000 ETB", callback_data='l_start_grand')],
+            [InlineKeyboardButton("✨ Book ✨ Special Arrival - 30,000 ETB", callback_data='l_start_special')],
+            [InlineKeyboardButton("👑 Book 👑 Royal Welcome - 35,000 ETB", callback_data='l_start_royal')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    else:
+        kb = [
+            [InlineKeyboardButton("⭐ መደበኛ - 25,000 ETB ይዘዙ", callback_data='l_start_grand')],
+            [InlineKeyboardButton("✨ ልዩ - 30,000 ETB ይዘዙ", callback_data='l_start_special')],
+            [InlineKeyboardButton("👑 ሮያል - 35,000 ETB ይዘዙ", callback_data='l_start_royal')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    
     try:
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
     except Exception:
@@ -758,19 +761,28 @@ async def show_photo_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
         f"{CONTENT[lang]['videography']}"
     )
 
-    kb = [
-        [InlineKeyboardButton("📝 Book Digital", callback_data='ph_start_digital')],
-        [InlineKeyboardButton("📝 Book Standard", callback_data='ph_start_standard')],
-        [InlineKeyboardButton("📝 Book Premium", callback_data='ph_start_premium')],
-        [InlineKeyboardButton("🎥 Book Video", callback_data='ph_start_video')],
-        [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
-    ]
+    if lang == 'en':
+        kb = [
+            [InlineKeyboardButton("📱 Book 📱 Digital Photo - 10,000 ETB", callback_data='ph_start_digital')],
+            [InlineKeyboardButton("🖼️ Book 🖼️ Standard Photo - 12,000 ETB", callback_data='ph_start_standard')],
+            [InlineKeyboardButton("💎 Book 💎 Premium Photo - 15,000 ETB", callback_data='ph_start_premium')],
+            [InlineKeyboardButton("🎥 Book 🎥 Videography - 15,000 ETB", callback_data='ph_start_video')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    else:
+        kb = [
+            [InlineKeyboardButton("📱 ዲጂታል - 10,000 ETB ይዘዙ", callback_data='ph_start_digital')],
+            [InlineKeyboardButton("🖼️ መደበኛ - 12,000 ETB ይዘዙ", callback_data='ph_start_standard')],
+            [InlineKeyboardButton("💎 ፕሪሚየም - 15,000 ETB ይዘዙ", callback_data='ph_start_premium')],
+            [InlineKeyboardButton("🎥 ቪዲዮ - 15,000 ETB ይዘዙ", callback_data='ph_start_video')],
+            [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
+        ]
+    
     try:
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), parse_mode='Markdown', disable_web_page_preview=True)
     except Exception:
         await query.message.edit_text(text, reply_markup=InlineKeyboardMarkup(kb), disable_web_page_preview=True)
 
-# --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
 # --- INDIVIDUAL PACKAGE VIEW FUNCTIONS ---
 async def view_decor_basic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -829,14 +841,17 @@ async def view_decor_premium(update: Update, context: ContextTypes.DEFAULT_TYPE)
         parse_mode='Markdown'
     )
 
+
 async def view_limo_grand(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_grand')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_limo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -851,9 +866,11 @@ async def view_limo_special(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_special')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_limo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -868,9 +885,11 @@ async def view_limo_royal(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='l_start_royal')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_limo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_limo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -880,14 +899,17 @@ async def view_limo_royal(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode='Markdown'
     )
 
+
 async def view_photo_digital(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_digital')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_photo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -902,9 +924,11 @@ async def view_photo_standard(update: Update, context: ContextTypes.DEFAULT_TYPE
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_standard')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_photo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -919,9 +943,11 @@ async def view_photo_premium(update: Update, context: ContextTypes.DEFAULT_TYPE)
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_premium')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_photo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -936,9 +962,11 @@ async def view_videography(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.answer()
     lang = context.user_data.get('lang', 'en')
     
+    back_text = "🔙 Back to Packages" if lang == 'en' else "🔙 ወደ ፓኬጆች ተመለስ"
+    
     kb = [
         [InlineKeyboardButton(CONTENT[lang]['book_now'], callback_data='ph_start_video')],
-        [InlineKeyboardButton("🔙 Back to Packages", callback_data='show_photo_packages')],
+        [InlineKeyboardButton(back_text, callback_data='show_photo_packages')],
         [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
     ]
     
@@ -947,6 +975,7 @@ async def view_videography(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=InlineKeyboardMarkup(kb),
         parse_mode='Markdown'
     )
+
 
 
 # --- DECOR BOOKING FLOW ---
