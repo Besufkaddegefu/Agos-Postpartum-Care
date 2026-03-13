@@ -651,24 +651,23 @@ async def show_discover_more(update: Update, context: ContextTypes.DEFAULT_TYPE,
 async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
+    
+    # 1. Detect language correctly
     lang = context.user_data.get('lang', 'en')
     
-    # We pull the exact text from your dictionary for the selected language
+    # 2. Safely pull text from your dictionary
+    # We combine basic, deluxe, and premium into one message as requested
     try:
-        basic = CONTENT[lang].get('decor_basic', "")
-        deluxe = CONTENT[lang].get('decor_deluxe', "")
-        premium = CONTENT[lang].get('decor_premium', "")
-        
-        # Combine them with clear separators
         text = (
-            f"{basic}\n\n"
+            f"{CONTENT[lang]['decor_basic']}\n\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"{deluxe}\n\n"
+            f"{CONTENT[lang]['decor_deluxe']}\n\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━\n\n"
-            f"{premium}\n\n"
+            f"{CONTENT[lang]['decor_premium']}\n\n"
             "👇 *Choose a package to book:*" if lang == 'en' else "👇 *ለመያዝ አንዱን ይምረጡ፦*"
         )
 
+        # 3. Dynamic Button Labels based on language
         kb = [
             [InlineKeyboardButton("📝 Book Basic (15k)" if lang == 'en' else "📝 መደበኛ (15k) ያዝ", callback_data='d_start_basic')],
             [InlineKeyboardButton("📝 Book Deluxe (20k)" if lang == 'en' else "📝 ደልክስ (20k) ያዝ", callback_data='d_start_deluxe')],
@@ -676,7 +675,7 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
             [InlineKeyboardButton(CONTENT[lang]['back'], callback_data='menu')]
         ]
 
-        # Use Markdown and disable previews so 20+ TikTok links don't crowd the screen
+        # 4. Try rendering with Markdown
         await query.message.edit_text(
             text, 
             reply_markup=InlineKeyboardMarkup(kb), 
@@ -684,8 +683,9 @@ async def show_decor_packages(update: Update, context: ContextTypes.DEFAULT_TYPE
             disable_web_page_preview=True
         )
     except Exception as e:
-        # If Markdown fails (due to a special character in a link), fallback to plain text
-        # This ensures the customer ALWAYS sees the info and buttons
+        # 5. SAFETY FALLBACK
+        # If Amharic characters/links crash the Markdown parser, send as plain text.
+        # This ensures the details NEVER disappear.
         await query.message.edit_text(
             text, 
             reply_markup=InlineKeyboardMarkup(kb), 
