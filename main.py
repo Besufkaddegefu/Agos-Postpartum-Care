@@ -79,7 +79,7 @@ CONTENT = {
             "🌐 www.agospostpartumcare.com\n\n"
             "_Making your celebrations unforgettable._"
         ),
-        'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Media Services", "📞 Contact Us", "📋 Services Catalog"],
+        'btns': ["🎁 Decor Packages", "🚗 Limousine Service", "📸 Photography Services", "📞 Contact Us", "📋 Services Catalog"],
         
         # Individual Decor Package Pages with Book Buttons
         'decor_basic': (
@@ -278,7 +278,7 @@ CONTENT = {
             "📸 ፕሮፌሽናል ፎቶግራፍ እና ቪዲዮግራፊ\n\n"
             "🌐 www.agospostpartumcare.com"
         ),
-        'btns': ["🎁 የዲኮር ፓኬጆች", "🚗 የሊሙዚን አገልግሎት", "📸 የሚዲያ አገልግሎቶች", "📞 ያግኙን", "📋 የአገልግሎት ካታሎግ"],
+        'btns': ["🎁 የዲኮር ፓኬጆች", "🚗 የሊሙዚን አገልግሎት", "📸 የፎቶግራፍ አገልግሎቶች", "📞 ያግኙን", "📋 የአገልግሎት ዝርዝር"],
         
         # Individual Decor Package Pages with Book Buttons (Amharic)
         'decor_basic': (
