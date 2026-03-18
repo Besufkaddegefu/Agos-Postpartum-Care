@@ -8,7 +8,6 @@ from telegram.ext import (Application, CommandHandler, CallbackQueryHandler,
                           MessageHandler, filters, ContextTypes, ConversationHandler)
 from datetime import datetime
 import logging
-import pytz  # You'll need to install this: pip install pytz
 
 # Enable logging
 logging.basicConfig(
@@ -26,16 +25,9 @@ ADMIN_IDS = [
 LOGO_PATH = os.environ.get("LOGO_PATH", "logo.webp")
 SERVICES_PDF_PATH = os.environ.get("SERVICES_PDF_PATH", "services_catalog.pdf")
 
-# Ethiopian Time Zone (East Africa Time)
-ETHIOPIA_TZ = pytz.timezone('Africa/Addis_Ababa')
-
 # Working hours configuration (Ethiopian Local Time)
-# Bot is OFFLINE during these hours - users will see call message
-WORKING_HOURS_START = 8  # 8:00 AM LT - BOT OFFLINE
-WORKING_HOURS_END = 20   # 8:00 PM LT - BOT OFFLINE
-
-# Phone number to display during offline hours
-CONTACT_PHONE = "+251 967 621 545"
+WORKING_HOURS_START = 8  # 8:00 AM LT
+WORKING_HOURS_END = 20   # 8:00 PM LT
 
 print("DEBUG - TOKEN is:", repr(TOKEN))
 print("DEBUG - Admin IDs:", ADMIN_IDS)
@@ -52,177 +44,29 @@ print("DEBUG - Admin IDs:", ADMIN_IDS)
 
 # --- WORKING HOURS CHECK ---
 def is_within_working_hours():
-    """
-    Check if current time is within working hours (8 AM - 8 PM LT)
-    During these hours, bot should be OFFLINE
-    """
-    # Get current time in Ethiopian time zone
-    ethiopia_now = datetime.now(ETHIOPIA_TZ)
-    current_hour = ethiopia_now.hour
-    
-    # Return True if within working hours (bot should be OFFLINE)
+    """Check if current time is within working hours (8 AM - 8 PM LT)"""
+    current_hour = datetime.now().hour
     return WORKING_HOURS_START <= current_hour < WORKING_HOURS_END
 
 async def working_hours_gate(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    This function runs for EVERY user interaction.
-    If within working hours, shows call message and blocks access.
-    If outside working hours, allows normal bot usage.
-    """
-    # Check if current time is within working hours (bot should be OFFLINE)
-    if is_within_working_hours():
-        # Bot is OFFLINE - show call message and block all features
-        offline_message = (
-            "⏰ *Bot is Currently Offline*\n\n"
-            f"📞 Please call us at: **{CONTACT_PHONE}**\n\n"
-            "Our team is available during working hours to assist you directly.\n\n"
-            "🤖 The bot will be available again after 8:00 PM Ethiopian Time.\n\n"
-            "Thank you for understanding! 🙏"
-        )
-        
-        # Create keyboard with only a way to check again (optional)
-        keyboard = [[InlineKeyboardButton("🔄 Check Again", callback_data='check_again')]]
-        
-        # Handle different update types
-        if update.callback_query:
-            await update.callback_query.answer()
-            await update.callback_query.message.reply_text(
-                offline_message,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode='Markdown'
-            )
-        elif update.message:
-            await update.message.reply_text(
-                offline_message,
-                reply_markup=InlineKeyboardMarkup(keyboard),
-                parse_mode='Markdown'
-            )
-        
-        # Return True to indicate that we're in offline mode
-        return True
-    else:
-        # Bot is ONLINE - allow normal operation
-        return False
-
-async def check_again_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle the 'Check Again' button - rechecks working hours"""
-    query = update.callback_query
-    await query.answer()
-    
-    # Re-check working hours
-    if is_within_working_hours():
-        # Still within working hours
-        offline_message = (
-            "⏰ *Still Within Working Hours*\n\n"
-            f"📞 Please call us at: **{CONTACT_PHONE}**\n\n"
-            "The bot will be available after 8:00 PM Ethiopian Time."
-        )
-        await query.message.reply_text(offline_message, parse_mode='Markdown')
-    else:
-        # Now outside working hours - show language selection
-        await query.message.reply_text(
-            "🌿 Bot is now online! Choose Language / ቋንቋ ይምረጡ:",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-                [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-            ])
-        )
-
-# --- WRAPPER FOR ALL HANDLERS ---
-async def gate_keeper(update: Update, context: ContextTypes.DEFAULT_TYPE, next_handler):
-    """
-    Wrapper function that checks working hours before allowing any handler to run
-    """
-    # Check if we're in offline mode
-    is_offline = await working_hours_gate(update, context)
-    
-    if is_offline:
-        # If offline, don't proceed to the actual handler
-        return ConversationHandler.END
-    else:
-        # If online, proceed to the actual handler
-        return await next_handler(update, context)
-
-# --- MODIFIED START HANDLER ---
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Modified start handler that checks working hours first"""
-    # Check working hours gate
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
-    
-    # If we get here, bot is online
-    context.user_data.clear()
-    keyboard = [
-        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-    ]
-    
-    await update.message.reply_text(
-        "🌿 Welcome! Choose Language / ቋንቋ ይምረጡ:", 
-        reply_markup=InlineKeyboardMarkup(keyboard)
+    """Display working hours message before proceeding"""
+    working_msg = (
+        "⏰ *Working Hours & Contact*\n\n"
+        "Please note that AGOS Postpartum Care does not accept calls after 2:00 PM (local time).\n"
+        "If you contact us after this time, kindly leave your message here and our team will review it and contact you the next morning.\n\n"
+        "⏰ *የስራ ሰዓታችን*\n\n"
+        "እባክዎ ያስታውሱ፤ AGOS Postpartum Care ከምሽቱ 2:00 ሰዓት በኋላ ጥሪ አይቀበልም።\n"
+        "ከዚህ ሰዓት በኋላ ቦታ ለማስያዝ እባክዎ መልእክትዎን በዚህ ፕላትፎርም ይተዉ፣ ቡድናችንም በሚቀጥለው ጠዋት ያገኞዎታል።"
     )
-    return ConversationHandler.END
-
-# --- MODIFIED AFTER HOURS HANDLER ---
-async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle the 'after_hours' callback - now just checks working hours"""
-    # Re-check working hours
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
     
-    # If online, show language selection
-    keyboard = [
-        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-    ]
+    keyboard = [[InlineKeyboardButton("Continue / ቀጥል", callback_data='after_hours')]]
     
-    if update.callback_query:
-        await update.callback_query.answer()
-        await update.callback_query.message.reply_text(
-            "🌿 Choose Language / ቋንቋ ይምረጡ:", 
-            reply_markup=InlineKeyboardMarkup(keyboard)
-        )
-    return ConversationHandler.END
-
-# --- MODIFIED SHOW MENU FUNCTION ---
-async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str = None):
-    """Modified menu function with working hours check"""
-    # Check working hours gate
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
-    
-    if lang:
-        context.user_data['lang'] = lang
+    if update.message:
+        await update.message.reply_text(working_msg, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
     else:
-        lang = context.user_data.get('lang', 'en')
-
-    btns = CONTENT[lang]['btns']
-    keyboard = [
-        [InlineKeyboardButton(btns[0], callback_data='show_decor_packages'), 
-         InlineKeyboardButton(btns[1], callback_data='show_limo_packages')],
-        [InlineKeyboardButton(btns[2], callback_data='show_photo_packages'), 
-         InlineKeyboardButton(btns[3], callback_data='info_contact')],
-        [InlineKeyboardButton(btns[4], callback_data='send_pdf')],
-        [InlineKeyboardButton(CONTENT[lang]['change_lang'], callback_data='restart')]
-    ]
+        await update.callback_query.message.reply_text(working_msg, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode='Markdown')
     
-    query = update.callback_query
-    if query:
-        await query.answer()
-        await query.message.reply_text(
-            CONTENT[lang]['welcome'], 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
-    else:
-        await update.message.reply_text(
-            CONTENT[lang]['welcome'], 
-            reply_markup=InlineKeyboardMarkup(keyboard), 
-            parse_mode='Markdown'
-        )
-
-# [REST OF YOUR CODE REMAINS EXACTLY THE SAME - ALL CONTENT, PDF FUNCTIONS, 
-#  BOOKING FLOWS, ETC. - NO CHANGES NEEDED]
+    return ConversationHandler.END
 
 # --- CONTENT (Your exact content preserved) ---
 CONTENT = {
@@ -380,7 +224,7 @@ CONTENT = {
         'contact_text': (
             "📞 ••Contact Us••\n\n"
             "⏰ •Working Hours:• 8:00 AM - 8:00 PM (Local Time)\n"
-            "⚠️ •Note:• Bot is offline during working hours - please call us\n\n"
+            "⚠️ •Note:• Not operational before 2:00 LT / 8:00 PM\n\n"
             "📞 ••Phone:•• \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
@@ -557,7 +401,7 @@ CONTENT = {
         'contact_text': (
             "📞 ••ያግኙን••\n\n"
             "⏰ •የስራ ሰዓት: 2፡00 ጥዋት - 2፡00 ማታ (በአካባቢው ሰዓት)\n"
-            "⚠️ •ማሳሰቢያ: ቦት በስራ ሰዓት አይሰራም - እባክዎ ይደውሉልን\n\n"
+            "⚠️ •ማሳሰቢያ: ከምሽቱ 2፡00 ሰዓት በፊት አይሰራም\n\n"
             "📞 ••ስልክ:•• \n\n"
             "📱 +251 967 621 545\n"
             "📱 +251 980 040 468\n\n"
@@ -625,8 +469,8 @@ def create_decor_pdf(data):
     c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
     c.drawString(50, height - 80, "DECOR SERVICE")
-    # c.setFont("Helvetica-Bold", 16)
-    # c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
     
     # Line separator
     c.line(50, height - 120, 550, height - 120)
@@ -772,8 +616,8 @@ def create_limo_pdf(data):
     c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
     c.drawString(50, height - 80, "LIMOUSINE SERVICE")
-    # c.setFont("Helvetica-Bold", 16)
-    # c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
     
     c.line(50, height - 120, 550, height - 120)
     
@@ -882,8 +726,8 @@ def create_photo_pdf(data):
     c.drawString(50, height - 50, "AGOS POSTPARTUM CARE")
     c.setFont("Helvetica-Bold", 18)
     c.drawString(50, height - 80, "PHOTOGRAPHY & VIDEOGRAPHY SERVICES")
-    # c.setFont("Helvetica-Bold", 16)
-    # c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawString(50, height - 105, "OFFICIAL BOOKING CONFIRMATION")
     
     c.line(50, height - 120, 550, height - 120)
     
@@ -989,11 +833,11 @@ async def send_services_pdf(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.callback_query.message.reply_document(
                 document=pdf_file,
                 filename="AGOS_Services_Catalog.pdf",
-                caption="📋 Our complete services catalog / ሙሉ የአገልግሎት ዝርዝር"
+                caption="📋 Our complete services catalog / ሙሉ የአገልግሎት ካታሎጋችን"
             )
     else:
         await update.callback_query.message.reply_text(
-            "PDF catalog will be available soon. / የአገልግሎት ዝርዝር በቅርቡ ይገኛል።"
+            "PDF catalog will be available soon. / የአገልግሎት ካታሎግ በቅርቡ ይገኛል።"
         )
 
 # --- DYNAMIC DISCOVER MORE FUNCTION ---
@@ -1505,16 +1349,16 @@ async def d_step7(update: Update, context: ContextTypes.DEFAULT_TYPE):
             context.user_data['d_pkg'] = query.data
         lang = context.user_data.get('lang', 'en')
         await query.message.reply_text(
-            "7. Preferred Date & Time for the Decor setup (e.g., 21/08/2018, Morning 4:00 AM)\n"
-            " ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
+            "8. Preferred Date & Time for the Decor setup (e.g., Morning 4:00 AM)\nFormat: (dd/mm/yyyy), (Time)\n\n"
+            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ ጥዋት 4፡00)\nቅርጸት: (ቀን/ወር/ዓመት), (ሰዓት)",
             reply_markup=get_nav_kb(lang, back_callback='d_back')
         )
     else:
         # This is a message object (from skip case)
         lang = context.user_data.get('lang', 'en')
         await update.message.reply_text(
-            "7. Preferred Date & Time for the Decor setup (e.g., 21/08/2018, Morning 4:00 AM)\n"
-            " ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)\n",
+            "8. Preferred Date & Time for the Decor setup (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
+            "8. ዲኮሩን የሚፈልጉበት ቀን እና ሰአት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)\n",
             reply_markup=get_nav_kb(lang, back_callback='d_back')
         )
     return D_DATE
@@ -1534,7 +1378,7 @@ async def d_step8(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ]
 
     await update.message.reply_text(
-        "8. House Type / የቤት አይነት:",
+        "9. House Type / የቤት አይነት:",
         reply_markup=InlineKeyboardMarkup(kb)
     )
     return D_HOUSE
@@ -1565,7 +1409,7 @@ async def d_step9(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await query.message.reply_text(warning_msg, parse_mode='Markdown')
     await query.message.reply_text(
-        "9. Special Notes (Limousine, Photo, Video, or None) / ልዩ ማስታወሻ (ሊሙዚን፣ ፎቶ፣ ቪዲዮ፣ ወይም ምንም):",
+        "10. Special Notes (Limousine, Photo, Video, or None) / ልዩ ማስታወሻ (ሊሙዚን፣ ፎቶ፣ ቪዲዮ፣ ወይም ምንም):",
         reply_markup=get_nav_kb(lang, back_callback='d_back')
     )
     return D_NOTES
@@ -1689,7 +1533,7 @@ async def l_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         "3. Preferred Date & Time (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
-        " የሚፈልጉት ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
+        "3. የሚፈለግ ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
         reply_markup=get_nav_kb(lang, back_callback='l_back')
     )
     return L_DATE
@@ -1883,7 +1727,7 @@ async def ph_step2(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await update.message.reply_text(
         "3. Event Date & Time (e.g., 21/08/2018, Morning 4:00 AM)\n\n"
-        " የዝግጅቱ ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
+        "3. የዝግጅቱ ቀን እና ሰዓት (ለምሳሌ፡ 21/08/2018, ጥዋት 4፡00)",
         reply_markup=get_nav_kb(lang, back_callback='ph_back')
     )
     return PH_DATE
@@ -2043,37 +1887,13 @@ async def ph_back_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     return PH_NAME
 
 # --- NAVIGATION FUNCTIONS ---
-# --- NAVIGATION FUNCTIONS (KEEP THIS VERSION - WITH WORKING HOURS CHECK) ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Modified start handler that checks working hours first"""
-    # Check working hours gate
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
-    
-    # If we get here, bot is online
     context.user_data.clear()
-    keyboard = [
-        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-    ]
-    
-    await update.message.reply_text(
-        "🌿 Welcome! Choose Language / ቋንቋ ይምረጡ:", 
-        reply_markup=InlineKeyboardMarkup(keyboard)
-    )
-    return ConversationHandler.END
+    return await working_hours_gate(update, context)
 
 async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle the 'after_hours' callback - now just checks working hours"""
-    # Re-check working hours
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
-    
-    # If online, show language selection
-    keyboard = [
-        [InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
-        [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]
-    ]
+    keyboard = [[InlineKeyboardButton("English 🇺🇸", callback_data='lang_en')],
+                [InlineKeyboardButton("አማርኛ 🇪🇹", callback_data='lang_am')]]
     
     if update.callback_query:
         await update.callback_query.answer()
@@ -2084,11 +1904,6 @@ async def after_hours_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     return ConversationHandler.END
 
 async def show_menu(update: Update, context: ContextTypes.DEFAULT_TYPE, lang: str = None):
-    """Modified menu function with working hours check"""
-    # Check working hours gate
-    if await working_hours_gate(update, context):
-        return ConversationHandler.END
-    
     if lang:
         context.user_data['lang'] = lang
     else:
@@ -2134,9 +1949,6 @@ async def info_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
 if __name__ == '__main__':
     app = Application.builder().token(TOKEN).build()
 
-    # Add the check_again handler first
-    app.add_handler(CallbackQueryHandler(check_again_handler, pattern='^check_again$'))
-    
     # Package view handlers
     app.add_handler(CallbackQueryHandler(show_decor_packages, pattern='^show_decor_packages$'))
     app.add_handler(CallbackQueryHandler(show_limo_packages, pattern='^show_limo_packages$'))
@@ -2250,8 +2062,8 @@ if __name__ == '__main__':
     app.add_handler(l_conv)
     app.add_handler(ph_conv)
 
-    print("🎨 AGOS Enhanced Services Bot is live with WORKING HOURS GATE!")
-    print(f"⏰ Bot OFFLINE during working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00 LT")
-    print(f"📞 During offline hours, users will be asked to call: {CONTACT_PHONE}")
-    print(f"🤖 Bot ONLINE after: {WORKING_HOURS_END}:00 - {WORKING_HOURS_START}:00 LT")
+    print("🎨 AGOS Enhanced Services Bot is live with FIXED conversation flows!")
+    print(f"⏰ Working hours: {WORKING_HOURS_START}:00 - {WORKING_HOURS_END}:00 LT")
+    print("📱 Features: Individual package pages with booking buttons, smart discover more")
+    print("✅ All booking forms should now work correctly!")
     app.run_polling()
